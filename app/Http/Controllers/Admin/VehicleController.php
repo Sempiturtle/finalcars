@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class VehicleController extends Controller
@@ -38,7 +39,8 @@ class VehicleController extends Controller
      */
     public function create()
     {
-        //
+        $users = User::where('role', 'customer')->orderBy('name')->get();
+        return view('admin.vehicles.create', compact('users'));
     }
 
     /**
@@ -46,38 +48,80 @@ class VehicleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'plate_number' => 'required|string|unique:vehicles,plate_number',
+            'make' => 'required|string',
+            'model' => 'required|string',
+            'year' => 'required|string',
+            'color' => 'nullable|string',
+            'owner_name' => 'required|string',
+            'next_service_date' => 'nullable|date',
+            'registration_date' => 'nullable|date',
+            'status' => 'required|in:active,maintenance,inactive,overdue',
+            'services' => 'nullable|array',
+            'services.*.type' => 'required_with:services|string',
+            'services.*.cost' => 'required_with:services|numeric|min:0',
+            'total_cost' => 'nullable|numeric|min:0',
+        ]);
+
+        Vehicle::create($validated);
+
+        return redirect()->route('admin.vehicles.index')
+            ->with('success', 'Vehicle added successfully to the fleet.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Vehicle $vehicle)
     {
-        //
+        return view('admin.vehicles.show', compact('vehicle'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Vehicle $vehicle)
     {
-        //
+        $users = User::where('role', 'customer')->orderBy('name')->get();
+        return view('admin.vehicles.edit', compact('vehicle', 'users'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Vehicle $vehicle)
     {
-        //
+        $validated = $request->validate([
+            'plate_number' => 'required|string|unique:vehicles,plate_number,' . $vehicle->id,
+            'make' => 'required|string',
+            'model' => 'required|string',
+            'year' => 'required|string',
+            'color' => 'nullable|string',
+            'owner_name' => 'required|string',
+            'next_service_date' => 'nullable|date',
+            'registration_date' => 'nullable|date',
+            'status' => 'required|in:active,maintenance,inactive,overdue',
+            'services' => 'nullable|array',
+            'services.*.type' => 'required_with:services|string',
+            'services.*.cost' => 'required_with:services|numeric|min:0',
+            'total_cost' => 'nullable|numeric|min:0',
+        ]);
+
+        $vehicle->update($validated);
+
+        return redirect()->route('admin.vehicles.index')
+            ->with('success', 'Vehicle information updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Vehicle $vehicle)
     {
-        //
+        $vehicle->delete();
+
+        return redirect()->route('admin.vehicles.index')
+            ->with('success', 'Vehicle removed from the fleet.');
     }
 }

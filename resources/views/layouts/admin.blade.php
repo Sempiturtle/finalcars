@@ -79,7 +79,7 @@
                         Notifications
                     </a>
 
-                    <a href="#" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold text-gray-500 hover:bg-gray-50 hover:text-gray-900">
+                    <a href="{{ route('admin.users.index') }}" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.users.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         User Management
                     </a>
@@ -100,7 +100,7 @@
 
         <!-- Main Content -->
         <main 
-            class="flex-1 transition-all duration-300 transform" 
+            class="flex-1 h-screen overflow-y-auto transition-all duration-300 transform" 
             :class="{ 'ml-72': sidebarOpen, 'ml-0': !sidebarOpen }"
         >
             <!-- Topbar -->

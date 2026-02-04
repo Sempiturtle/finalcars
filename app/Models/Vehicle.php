@@ -20,10 +20,14 @@ class Vehicle extends Model
         'next_service_date',
         'registration_date',
         'status',
+        'services',
+        'total_cost',
     ];
 
     protected $casts = [
         'next_service_date' => 'date',
         'registration_date' => 'date',
+        'services' => 'array',
+        'total_cost' => 'decimal:2',
     ];
 }

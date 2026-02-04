@@ -6,10 +6,10 @@
                 <h1 class="text-3xl font-black text-gray-900 tracking-tight">Fleet Management</h1>
                 <p class="text-gray-500 font-medium mt-1">Manage and monitor all vehicles in your fleet.</p>
             </div>
-            <button class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-bold rounded-2xl text-white bg-autocheck-red hover:bg-red-700 transition-all shadow-lg shadow-red-500/30">
+            <a href="{{ route('admin.vehicles.create') }}" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-bold rounded-2xl text-white bg-autocheck-red hover:bg-red-700 transition-all shadow-lg shadow-red-500/30">
                 <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Add New Vehicle
-            </button>
+            </a>
         </div>
 
         <!-- Filters & Search -->
@@ -67,12 +67,18 @@
                                     {{ $vehicle->status }}
                                 </span>
                                 <div class="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button class="p-2.5 bg-gray-50 text-gray-400 hover:text-autocheck-red hover:bg-red-50 rounded-xl transition-all">
+                                <div class="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <a href="{{ route('admin.vehicles.edit', $vehicle) }}" class="p-2.5 bg-gray-50 text-gray-400 hover:text-autocheck-red hover:bg-red-50 rounded-xl transition-all">
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                    </button>
-                                    <button class="p-2.5 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    </button>
+                                    </a>
+                                    <form action="{{ route('admin.vehicles.destroy', $vehicle) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this vehicle?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="p-2.5 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </form>
+                                </div>
                                 </div>
                             </div>
 
@@ -105,8 +111,8 @@
                                     <p class="text-sm font-black text-gray-900 italic tracking-wider">{{ $vehicle->plate_number }}</p>
                                 </div>
                                 <div class="p-4 rounded-2xl bg-white border border-gray-100 shadow-sm">
-                                    <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Next Service</p>
-                                    <p class="text-sm font-black text-autocheck-red">{{ $vehicle->next_service_date?->format('m/d/Y') ?? 'N/A' }}</p>
+                                    <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Total Service Cost</p>
+                                    <p class="text-sm font-black text-autocheck-red">₱{{ number_format($vehicle->total_cost ?? 0, 2) }}</p>
                                 </div>
                             </div>
                         </div>
