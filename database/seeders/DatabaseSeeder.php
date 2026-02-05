@@ -17,21 +17,38 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        \App\Models\User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@gmail.com',
-            'username' => 'admin',
-            'password' => \Illuminate\Support\Facades\Hash::make('password123'),
-            'role' => 'admin',
-        ]);
+        \App\Models\User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin User',
+                'username' => 'admin',
+                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                'role' => 'admin',
+            ]
+        );
 
-        \App\Models\User::factory()->create([
-            'name' => 'Staff Member',
-            'email' => 'staff@gmail.com',
-            'username' => 'staff',
-            'password' => \Illuminate\Support\Facades\Hash::make('password123'),
-            'role' => 'staff',
-        ]);
+        \App\Models\User::updateOrCreate(
+            ['email' => 'staff@gmail.com'],
+            [
+                'name' => 'Staff Member',
+                'username' => 'staff',
+                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                'role' => 'staff',
+            ]
+        );
 
+        \App\Models\User::updateOrCreate(
+            ['email' => 'nathaniel@gmail.com'],
+            [
+                'name' => 'Nathaniel Amistoso',
+                'username' => 'nathaniel',
+                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                'role' => 'customer',
+            ]
+        );
+
+        $this->call([
+            VehicleSeeder::class,
+        ]);
     }
 }

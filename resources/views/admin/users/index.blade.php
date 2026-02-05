@@ -131,7 +131,7 @@
                                         </div>
                                         <div>
                                             <p class="text-sm font-black text-gray-900 tracking-tight">{{ $user->name }}</p>
-                                            <p class="text-xs font-bold text-gray-400">{{ $user->email }}</p>
+                                            <p class="text-xs font-bold text-gray-400">{{ $user->email }} @if($user->phone) • {{ $user->phone }} @endif</p>
                                         </div>
                                     </div>
                                 </td>
@@ -242,6 +242,15 @@
                                     @enderror
                                 </div>
 
+                                <!-- Phone -->
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Phone Number</label>
+                                    <input type="text" name="phone" value="{{ old('phone') }}" class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all @error('phone') border-red-500 @enderror" placeholder="09123456789">
+                                    @error('phone')
+                                        <p class="text-red-600 text-xs font-bold ml-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
                                 <!-- Role -->
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Access Role</label>
@@ -340,6 +349,12 @@
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Email Address</label>
                                     <input type="email" name="email" value="{{ $user->email }}" required class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
+                                </div>
+
+                                <!-- Phone -->
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Phone Number</label>
+                                    <input type="text" name="phone" value="{{ $user->phone }}" class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
                                 </div>
 
                                 <!-- Role -->

@@ -28,7 +28,7 @@
                     >
                 </div>
                 <div class="flex gap-2 p-1 bg-gray-50 rounded-2xl">
-                    @foreach(['all' => 'All Status', 'active' => 'Active', 'maintenance' => 'In Maintenance', 'inactive' => 'Inactive', 'overdue' => 'Overdue'] as $value => $label)
+                    @foreach(['all' => 'All Status', 'completed' => 'Completed', 'in progress' => 'In Progress', 'scheduled' => 'Scheduled', 'inactive' => 'Inactive', 'overdue' => 'Overdue'] as $value => $label)
                         <a 
                             href="{{ route('admin.vehicles.index', array_merge(request()->query(), ['status' => $value])) }}" 
                             class="px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all {{ (request('status', 'all') == $value) ? 'bg-white text-autocheck-red shadow-sm' : 'text-gray-400 hover:text-gray-600' }}"
@@ -58,8 +58,9 @@
                             <div class="flex items-center justify-between mb-8">
                                 <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] {{ 
                                     match($vehicle->status) {
-                                        'active' => 'bg-green-50 text-green-600',
-                                        'maintenance' => 'bg-blue-50 text-blue-600',
+                                        'completed' => 'bg-green-50 text-green-600',
+                                        'in progress' => 'bg-blue-50 text-blue-600',
+                                        'scheduled' => 'bg-yellow-50 text-yellow-600',
                                         'overdue' => 'bg-red-50 text-autocheck-red',
                                         default => 'bg-gray-50 text-gray-600',
                                     }
@@ -93,14 +94,25 @@
                                 </div>
                             </div>
 
-                            <!-- User Info -->
-                            <div class="bg-gray-50/50 rounded-3xl p-5 mb-8 border border-gray-50">
-                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Vehicle Owner</p>
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-xs font-black text-autocheck-red border border-gray-100 shadow-sm">
-                                        {{ substr($vehicle->owner_name, 0, 1) }}
+                            <!-- Personnel Info -->
+                            <div class="bg-gray-50/50 rounded-3xl p-5 mb-8 border border-gray-50 space-y-4">
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Vehicle Owner</p>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-xs font-black text-autocheck-red border border-gray-100 shadow-sm">
+                                            {{ substr($vehicle->owner_name, 0, 1) }}
+                                        </div>
+                                        <span class="text-sm font-bold text-gray-700">{{ $vehicle->owner_name }}</span>
                                     </div>
-                                    <span class="text-sm font-bold text-gray-700">{{ $vehicle->owner_name }}</span>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Assigned Mechanic</p>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-xs font-black text-blue-600 border border-gray-100 shadow-sm">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        </div>
+                                        <span class="text-sm font-bold text-gray-700">{{ $vehicle->mechanic_name ?? 'Not Assigned' }}</span>
+                                    </div>
                                 </div>
                             </div>
 

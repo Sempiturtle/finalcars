@@ -30,17 +30,26 @@
 
                     <!-- Owner Name -->
                     <div class="space-y-2">
-                        <label for="owner_name" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Owner Name</label>
-                        <select name="owner_name" id="owner_name" required
+                        <label for="user_id" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Owner Name</label>
+                        <select name="user_id" id="user_id" required
                             class="block w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
                             <option value="">Select Owner</option>
                             @foreach($users as $user)
-                                <option value="{{ $user->name }}" {{ old('owner_name', $vehicle->owner_name) == $user->name ? 'selected' : '' }}>
+                                <option value="{{ $user->id }}" {{ old('user_id', $vehicle->user_id) == $user->id ? 'selected' : '' }}>
                                     {{ $user->name }} ({{ $user->email }})
                                 </option>
                             @endforeach
                         </select>
-                        @error('owner_name') <p class="text-xs text-autocheck-red font-bold mt-1 ml-1">{{ $message }}</p> @enderror
+                        @error('user_id') <p class="text-xs text-autocheck-red font-bold mt-1 ml-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <!-- Assigned Mechanic -->
+                    <div class="space-y-2">
+                        <label for="mechanic_name" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Assigned Mechanic</label>
+                        <input type="text" name="mechanic_name" id="mechanic_name" value="{{ old('mechanic_name', $vehicle->mechanic_name) }}"
+                            class="block w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all"
+                            placeholder="e.g. Juan Mechanic">
+                        @error('mechanic_name') <p class="text-xs text-autocheck-red font-bold mt-1 ml-1">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- Make -->
@@ -167,8 +176,9 @@
                         <label for="status" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Status</label>
                         <select name="status" id="status" required
                             class="block w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
-                            <option value="active" {{ old('status', $vehicle->status) == 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="maintenance" {{ old('status', $vehicle->status) == 'maintenance' ? 'selected' : '' }}>Maintenance</option>
+                            <option value="completed" {{ old('status', $vehicle->status) == 'completed' ? 'selected' : '' }}>Completed</option>
+                            <option value="in progress" {{ old('status', $vehicle->status) == 'in progress' ? 'selected' : '' }}>In Progress</option>
+                            <option value="scheduled" {{ old('status', $vehicle->status) == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
                             <option value="inactive" {{ old('status', $vehicle->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
                             <option value="overdue" {{ old('status', $vehicle->status) == 'overdue' ? 'selected' : '' }}>Overdue</option>
                         </select>

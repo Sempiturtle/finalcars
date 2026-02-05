@@ -46,10 +46,16 @@
                         </div>
 
                         <div>
-                            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Ownership</h3>
-                            <div>
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Owner Name</p>
-                                <p class="text-lg font-black text-gray-900">{{ $vehicle->owner_name }}</p>
+                            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Ownership & Personnel</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Owner Name</p>
+                                    <p class="text-lg font-black text-gray-900">{{ $vehicle->owner_name }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Assigned Mechanic</p>
+                                    <p class="text-lg font-black text-gray-900 italic tracking-tight">{{ $vehicle->mechanic_name ?? 'Not Assigned' }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -63,8 +69,9 @@
                                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Current Status</p>
                                     <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] {{ 
                                         match($vehicle->status) {
-                                            'active' => 'bg-green-50 text-green-600',
-                                            'maintenance' => 'bg-blue-50 text-blue-600',
+                                            'completed' => 'bg-green-50 text-green-600',
+                                            'in progress' => 'bg-blue-50 text-blue-600',
+                                            'scheduled' => 'bg-yellow-50 text-yellow-600',
                                             'overdue' => 'bg-red-50 text-autocheck-red',
                                             default => 'bg-gray-50 text-gray-600',
                                         }

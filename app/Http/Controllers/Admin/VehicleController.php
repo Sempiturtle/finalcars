@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class VehicleController extends Controller
 {
@@ -54,17 +55,29 @@ class VehicleController extends Controller
             'model' => 'required|string',
             'year' => 'required|string',
             'color' => 'nullable|string',
-            'owner_name' => 'required|string',
+            'user_id' => 'required|exists:users,id',
+            'mechanic_name' => 'nullable|string',
             'next_service_date' => 'nullable|date',
             'registration_date' => 'nullable|date',
-            'status' => 'required|in:active,maintenance,inactive,overdue',
+            'status' => 'required|in:completed,in progress,scheduled,inactive,overdue',
             'services' => 'nullable|array',
             'services.*.type' => 'required_with:services|string',
             'services.*.cost' => 'required_with:services|numeric|min:0',
             'total_cost' => 'nullable|numeric|min:0',
         ]);
 
-        Vehicle::create($validated);
+        // Automatically set owner_name from user_id for display consistency
+        $user = User::find($validated['user_id']);
+        $validated['owner_name'] = $user->name;
+
+        if (empty($validated['next_service_date'])) {
+            $baseDate = !empty($validated['registration_date']) 
+                ? Carbon::parse($validated['registration_date']) 
+                : Carbon::now();
+            $validated['next_service_date'] = $baseDate->addMonths(6)->toDateString();
+        }
+
+        $vehicle = Vehicle::create($validated);
 
         return redirect()->route('admin.vehicles.index')
             ->with('success', 'Vehicle added successfully to the fleet.');
@@ -98,15 +111,20 @@ class VehicleController extends Controller
             'model' => 'required|string',
             'year' => 'required|string',
             'color' => 'nullable|string',
-            'owner_name' => 'required|string',
+            'user_id' => 'required|exists:users,id',
+            'mechanic_name' => 'nullable|string',
             'next_service_date' => 'nullable|date',
             'registration_date' => 'nullable|date',
-            'status' => 'required|in:active,maintenance,inactive,overdue',
+            'status' => 'required|in:completed,in progress,scheduled,inactive,overdue',
             'services' => 'nullable|array',
             'services.*.type' => 'required_with:services|string',
             'services.*.cost' => 'required_with:services|numeric|min:0',
             'total_cost' => 'nullable|numeric|min:0',
         ]);
+
+        // Automatically set owner_name from user_id for display consistency
+        $user = User::find($validated['user_id']);
+        $validated['owner_name'] = $user->name;
 
         $vehicle->update($validated);
 
