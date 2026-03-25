@@ -85,7 +85,12 @@
                             <div class="p-6 bg-red-50/50 rounded-3xl border border-red-100 flex items-center justify-between">
                                 <div>
                                     <span class="block text-sm font-bold text-autocheck-red/70 uppercase tracking-widest mb-1">Overdue</span>
-                                    <span class="text-3xl font-black text-autocheck-red">{{ $maintenanceOverview['overdue'] }}</span>
+                                    <div class="flex items-baseline space-x-3">
+                                        <span class="text-3xl font-black text-autocheck-red">{{ $maintenanceOverview['overdue'] }}</span>
+                                        @if($maintenanceOverview['critical_overdue'] > 0)
+                                            <span class="text-[10px] font-black bg-red-600 text-white px-2 py-1 rounded-lg animate-pulse">{{ $maintenanceOverview['critical_overdue'] }} CRITICAL</span>
+                                        @endif
+                                    </div>
                                 </div>
                                 <svg class="h-8 w-8 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                             </div>
@@ -145,6 +150,26 @@
 
             <!-- Sidebar Area -->
             <div class="space-y-8">
+                <!-- Quick Tracking -->
+                <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-autocheck-red/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+                    <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight mb-4 relative z-10">Quick <span class="text-autocheck-red">Tracking</span></h2>
+                    <p class="text-xs font-bold text-gray-400 mb-6 relative z-10 italic">Instantly monitor vehicle maintenance records.</p>
+                    
+                    <form action="{{ route('admin.reports.index') }}" method="GET" class="relative z-10 space-y-4">
+                        <div class="relative">
+                            <input type="text" name="search" placeholder="Enter Plate Number..." 
+                                class="w-full pl-6 pr-12 py-4 bg-gray-50 border-transparent rounded-2xl text-xs font-black uppercase tracking-widest focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-4 bg-autocheck-red text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-700 transition-all shadow-lg shadow-red-500/20">
+                            Track Now
+                        </button>
+                    </form>
+                </div>
+
                 <!-- Attention Required -->
                 <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm">
                     <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight mb-8">Attention <span class="text-autocheck-red">Required</span></h2>

@@ -13,8 +13,8 @@ class VehicleSeeder extends Seeder
      */
     public function run(): void
     {
-        // Truncate existing vehicles to ensure only the requested one remains
-        Vehicle::truncate();
+        // Delete existing vehicles to ensure only the requested one remains
+        Vehicle::query()->delete();
 
         Vehicle::create([
             'plate_number' => 'LMN-9012',

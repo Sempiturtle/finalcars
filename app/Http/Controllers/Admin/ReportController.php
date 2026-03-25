@@ -28,6 +28,7 @@ class ReportController extends Controller
         // System Summary - Vehicle Statistics
         $dueSoonCount = Vehicle::whereBetween('next_service_date', [Carbon::now(), Carbon::now()->addDays(7)])->count();
         $overdueCount = Vehicle::where('next_service_date', '<', Carbon::now())->count();
+        $criticalOverdueCount = Vehicle::criticalOverdue()->count();
 
         // System Summary - Services Statistics
         $totalServicesAllTime = ServiceLog::count();
@@ -35,15 +36,23 @@ class ReportController extends Controller
         $avgCostPerService = $totalServicesAllTime > 0 ? $totalCostAllTime / $totalServicesAllTime : 0;
 
         // Recent Activity
-        $recentActivity = ServiceLog::with('vehicle')
-            ->latest()
-            ->take(10)
-            ->get();
+        $recentActivityQuery = ServiceLog::with('vehicle')->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $recentActivityQuery->whereHas('vehicle', function($query) use ($search) {
+                $query->where('plate_number', 'like', "%{$search}%")
+                      ->orWhere('make', 'like', "%{$search}%")
+                      ->orWhere('model', 'like', "%{$search}%");
+            });
+        }
+
+        $recentActivity = $recentActivityQuery->take(10)->get();
 
         return view('admin.reports.index', compact(
             'reportType', 'startDate', 'endDate',
             'totalCustomers', 'totalVehicles', 'servicesThisMonth', 'totalCostThisMonth',
-            'dueSoonCount', 'overdueCount', 'totalServicesAllTime', 'totalCostAllTime', 'avgCostPerService',
+            'dueSoonCount', 'overdueCount', 'criticalOverdueCount', 'totalServicesAllTime', 'totalCostAllTime', 'avgCostPerService',
             'recentActivity'
         ));
     }

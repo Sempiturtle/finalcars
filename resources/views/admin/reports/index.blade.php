@@ -4,15 +4,21 @@
         <div class="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
                 <div>
-                    <h1 class="text-3xl font-black text-gray-900 tracking-tight">Reports & Analytics</h1>
-                    <p class="text-gray-500 font-medium mt-1 text-sm italic">Comprehensive insights into your fleet and service performance.</p>
+                    <h1 class="text-3xl font-black text-gray-900 tracking-tight">Analytics / Tracking</h1>
+                    <p class="text-gray-500 font-medium mt-1 text-sm italic">Monitor vehicle records, maintenance history, and scheduled servicing in real-time.</p>
                 </div>
                 
                 <form action="{{ route('admin.reports.index') }}" method="GET" class="flex flex-wrap items-end gap-4">
                     <div class="space-y-2">
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Track Vehicle</label>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Plate Number or Model..."
+                            class="block w-64 px-6 py-3.5 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
+                    </div>
+
+                    <div class="space-y-2">
                         <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Report Type</label>
                         <select name="report_type" 
-                            class="block w-64 px-6 py-3.5 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
+                            class="block w-56 px-6 py-3.5 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
                             @foreach(['Summary Report', 'Vehicles Due Report', 'Overdue Vehicles', 'Completed Services'] as $type)
                                 <option value="{{ $type }}" {{ $reportType == $type ? 'selected' : '' }}>{{ $type }}</option>
                             @endforeach
@@ -23,16 +29,21 @@
                         <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Date Range</label>
                         <div class="flex items-center bg-gray-50 rounded-2xl border border-transparent focus-within:border-autocheck-red focus-within:bg-white transition-all">
                             <input type="date" name="start_date" value="{{ $startDate->format('Y-m-d') }}"
-                                class="bg-transparent border-none px-4 py-3.5 text-sm font-bold focus:ring-0 w-40">
+                                class="bg-transparent border-none px-4 py-3.5 text-sm font-bold focus:ring-0 w-32">
                             <span class="text-gray-300 font-bold">—</span>
                             <input type="date" name="end_date" value="{{ $endDate->format('Y-m-d') }}"
-                                class="bg-transparent border-none px-4 py-3.5 text-sm font-bold focus:ring-0 w-40">
+                                class="bg-transparent border-none px-4 py-3.5 text-sm font-bold focus:ring-0 w-32">
                         </div>
                     </div>
 
                     <button type="submit" class="px-8 py-3.5 bg-autocheck-red text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20">
-                        Generate
+                        Update
                     </button>
+                    @if(request()->anyFilled(['search', 'report_type', 'start_date', 'end_date']))
+                        <a href="{{ route('admin.reports.index') }}" class="px-6 py-3.5 bg-gray-100 text-gray-500 text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-gray-200 transition-all">
+                            Reset
+                        </a>
+                    @endif
                 </form>
             </div>
         </div>
@@ -136,6 +147,15 @@
                             <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
                         </div>
                     </div>
+                    @if($criticalOverdueCount > 0)
+                    <div class="flex items-center justify-between group p-3 bg-red-50 rounded-2xl animate-pulse">
+                        <span class="text-xs font-black text-red-600 uppercase tracking-widest">🚨 Critical (5+ Days Overdue):</span>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-xl font-black text-red-700">{{ $criticalOverdueCount }}</span>
+                            <div class="w-1.5 h-1.5 rounded-full bg-red-700"></div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
 
@@ -204,7 +224,12 @@
                                 <td class="px-10 py-6 text-sm font-bold text-gray-500 italic">{{ optional($activity->service_date)->format('M d, Y') ?? 'N/A' }}</td>
                                 <td class="px-10 py-6">
                                     <p class="text-sm font-black text-gray-900 tracking-tight">{{ $activity->vehicle->make }} {{ $activity->vehicle->model }}</p>
-                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest italic tracking-wider">{{ $activity->vehicle->plate_number }}</p>
+                                    <div class="flex items-center space-x-2">
+                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest italic tracking-wider">{{ $activity->vehicle->plate_number }}</p>
+                                        @if($activity->vehicle->isCriticalOverdue())
+                                            <span class="text-[8px] font-black bg-red-600 text-white px-1.5 py-0.5 rounded uppercase tracking-tighter">CRITICAL</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-10 py-6">
                                     <p class="text-sm font-bold text-gray-700 max-w-md truncate">{{ $activity->service_type }}</p>

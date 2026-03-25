@@ -33,6 +33,7 @@ class DashboardController extends Controller
             'upcoming' => Vehicle::where('next_service_date', '>', $nextWeek)->count(),
             'due_soon' => Vehicle::whereBetween('next_service_date', [$today, $nextWeek])->count(),
             'overdue' => Vehicle::where('next_service_date', '<', $today)->count(),
+            'critical_overdue' => Vehicle::criticalOverdue()->count(),
         ];
 
         // Vehicles Requiring Attention (Overdue)

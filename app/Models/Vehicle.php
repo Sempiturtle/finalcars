@@ -24,6 +24,8 @@ class Vehicle extends Model
         'status',
         'services',
         'total_cost',
+        'last_ai_message',
+        'last_notification_at',
     ];
 
     protected $casts = [
@@ -31,7 +33,25 @@ class Vehicle extends Model
         'registration_date' => 'date',
         'services' => 'array',
         'total_cost' => 'decimal:2',
+        'last_notification_at' => 'datetime',
     ];
+
+    /**
+     * Scope for vehicles that are 5 or more days overdue.
+     */
+    public function scopeCriticalOverdue($query)
+    {
+        return $query->where('next_service_date', '<=', now()->subDays(5));
+    }
+
+    /**
+     * Check if the vehicle is 5 or more days overdue.
+     */
+    public function isCriticalOverdue()
+    {
+        if (!$this->next_service_date) return false;
+        return $this->next_service_date->lte(now()->subDays(5));
+    }
     public function serviceLogs()
     {
         return $this->hasMany(ServiceLog::class);
