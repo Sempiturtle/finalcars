@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (config('app.env') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         \Illuminate\Support\Facades\View::composer('layouts.admin', function ($view) {
             $view->with('allCustomers', \App\Models\User::where('role', 'customer')->orderBy('name')->get());
         });
