@@ -171,11 +171,14 @@
                 </div>
 
                 <!-- Attention Required -->
-                <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm">
-                    <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight mb-8">Attention <span class="text-autocheck-red">Required</span></h2>
+                <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden group/attn">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight">Attention <span class="text-autocheck-red">Required</span></h2>
+                        <a href="{{ route('admin.attention-required') }}" class="text-[10px] font-black text-autocheck-red uppercase tracking-widest hover:underline italic">View All</a>
+                    </div>
                     <div class="space-y-4">
                         @forelse($attentionRequired as $vehicle)
-                            <div class="p-4 rounded-3xl bg-red-50/30 border border-red-100 flex items-center space-x-4 group hover:bg-red-50 transition-colors">
+                            <a href="{{ route('admin.attention-required') }}" class="block p-4 rounded-3xl bg-red-50/30 border border-red-100 flex items-center space-x-4 group hover:bg-red-50 transition-colors">
                                 <div class="p-3 bg-white text-autocheck-red rounded-2xl shadow-sm group-hover:bg-autocheck-red group-hover:text-white transition-colors">
                                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                 </div>
@@ -183,10 +186,10 @@
                                     <p class="text-sm font-bold text-gray-900">{{ $vehicle['make_model'] }}</p>
                                     <div class="flex items-center mt-0.5">
                                         <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mr-2">{{ $vehicle['plate_number'] }}</span>
-                                        <span class="text-[10px] font-black text-autocheck-red uppercase tracking-widest bg-red-100 px-2 py-0.5 rounded-full">{{ $vehicle['days_overdue'] }} Days Overdue</span>
+                                        <span class="text-[10px] font-black text-autocheck-red uppercase tracking-widest bg-red-100 px-2 py-0.5 rounded-full">{{ $vehicle['days_overdue'] }} Days</span>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         @empty
                             <div class="text-center py-10">
                                 <div class="bg-green-50 w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4">
@@ -198,9 +201,9 @@
                     </div>
 
                     @if($attentionRequired->isNotEmpty())
-                        <button class="w-full mt-8 py-4 bg-gray-950 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-900 transition-colors shadow-xl shadow-gray-200">
+                        <a href="{{ route('admin.attention-required') }}" class="block w-full mt-8 py-4 bg-gray-950 text-white rounded-2xl font-black text-center text-xs uppercase tracking-widest hover:bg-gray-900 transition-colors shadow-xl shadow-gray-200">
                             Notify All Owners
-                        </button>
+                        </a>
                     @endif
                 </div>
 

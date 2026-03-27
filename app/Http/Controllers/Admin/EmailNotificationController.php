@@ -87,4 +87,63 @@ class EmailNotificationController extends Controller
 
         return redirect()->back()->with('success', "Notification successfully sent to {$vehicle->owner_name}!");
     }
+
+    /**
+     * Display all vehicles requiring attention (overdue).
+     */
+    public function attentionRequired()
+    {
+        $today = Carbon::today();
+        
+        $attentionRequired = Vehicle::where('next_service_date', '<', $today)
+            ->where('status', '!=', 'inactive')
+            ->orderBy('next_service_date', 'asc')
+            ->get()
+            ->map(function ($vehicle) use ($today) {
+                $nextService = Carbon::parse($vehicle->next_service_date);
+                $user = $vehicle->owner ?? User::where('name', $vehicle->owner_name)->first();
+                
+                return [
+                    'id' => $vehicle->id,
+                    'plate_number' => $vehicle->plate_number,
+                    'make_model' => "{$vehicle->make} {$vehicle->model}",
+                    'customer_name' => $vehicle->owner_name,
+                    'customer_email' => $user ? $user->email : 'no-email@example.com',
+                    'days_overdue' => $today->diffInDays($nextService),
+                    'next_service_date' => $nextService->format('M d, Y'),
+                ];
+            });
+
+        return view('admin.notifications.attention-required', compact('attentionRequired'));
+    }
+
+    /**
+     * Notify all owners of overdue vehicles.
+     */
+    public function notifyAll()
+    {
+        $today = Carbon::today();
+        $overdueVehicles = Vehicle::where('next_service_date', '<', $today)
+            ->where('status', '!=', 'inactive')
+            ->get();
+
+        if ($overdueVehicles->isEmpty()) {
+            return redirect()->back()->with('info', "No overdue vehicles to notify.");
+        }
+
+        foreach ($overdueVehicles as $vehicle) {
+            $user = $vehicle->owner ?? User::where('name', $vehicle->owner_name)->first();
+            $email = $user ? $user->email : 'no-email@example.com';
+
+            EmailLog::create([
+                'vehicle_id' => $vehicle->id,
+                'recipient_email' => $email,
+                'notification_type' => 'overdue',
+                'status' => 'delivered',
+                'sent_at' => now(),
+            ]);
+        }
+
+        return redirect()->back()->with('success', "Notifications sent to owners of " . $overdueVehicles->count() . " overdue vehicles!");
+    }
 }

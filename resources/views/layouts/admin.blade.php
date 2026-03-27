@@ -74,6 +74,11 @@
                         Email Notifications
                     </a>
 
+                    <a href="{{ route('admin.attention-required') }}" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.attention-required') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
+                        <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Overdue Alerts
+                    </a>
+
                     <a href="{{ route('admin.service-history.index') }}" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.service-history.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                         Service History
@@ -113,7 +118,48 @@
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                 </button>
 
-                <div class="flex items-center space-x-6">
+                <div class="flex items-center space-x-4">
+                    <!-- Test Email Trigger -->
+                    <div x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" class="p-2.5 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-autocheck-red focus:outline-none transition-all group" title="Send Test Email">
+                            <svg class="h-6 w-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </button>
+                        <div x-show="open" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 scale-95 translate-y-2"
+                             @click.away="open = false" 
+                             class="absolute right-0 mt-3 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 z-50 overflow-hidden"
+                             style="display: none;"
+                        >
+                            <div class="absolute top-0 right-0 -mt-2 -mr-2 w-16 h-16 bg-autocheck-red/5 rounded-full"></div>
+                            
+                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 relative z-10">Manual Test Email</h4>
+                            <p class="text-[10px] text-gray-500 mb-4 font-medium leading-relaxed">Select a user to send a sample maintenance reminder.</p>
+                            
+                            <form action="{{ route('admin.test-email.send') }}" method="POST" class="relative z-10">
+                                @csrf
+                                <div class="mb-4">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 font-bold select-none">Select Recipient</label>
+                                    <select name="user_id" class="w-full text-xs font-bold bg-gray-50 border-gray-100 rounded-2xl focus:ring-autocheck-red/20 focus:border-autocheck-red focus:bg-white transition-all py-3 px-4">
+                                        @foreach($allCustomers as $customer)
+                                            <option value="{{ $customer->id }}">{{ $customer->name }} ({{ $customer->email }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <button type="submit" class="w-full py-4 bg-autocheck-red text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 active:scale-[0.98]">
+                                    Send Test Now
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="h-8 w-px bg-gray-100 mx-2"></div>
+
+                    <div class="flex items-center space-x-6">
                     <div class="flex flex-col items-end">
                         <span class="text-sm font-bold text-gray-900">{{ Auth::user()->name }}</span>
                         <span class="text-xs font-bold text-autocheck-red uppercase tracking-widest">{{ Auth::user()->role }}</span>
@@ -126,6 +172,24 @@
 
             <!-- Page Content -->
             <div class="p-8">
+                @if(session('success'))
+                    <div class="mb-8 p-6 bg-green-50 rounded-3xl border border-green-100 flex items-center space-x-4 animate-fade-in shadow-sm">
+                        <div class="flex-shrink-0 w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-green-500/20">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <p class="text-green-800 font-bold tracking-tight">{{ session('success') }}</p>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="mb-8 p-6 bg-red-50 rounded-3xl border border-red-100 flex items-center space-x-4 animate-fade-in shadow-sm">
+                        <div class="flex-shrink-0 w-12 h-12 bg-autocheck-red rounded-2xl flex items-center justify-center text-white shadow-lg shadow-red-500/20">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                        <p class="text-red-800 font-bold tracking-tight">{{ session('error') }}</p>
+                    </div>
+                @endif
+
                 {{ $slot }}
             </div>
         </main>
