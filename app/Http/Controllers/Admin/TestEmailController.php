@@ -43,7 +43,7 @@ class TestEmailController extends Controller
         }
 
         try {
-            Mail::to($user->email)->queue(new MaintenanceReminder($vehicle));
+            Mail::to($user->email)->send(new MaintenanceReminder($vehicle));
 
             EmailLog::create([
                 'vehicle_id' => $vehicle->id ?? null,
