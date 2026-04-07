@@ -99,5 +99,9 @@ class Vehicle extends Model
                 ]);
             }
         }
+
+        if ($this->owner) {
+            $this->owner->recalculateLoyaltyPoints();
+        }
     }
 }

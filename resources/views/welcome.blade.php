@@ -55,13 +55,13 @@
 
                             <div x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 mt-2 w-48 rounded-2xl shadow-xl bg-white ring-1 ring-black ring-opacity-5 overflow-hidden">
                                 <div class="py-1">
-                                    <a href="{{ route('login') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-3">
+                                    <a href="{{ route('login', ['type' => 'customer']) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-3">
                                         <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                         </div>
                                         <span>Customer Login</span>
                                     </a>
-                                    <a href="{{ route('login') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-3">
+                                    <a href="{{ route('login', ['type' => 'admin']) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-3">
                                         <div class="p-2 bg-red-50 rounded-lg text-autocheck-red">
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                                         </div>
@@ -92,8 +92,8 @@
                 <a href="{{ route('services.index') }}" class="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg">Services</a>
                 <a href="{{ route('features.index') }}" class="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg">Features</a>
                 <hr class="my-2 border-gray-100">
-                <a href="{{ route('login') }}" class="block px-4 py-2 text-base font-bold text-autocheck-red uppercase tracking-wider">Customer Login</a>
-                <a href="{{ route('login') }}" class="block px-4 py-2 text-base font-bold text-autocheck-red uppercase tracking-wider">Admin Login</a>
+                <a href="{{ route('login', ['type' => 'customer']) }}" class="block px-4 py-2 text-base font-bold text-autocheck-red uppercase tracking-wider">Customer Login</a>
+                <a href="{{ route('login', ['type' => 'admin']) }}" class="block px-4 py-2 text-base font-bold text-autocheck-red uppercase tracking-wider">Admin Login</a>
             </div>
         </header>
 

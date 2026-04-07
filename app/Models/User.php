@@ -25,7 +25,29 @@ class User extends Authenticatable
         'password',
         'role',
         'address',
+        'loyalty_points',
     ];
+
+    public function calculateActivityLevel()
+    {
+        $lastService = $this->vehicles()->with(['serviceLogs' => function($query) {
+            $query->latest('service_date');
+        }])->get()->flatMap->serviceLogs->sortByDesc('service_date')->first();
+
+        if (!$lastService) return 'Inactive';
+        
+        $daysSince = \Carbon\Carbon::parse($lastService->service_date)->diffInDays(now());
+        
+        if ($daysSince <= 90) return 'Active';
+        if ($daysSince <= 180) return 'Regular';
+        return 'Inactive';
+    }
+
+    public function recalculateLoyaltyPoints()
+    {
+        $serviceCount = $this->vehicles()->withCount('serviceLogs')->get()->sum('service_logs_count');
+        $this->update(['loyalty_points' => $serviceCount * 100]);
+    }
 
     public function isAdmin(): bool
     {

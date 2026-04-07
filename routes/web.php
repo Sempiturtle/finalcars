@@ -56,11 +56,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
     Route::get('/service-history', [\App\Http\Controllers\Admin\ServiceHistoryController::class, 'index'])->name('service-history.index');
+    // Pointing System
+    Route::get('/pointing-system', [\App\Http\Controllers\Admin\PointSystemController::class, 'index'])->name('points.index');
+    Route::post('/point-system/adjust/{user?}', [\App\Http\Controllers\Admin\PointSystemController::class, 'adjust'])->name('points.adjust');
+    Route::post('/point-system/sync-all', [\App\Http\Controllers\Admin\PointSystemController::class, 'syncAll'])->name('points.sync-all');
     Route::post('/test-email', [\App\Http\Controllers\Admin\TestEmailController::class, 'send'])->name('test-email.send');
+    
+    // Timeline Monitoring
+    Route::get('/timeline', [\App\Http\Controllers\Admin\MaintenanceTimelineController::class, 'index'])->name('maintenance.timeline');
 });
 
 Route::middleware(['auth', 'customer'])->prefix('customer')->name('customer.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Customer\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/timeline', [\App\Http\Controllers\Customer\MaintenanceTimelineController::class, 'index'])->name('maintenance.timeline');
 });
 
 require __DIR__.'/auth.php';

@@ -16,35 +16,34 @@
         </style>
     </head>
     <body class="antialiased bg-gray-50 flex items-center justify-center min-h-screen p-4 border-t-8 border-autocheck-red">
-        <div class="max-w-md w-full" x-data="{ type: 'customer' }">
+        @php $loginType = request('type', 'customer'); @endphp
+        <div class="max-w-md w-full">
             <div class="text-center mb-10">
                 <a href="/" class="inline-flex flex-col items-center space-y-4 mb-6">
-                    <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-16 w-16 rounded-full object-cover border-2 border-autocheck-red shadow-xl">
+                    <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-16 w-16 rounded-full object-cover border-2 {{ $loginType === 'admin' ? 'border-autocheck-red' : 'border-blue-500' }} shadow-xl">
                     <span class="text-3xl font-black tracking-tight text-gray-900">AutoCheck</span>
                 </a>
-                <h2 class="text-xl font-bold text-gray-600">Access your portal</h2>
+                <h2 class="text-xl font-bold text-gray-600">
+                    {{ $loginType === 'admin' ? 'Admin Portal' : 'Customer Portal' }}
+                </h2>
+                <p class="text-sm text-gray-400 mt-2">Sign in to access your account</p>
             </div>
 
-            <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-red-500/10 border border-gray-100 p-10">
+            <div class="bg-white rounded-[2.5rem] shadow-2xl {{ $loginType === 'admin' ? 'shadow-red-500/10' : 'shadow-blue-500/10' }} border border-gray-100 p-10">
                 <!-- Session Status -->
                 <x-auth-session-status class="mb-4" :status="session('status')" />
 
-                <!-- Login Type Selector -->
-                <div class="flex p-1.5 bg-gray-100 rounded-2xl mb-10">
-                    <button 
-                        @click="type = 'customer'"
-                        class="flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300"
-                        :class="type === 'customer' ? 'bg-white text-gray-900 shadow-lg' : 'text-gray-500 hover:text-gray-700'"
-                    >
-                        Customer Login
-                    </button>
-                    <button 
-                        @click="type = 'admin'"
-                        class="flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300"
-                        :class="type === 'admin' ? 'bg-autocheck-red text-white shadow-lg shadow-red-500/30' : 'text-gray-500 hover:text-gray-700'"
-                    >
-                        Admin Login
-                    </button>
+                <!-- Portal Badge -->
+                <div class="flex justify-center mb-8">
+                    <div class="inline-flex items-center px-5 py-2.5 rounded-2xl {{ $loginType === 'admin' ? 'bg-red-50 text-autocheck-red' : 'bg-blue-50 text-blue-600' }} text-xs font-black uppercase tracking-[0.2em]">
+                        @if($loginType === 'admin')
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            Administrator Access
+                        @else
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            Customer Access
+                        @endif
+                    </div>
                 </div>
 
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
@@ -83,7 +82,7 @@
                     </div>
 
                     <div class="pt-4">
-                        <button type="submit" class="w-full py-5 bg-autocheck-red text-white rounded-2xl font-black text-sm uppercase tracking-[0.2em] hover:bg-red-700 transition-all shadow-xl shadow-red-500/20 active:scale-95 transform">
+                        <button type="submit" class="w-full py-5 {{ $loginType === 'admin' ? 'bg-autocheck-red shadow-red-500/20 hover:bg-red-700' : 'bg-blue-600 shadow-blue-500/20 hover:bg-blue-700' }} text-white rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 transform">
                             Secure Log In
                         </button>
                     </div>

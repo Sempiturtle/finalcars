@@ -64,9 +64,14 @@
                         Vehicle Fleet
                     </a>
 
-                    <a href="{{ route('admin.maintenance.index') }}" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.maintenance.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
+                    <a href="{{ route('admin.maintenance.index') }}" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.maintenance.index') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         Maintenance Schedule
+                    </a>
+
+                    <a href="{{ route('admin.maintenance.timeline') }}" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.maintenance.timeline') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
+                        <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Timeline Monitoring
                     </a>
 
                     <a href="{{ route('admin.notifications.index') }}" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.notifications.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
@@ -87,6 +92,10 @@
                     <a href="{{ route('admin.users.index') }}" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.users.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         User Management
+                    </a>
+                    <a href="{{ route('admin.points.index') }}" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.points.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
+                        <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        Pointing System
                     </a>
                     <a href="{{ route('admin.reports.index') }}" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.reports.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
