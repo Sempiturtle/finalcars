@@ -56,7 +56,7 @@ class OverdueFollowUpCall extends Notification
         }
 
         try {
-            $twiml = "<Response><Say voice='alice' language='en-US'>{$this->message}</Say></Response>";
+            $twiml = "<Response><Pause length='1'/><Say voice='alice' language='en-US'>{$this->message}</Say></Response>";
             
             $response = \Illuminate\Support\Facades\Http::withBasicAuth($sid, $token)
                 ->asForm()

@@ -183,10 +183,23 @@
                                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-bold text-gray-900">{{ $vehicle['make_model'] }}</p>
+                                    <p class="text-sm font-bold text-gray-900 line-clamp-1">{{ $vehicle['make_model'] }}</p>
                                     <div class="flex items-center mt-0.5">
                                         <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mr-2">{{ $vehicle['plate_number'] }}</span>
                                         <span class="text-[10px] font-black text-autocheck-red uppercase tracking-widest bg-red-100 px-2 py-0.5 rounded-full">{{ $vehicle['days_overdue'] }} Days</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2 ml-auto">
+                                    @if($vehicle['phone'])
+                                    <form action="{{ route('admin.notifications.call', $vehicle['id']) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="p-2 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-colors" title="Call Now (AI)">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                        </button>
+                                    </form>
+                                    @endif
+                                    <div class="p-2 bg-red-50 text-autocheck-red rounded-xl">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                                     </div>
                                 </div>
                             </a>

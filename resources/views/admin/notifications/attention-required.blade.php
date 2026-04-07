@@ -59,17 +59,39 @@
                                 <span class="text-sm font-bold text-blue-600 underline">{{ $v['customer_email'] }}</span>
                             </div>
                             <div class="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50">
+                                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Phone</span>
+                                <span class="text-sm font-black text-gray-900">{{ $v['customer_phone'] ?? 'N/A' }}</span>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50">
                                 <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Due Since</span>
                                 <span class="text-sm font-black text-autocheck-red italic">{{ $v['next_service_date'] }}</span>
                             </div>
                         </div>
 
-                        <form action="{{ route('admin.notifications.send', $v['id']) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="w-full py-4 bg-autocheck-red text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 active:scale-[0.98]">
-                                Send Reminder Now
+                        <div class="flex flex-col space-y-3">
+                            <form action="{{ route('admin.notifications.send', $v['id']) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full py-4 bg-autocheck-red text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 active:scale-[0.98] flex items-center justify-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                    Send Email
+                                </button>
+                            </form>
+
+                            @if($v['customer_phone'])
+                            <form action="{{ route('admin.notifications.call', $v['id']) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full py-4 bg-indigo-600 text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20 active:scale-[0.98] flex items-center justify-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                    Call Now (AI)
+                                </button>
+                            </form>
+                            @else
+                            <button disabled class="w-full py-4 bg-gray-200 text-gray-400 text-xs font-black uppercase tracking-[0.2em] rounded-2xl cursor-not-allowed flex items-center justify-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                                No Phone Listed
                             </button>
-                        </form>
+                            @endif
+                        </div>
                     </div>
                 </div>
             @endforeach

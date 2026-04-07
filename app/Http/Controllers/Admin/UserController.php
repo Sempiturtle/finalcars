@@ -54,6 +54,16 @@ class UserController extends Controller implements HasMiddleware
 
         $validated['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
 
+        // Auto-fix phone number format if needed
+        if (isset($validated['phone']) && !str_starts_with($validated['phone'], '+')) {
+            $phone = preg_replace('/[^0-9]/', '', $validated['phone']);
+            if (str_starts_with($phone, '09')) {
+                $validated['phone'] = '+63' . substr($phone, 1);
+            } elseif (str_starts_with($phone, '9')) {
+                $validated['phone'] = '+63' . $phone;
+            }
+        }
+
         User::create($validated);
 
         return redirect()->route('admin.users.index')
@@ -93,6 +103,16 @@ class UserController extends Controller implements HasMiddleware
         if ($request->filled('password')) {
             $request->validate(['password' => 'string|min:8']);
             $validated['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+        }
+
+        // Auto-fix phone number format if needed
+        if (isset($validated['phone']) && !str_starts_with($validated['phone'], '+')) {
+            $phone = preg_replace('/[^0-9]/', '', $validated['phone']);
+            if (str_starts_with($phone, '09')) {
+                $validated['phone'] = '+63' . substr($phone, 1);
+            } elseif (str_starts_with($phone, '9')) {
+                $validated['phone'] = '+63' . $phone;
+            }
         }
 
         $user->update($validated);

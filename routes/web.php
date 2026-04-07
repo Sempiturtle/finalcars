@@ -52,6 +52,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Attention Required (Overdue Vehicles)
     Route::get('/attention-required', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'attentionRequired'])->name('attention-required');
     Route::post('/attention-required/notify-all', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'notifyAll'])->name('attention-required.notify-all');
+    Route::post('/notifications/{vehicle}/call', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'call'])->name('notifications.call');
 
     Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
     Route::get('/service-history', [\App\Http\Controllers\Admin\ServiceHistoryController::class, 'index'])->name('service-history.index');

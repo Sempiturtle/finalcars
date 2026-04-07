@@ -43,10 +43,13 @@ class DashboardController extends Controller
             ->get()
             ->map(function ($vehicle) use ($today) {
                 $nextService = Carbon::parse($vehicle->next_service_date);
+                $user = $vehicle->owner ?? User::where('name', $vehicle->owner_name)->first();
                 return [
+                    'id' => $vehicle->id,
                     'plate_number' => $vehicle->plate_number,
                     'make_model' => "{$vehicle->make} {$vehicle->model}",
                     'days_overdue' => $today->diffInDays($nextService),
+                    'phone' => $user ? $user->phone : null,
                 ];
             });
 

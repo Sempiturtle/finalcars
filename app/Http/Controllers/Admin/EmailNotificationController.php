@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\EmailLog;
 use App\Models\Vehicle;
 use App\Models\User;
+use App\Notifications\OverdueFollowUpCall;
 use Carbon\Carbon;
 
 class EmailNotificationController extends Controller
@@ -109,6 +110,7 @@ class EmailNotificationController extends Controller
                     'make_model' => "{$vehicle->make} {$vehicle->model}",
                     'customer_name' => $vehicle->owner_name,
                     'customer_email' => $user ? $user->email : 'no-email@example.com',
+                    'customer_phone' => $user ? $user->phone : null,
                     'days_overdue' => $today->diffInDays($nextService),
                     'next_service_date' => $nextService->format('M d, Y'),
                 ];
@@ -145,5 +147,38 @@ class EmailNotificationController extends Controller
         }
 
         return redirect()->back()->with('success', "Notifications sent to owners of " . $overdueVehicles->count() . " overdue vehicles!");
+    }
+
+    /**
+     * Trigger a Twilio automated AI call for a specific vehicle owner.
+     */
+    public function call(Request $request, Vehicle $vehicle)
+    {
+        $user = $vehicle->owner ?? User::where('name', $vehicle->owner_name)->first();
+        
+        if (!$user || !$user->phone) {
+            return redirect()->back()->with('error', "No phone number found for this customer. Please update their profile.");
+        }
+
+        $plate = $vehicle->plate_number;
+        $customer = $user->name ?? $vehicle->owner_name;
+        
+        $date = Carbon::parse($vehicle->next_service_date)->format('M d, Y');
+        $message = "Hello {$customer}, this is an automated reminder from your car service center. Your vehicle with plate number {$plate} is overdue for maintenance since {$date}. Please schedule your service as soon as possible.";
+
+        try {
+            $notification = new OverdueFollowUpCall($message);
+            $sid = $notification->triggerCall($user->phone);
+
+            if ($sid !== 'FAILED' && $sid !== 'SIMULATED_SID') {
+                return redirect()->back()->with('success', "AI Call successfully initiated to {$user->phone}. SID: {$sid}");
+            } elseif ($sid === 'SIMULATED_SID') {
+                return redirect()->back()->with('info', "Simulation: Call would be sent to {$user->phone} with message: \"{$message}\"");
+            } else {
+                return redirect()->back()->with('error', "Twilio call failed. Check your configuration or Twilio console.");
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', "Error triggering call: " . $e->getMessage());
+        }
     }
 }
