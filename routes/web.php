@@ -80,6 +80,10 @@ Route::middleware(['auth', 'customer'])->prefix('customer')->name('customer.')->
     Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'customerIndex'])->name('chat.index');
     Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
     Route::get('/chat/fetch', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.fetch');
+
+    // Loyalty Rewards
+    Route::get('/rewards', [\App\Http\Controllers\Customer\RewardController::class, 'index'])->name('rewards.index');
+    Route::post('/rewards/{reward}/claim', [\App\Http\Controllers\Customer\RewardController::class, 'claim'])->name('rewards.claim');
 });
 
 require __DIR__.'/auth.php';

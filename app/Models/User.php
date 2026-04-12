@@ -89,6 +89,21 @@ class User extends Authenticatable
         return $this->hasMany(ChatMessage::class, 'receiver_id');
     }
 
+    public function rewards()
+    {
+        return $this->belongsToMany(Reward::class)->withTimestamps()->withPivot('claimed_at');
+    }
+
+    public function totalSpentPoints(): int
+    {
+        return $this->rewards()->sum('points_cost') ?? 0;
+    }
+
+    public function availablePoints(): int
+    {
+        return max(0, $this->loyalty_points - $this->totalSpentPoints());
+    }
+
     /**
      * Get the attributes that should be cast.
      *

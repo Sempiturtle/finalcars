@@ -50,5 +50,33 @@ class DatabaseSeeder extends Seeder
         $this->call([
             VehicleSeeder::class,
         ]);
+
+        // Sample Rewards
+        \App\Models\Reward::updateOrCreate(
+            ['name' => '5% OFF Oil Change'],
+            [
+                'description' => 'Get 5% off on your next oil change service.',
+                'points_cost' => 500,
+                'is_active' => true,
+            ]
+        );
+
+        \App\Models\Reward::updateOrCreate(
+            ['name' => 'Free Tire Rotation'],
+            [
+                'description' => 'Claim a free tire rotation for any vehicle in your fleet.',
+                'points_cost' => 1000,
+                'is_active' => true,
+            ]
+        );
+
+        \App\Models\Reward::updateOrCreate(
+            ['name' => '15% OFF Full Service'],
+            [
+                'description' => 'A significant discount for your vehicle\'s comprehensive full service check.',
+                'points_cost' => 2500,
+                'is_active' => true,
+            ]
+        );
     }
 }
