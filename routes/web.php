@@ -84,6 +84,9 @@ Route::middleware(['auth', 'customer'])->prefix('customer')->name('customer.')->
     // Loyalty Rewards
     Route::get('/rewards', [\App\Http\Controllers\Customer\RewardController::class, 'index'])->name('rewards.index');
     Route::post('/rewards/{reward}/claim', [\App\Http\Controllers\Customer\RewardController::class, 'claim'])->name('rewards.claim');
+
+    // Vehicle History
+    Route::get('/history', [\App\Http\Controllers\Customer\VehicleHistoryController::class, 'index'])->name('history.index');
 });
 
 require __DIR__.'/auth.php';
