@@ -43,13 +43,13 @@
         </div>
 
         <!-- Chat Input -->
-        <div class="p-6 bg-white border-t border-gray-100">
-            <form @submit.prevent="sendMessage" class="flex space-x-4">
+        <div class="p-4 md:p-6 bg-white border-t border-gray-100">
+            <form @submit.prevent="sendMessage" class="flex space-x-2 md:space-x-4">
                 <input type="text" x-model="newMessage" placeholder="Type your message to support..." 
-                       class="flex-1 bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-autocheck-red/20 transition-all font-medium text-sm">
+                       class="flex-1 bg-gray-50 border-none rounded-2xl px-4 py-3 md:px-6 md:py-4 focus:ring-2 focus:ring-autocheck-red/20 transition-all font-medium text-sm">
                 <button type="submit" 
                         :disabled="!newMessage.trim() || sending"
-                        class="bg-autocheck-red text-white p-4 rounded-2xl shadow-lg shadow-red-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:scale-100">
+                        class="bg-autocheck-red text-white p-3 md:p-4 rounded-2xl shadow-lg shadow-red-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:scale-100">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                 </button>
             </form>
