@@ -29,7 +29,12 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between">
                                     <h3 class="font-bold text-gray-900 truncate text-sm" x-text="user.name"></h3>
-                                    <span class="text-[10px] font-black uppercase tracking-tighter text-autocheck-red/60" x-text="user.role"></span>
+                                    <div class="flex items-center space-x-1">
+                                        <template x-if="user.unread_count > 0">
+                                            <span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full" x-text="user.unread_count"></span>
+                                        </template>
+                                        <span class="text-[10px] font-black uppercase tracking-tighter text-autocheck-red/60" x-text="user.role"></span>
+                                    </div>
                                 </div>
                                 <p class="text-xs text-gray-500 truncate mt-1" x-text="user.email"></p>
                             </div>
@@ -129,6 +134,7 @@
 
                 selectUser(user) {
                     this.selectedUser = user;
+                    user.unread_count = 0; // Visual immediate clear
                     this.fetchMessages();
                     
                     // Stop previous polling and start new one

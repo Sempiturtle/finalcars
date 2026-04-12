@@ -104,6 +104,11 @@ class User extends Authenticatable
         return max(0, $this->loyalty_points - $this->totalSpentPoints());
     }
 
+    public function unreadMessagesCount(): int
+    {
+        return ChatMessage::where('receiver_id', $this->id)->whereNull('read_at')->count();
+    }
+
     /**
      * Get the attributes that should be cast.
      *

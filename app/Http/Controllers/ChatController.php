@@ -13,10 +13,21 @@ class ChatController extends Controller
 
     public function adminIndex()
     {
-        // Get all customers for the sidebar
-        // We might want to sort them by those who have recent messages
-        $customers = User::where('role', 'customer')->get();
+        $customers = User::where('role', 'customer')->get()->map(function($user) {
+            $user->unread_count = ChatMessage::where('sender_id', $user->id)
+                ->where('receiver_id', Auth::id())
+                ->whereNull('read_at')
+                ->count();
+            return $user;
+        });
         return view('admin.chat.index', compact('customers'));
+    }
+
+    public function getUnreadCounts()
+    {
+        return response()->json([
+            'total' => Auth::user()->unreadMessagesCount()
+        ]);
     }
 
     public function adminShow(User $user)

@@ -101,9 +101,17 @@
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         Analytics / Tracking
                     </a>
-                    <a href="{{ route('admin.chat.index') }}" class="sidebar-item flex items-center px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.chat.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
-                        <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                        Chat Center
+                    <a href="{{ route('admin.chat.index') }}" 
+                       x-data="{ unreadCount: 0, poll() { fetch('{{ route('chat.unread-count') }}').then(r => r.json()).then(d => this.unreadCount = d.total) } }"
+                       x-init="poll(); setInterval(() => poll(), 10000)"
+                       class="sidebar-item flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-bold {{ request()->routeIs('admin.chat.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
+                        <div class="flex items-center">
+                            <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                            Chat Center
+                        </div>
+                        <template x-if="unreadCount > 0">
+                            <span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-pulse" x-text="unreadCount"></span>
+                        </template>
                     </a>
                 </nav>
 
