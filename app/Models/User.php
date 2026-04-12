@@ -79,6 +79,16 @@ class User extends Authenticatable
         return $this->hasMany(Vehicle::class);
     }
 
+    public function sentMessages()
+    {
+        return $this->hasMany(ChatMessage::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(ChatMessage::class, 'receiver_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

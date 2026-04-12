@@ -64,11 +64,22 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // Timeline Monitoring
     Route::get('/timeline', [\App\Http\Controllers\Admin\MaintenanceTimelineController::class, 'index'])->name('maintenance.timeline');
+
+    // Chat System
+    Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'adminIndex'])->name('chat.index');
+    Route::get('/chat/{user}', [\App\Http\Controllers\ChatController::class, 'adminShow'])->name('chat.show');
+    Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/fetch/{other_user_id}', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.fetch');
 });
 
 Route::middleware(['auth', 'customer'])->prefix('customer')->name('customer.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Customer\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/timeline', [\App\Http\Controllers\Customer\MaintenanceTimelineController::class, 'index'])->name('maintenance.timeline');
+
+    // Chat System
+    Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'customerIndex'])->name('chat.index');
+    Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/fetch', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.fetch');
 });
 
 require __DIR__.'/auth.php';
