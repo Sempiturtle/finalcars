@@ -1,10 +1,11 @@
 <x-admin-layout>
-    <div class="h-[calc(100vh-12rem)] bg-white rounded-3xl shadow-xl overflow-hidden flex border border-gray-100" 
+    <div class="h-[calc(100vh-12rem)] bg-white rounded-3xl shadow-xl overflow-hidden flex border border-gray-100 relative" 
          x-data="chatSystem()" 
          x-init="init()">
         
         <!-- Sidebar: User List -->
-        <div class="w-80 border-r border-gray-100 flex flex-col bg-gray-50/30">
+        <div class="w-full md:w-80 border-r border-gray-100 flex flex-col bg-gray-50/30"
+             :class="{ 'hidden md:flex': !showList && selectedUser }">
             <div class="p-6 border-b border-gray-100 bg-white">
                 <h2 class="text-xl font-black text-gray-900 flex items-center">
                     <span class="w-2 h-8 bg-autocheck-red rounded-full mr-3"></span>
@@ -45,7 +46,8 @@
         </div>
 
         <!-- Main Chat Area -->
-        <div class="flex-1 flex flex-col bg-white">
+        <div class="flex-1 flex flex-col bg-white"
+             :class="{ 'hidden md:flex': showList && selectedUser, 'flex': !showList && selectedUser }">
             <template x-if="!selectedUser">
                 <div class="flex-1 flex flex-col items-center justify-center p-12 text-center">
                     <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
@@ -61,10 +63,13 @@
                     <!-- Chat Header -->
                     <div class="h-20 px-8 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
                         <div class="flex items-center space-x-4">
+                            <button @click="showList = true" class="md:hidden p-2 -ml-2 text-gray-400 hover:text-gray-600">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </button>
                             <div class="h-10 w-10 rounded-xl bg-autocheck-red flex items-center justify-center text-white font-bold" x-text="selectedUser.name.charAt(0)"></div>
-                            <div>
-                                <h3 class="font-bold text-gray-900 leading-none" x-text="selectedUser.name"></h3>
-                                <span class="text-[10px] font-black text-green-500 uppercase tracking-widest mt-1 inline-block">Online History</span>
+                            <div class="min-w-0">
+                                <h3 class="font-bold text-gray-900 leading-none truncate" x-text="selectedUser.name"></h3>
+                                <span class="text-[10px] font-black text-green-500 uppercase tracking-widest mt-1 inline-block">Online</span>
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
@@ -75,7 +80,7 @@
                     </div>
 
                     <!-- Chat History -->
-                    <div class="flex-1 overflow-y-auto p-8 space-y-6 bg-gray-50/20" id="chat-history">
+                    <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 bg-gray-50/20" id="chat-history">
                         <template x-for="(msg, index) in messages" :key="msg.id">
                             <div>
                                 <!-- Date Separator -->
@@ -119,6 +124,7 @@
                 customers: @json($customers),
                 search: '',
                 selectedUser: null,
+                showList: true,
                 messages: [],
                 newMessage: '',
                 pollingTimer: null,
@@ -134,6 +140,7 @@
 
                 selectUser(user) {
                     this.selectedUser = user;
+                    this.showList = false;
                     user.unread_count = 0; // Visual immediate clear
                     this.fetchMessages();
                     
