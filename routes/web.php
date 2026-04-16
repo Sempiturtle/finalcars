@@ -90,6 +90,16 @@ Route::middleware(['auth', 'customer'])->prefix('customer')->name('customer.')->
 
     // Vehicle History
     Route::get('/history', [\App\Http\Controllers\Customer\VehicleHistoryController::class, 'index'])->name('history.index');
+
+    // Customer Profile
+    Route::get('/profile', [\App\Http\Controllers\Customer\ProfileController::class, 'index'])->name('profile.index');
+    Route::post('/profile/update', [\App\Http\Controllers\Customer\ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/password', [\App\Http\Controllers\Customer\ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    // Notifications
+    Route::get('/notifications', [\App\Http\Controllers\Customer\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\Customer\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\Customer\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 });
 
 require __DIR__.'/auth.php';
