@@ -96,13 +96,13 @@
 
         <!-- Main Content -->
         <main 
-            class="flex-1 h-screen overflow-y-auto transition-all duration-300 transform" 
+            class="flex-1 h-screen overflow-y-auto transition-all duration-300" 
             :class="{ 'ml-72': sidebarOpen, 'ml-0': !sidebarOpen }"
         >
             <!-- Topbar -->
             <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-40">
                 <div class="flex items-center space-x-6">
-                    <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:outline-none transition-colors lg:hidden">
+                    <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:outline-none transition-colors">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                     </button>
                     <h2 class="text-sm font-black text-gray-400 uppercase tracking-[0.3em] hidden md:block italic">Dashboard <span class="text-autocheck-red">/</span> {{ request()->route()->getName() }}</h2>

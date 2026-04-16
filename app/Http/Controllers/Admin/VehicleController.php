@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use App\Models\User;
+use App\Notifications\SystemNotification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -79,6 +80,17 @@ class VehicleController extends Controller
 
         $vehicle = Vehicle::create($validated);
 
+        // Notify User in Bell
+        if ($user) {
+            $icon = '<path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2" d = "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />';
+            $user->notify(new SystemNotification(
+                "New Vehicle Added",
+                "A new vehicle ({$vehicle->make} {$vehicle->model}) with plate number {$vehicle->plate_number} has been registered to your account.",
+                $icon,
+                route('customer.dashboard', ['vehicle_id' => $vehicle->id])
+            ));
+        }
+
         return redirect()->route('admin.vehicles.index')
             ->with('success', 'Vehicle added successfully to the fleet.');
     }
@@ -126,7 +138,23 @@ class VehicleController extends Controller
         $user = User::find($validated['user_id']);
         $validated['owner_name'] = $user->name;
 
+        $oldUserId = $vehicle->user_id;
+
         $vehicle->update($validated);
+
+        // If user_id changed, notify the new owner
+        if ($oldUserId != $vehicle->user_id) {
+            $user = User::find($vehicle->user_id);
+            if ($user) {
+                $icon = '<path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2" d = "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />';
+                $user->notify(new SystemNotification(
+                    "Vehicle Assigned to You",
+                    "A vehicle ({$vehicle->make} {$vehicle->model}) with plate number {$vehicle->plate_number} has been moved to your account.",
+                    $icon,
+                    route('customer.dashboard', ['vehicle_id' => $vehicle->id])
+                ));
+            }
+        }
 
         return redirect()->route('admin.vehicles.index')
             ->with('success', 'Vehicle information updated successfully.');

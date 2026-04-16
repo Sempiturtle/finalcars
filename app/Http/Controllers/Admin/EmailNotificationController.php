@@ -9,6 +9,7 @@ use App\Models\EmailLog;
 use App\Models\Vehicle;
 use App\Models\User;
 use App\Notifications\OverdueFollowUpCall;
+use App\Notifications\SystemNotification;
 use Carbon\Carbon;
 
 class EmailNotificationController extends Controller
@@ -86,6 +87,16 @@ class EmailNotificationController extends Controller
             'sent_at' => now(),
         ]);
 
+        // Notify User in Bell
+        if ($user) {
+            $icon = '<path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2" d = "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />';
+            $user->notify(new SystemNotification(
+                "Maintenance Email Sent",
+                "An official maintenance reminder email regarding your vehicle ({$vehicle->plate_number}) has been sent to your inbox.",
+                $icon
+            ));
+        }
+
         return redirect()->back()->with('success', "Notification successfully sent to {$vehicle->owner_name}!");
     }
 
@@ -144,6 +155,16 @@ class EmailNotificationController extends Controller
                 'status' => 'delivered',
                 'sent_at' => now(),
             ]);
+
+            // Notify User in Bell
+            if ($user) {
+                $icon = '<path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2" d = "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />';
+                $user->notify(new SystemNotification(
+                    "Overdue Maintenance Notice",
+                    "An automated email has been sent because your vehicle ({$vehicle->plate_number}) is overdue for service.",
+                    $icon
+                ));
+            }
         }
 
         return redirect()->back()->with('success', "Notifications sent to owners of " . $overdueVehicles->count() . " overdue vehicles!");
@@ -171,8 +192,24 @@ class EmailNotificationController extends Controller
             $sid = $notification->triggerCall($user->phone);
 
             if ($sid !== 'FAILED' && $sid !== 'SIMULATED_SID') {
+                if ($user) {
+                    $icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />';
+                    $user->notify(new SystemNotification(
+                        "Automated Call Initiated",
+                        "An AI follow-up call regarding your vehicle ({$vehicle->plate_number}) is being connected to your phone.",
+                        $icon
+                    ));
+                }
                 return redirect()->back()->with('success', "AI Call successfully initiated to {$user->phone}. SID: {$sid}");
             } elseif ($sid === 'SIMULATED_SID') {
+                if ($user) {
+                    $icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />';
+                    $user->notify(new SystemNotification(
+                        "Automated Call (Simulated)",
+                        "A simulated follow-up call is being logged for your vehicle ({$vehicle->plate_number}).",
+                        $icon
+                    ));
+                }
                 return redirect()->back()->with('info', "Simulation: Call would be sent to {$user->phone} with message: \"{$message}\"");
             } else {
                 return redirect()->back()->with('error', "Twilio call failed. Check your configuration or Twilio console.");

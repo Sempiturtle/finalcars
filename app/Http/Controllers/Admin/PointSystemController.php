@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Notifications\SystemNotification;
 use Illuminate\Http\Request;
 
 class PointSystemController extends Controller
@@ -45,6 +46,15 @@ class PointSystemController extends Controller
                 $user->update(['loyalty_points' => $request->points]);
                 break;
         }
+
+        // Notify User in Bell
+        $icon = '<path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2" d = "M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />';
+        $user->notify(new SystemNotification(
+            "Loyalty Points Updated",
+            "Your loyalty points balance has been adjusted. You now have {$user->loyalty_points} points.",
+            $icon,
+            route('customer.rewards.index')
+        ));
 
         return back()->with('success', "Points for {$user->name} have been updated.");
     }

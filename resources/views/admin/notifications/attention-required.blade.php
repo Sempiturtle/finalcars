@@ -69,13 +69,6 @@
                         </div>
 
                         <div class="flex flex-col space-y-3">
-                            <form action="{{ route('admin.notifications.send', $v['id']) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="w-full py-4 bg-autocheck-red text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 active:scale-[0.98] flex items-center justify-center">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                    Send Email
-                                </button>
-                            </form>
 
                             @if($v['customer_phone'])
                             <form action="{{ route('admin.notifications.call', $v['id']) }}" method="POST">

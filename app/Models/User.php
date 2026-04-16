@@ -45,8 +45,14 @@ class User extends Authenticatable
 
     public function recalculateLoyaltyPoints()
     {
-        $serviceCount = $this->vehicles()->withCount('serviceLogs')->get()->sum('service_logs_count');
-        $this->update(['loyalty_points' => $serviceCount * 100]);
+        $totalSpent = $this->vehicles()->with(['serviceLogs' => function($q) {
+            $q->where('status', 'completed');
+        }])->get()->flatMap->serviceLogs->sum('cost');
+
+        // Award 1 point for every 10 units spent
+        $points = floor($totalSpent / 10);
+        
+        $this->update(['loyalty_points' => $points]);
     }
 
     public function isAdmin(): bool

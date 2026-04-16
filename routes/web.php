@@ -65,6 +65,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/point-system/sync-all', [\App\Http\Controllers\Admin\PointSystemController::class, 'syncAll'])->name('points.sync-all');
     Route::post('/test-email', [\App\Http\Controllers\Admin\TestEmailController::class, 'send'])->name('test-email.send');
     
+    // Reward Management
+    Route::resource('rewards', \App\Http\Controllers\Admin\RewardController::class);
+    Route::patch('/rewards/{reward}/toggle', [\App\Http\Controllers\Admin\RewardController::class, 'updateStatus'])->name('rewards.toggle');
+    
     // Timeline Monitoring
     Route::get('/timeline', [\App\Http\Controllers\Admin\MaintenanceTimelineController::class, 'index'])->name('maintenance.timeline');
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ChatMessage;
 use App\Models\User;
+use App\Notifications\SystemNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -110,6 +111,21 @@ class ChatController extends Controller
             'receiver_id' => $receiverId,
             'message' => $request->message,
         ]);
+
+        // Notify Receiver
+        $receiver = User::find($receiverId);
+        if ($receiver) {
+            $senderName = Auth::user()->name;
+            $icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />';
+            $url = $receiver->isCustomer() ? route('customer.chat.index') : route('admin.chat.show', ['user' => Auth::id()]);
+            
+            $receiver->notify(new SystemNotification(
+                "New Message from {$senderName}",
+                $request->message,
+                $icon,
+                $url
+            ));
+        }
 
         return response()->json($message);
     }
