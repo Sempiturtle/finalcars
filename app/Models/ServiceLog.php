@@ -9,6 +9,7 @@ class ServiceLog extends Model
     protected $fillable = [
         'vehicle_id',
         'service_type',
+        'service_mode',
         'cost',
         'status',
         'service_date',

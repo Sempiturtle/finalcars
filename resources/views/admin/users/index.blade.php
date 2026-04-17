@@ -50,68 +50,68 @@
         </div>
 
         <!-- Header -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-8 rounded-[3rem] shadow-xl border border-gray-100">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-xl border border-gray-100">
             <div>
-                <h1 class="text-3xl font-black text-gray-900 tracking-tight">User <span class="text-autocheck-red">Management</span></h1>
-                <p class="text-gray-500 font-bold mt-1">Manage system administrators, staff, and customers.</p>
+                <h1 class="text-2xl font-black text-gray-900 tracking-tight">User <span class="text-autocheck-red">Management</span></h1>
+                <p class="text-[13px] text-gray-500 font-bold mt-0.5">Manage system administrators, staff, and customers.</p>
             </div>
-            <button @click="showAddModal = true" class="px-8 py-4 bg-autocheck-red text-white font-black rounded-2xl hover:bg-red-700 transition-all shadow-xl shadow-red-500/20 flex items-center space-x-2 text-sm uppercase tracking-widest">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+            <button @click="showAddModal = true" class="px-6 py-3 bg-autocheck-red text-white font-black rounded-xl hover:bg-red-700 transition-all shadow-xl shadow-red-500/20 flex items-center space-x-2 text-[11px] uppercase tracking-widest">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
                 <span>Add Member</span>
             </button>
         </div>
 
         <!-- Stats Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                <div class="p-3 bg-gray-50 rounded-2xl text-gray-400 w-fit mb-4"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
-                <h3 class="text-3xl font-black text-gray-900 tracking-tight">{{ $totalUsers }}</h3>
-                <p class="text-gray-400 text-xs font-black uppercase tracking-widest mt-1">Total Users</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="p-2.5 bg-gray-50 rounded-xl text-gray-400 w-fit mb-3"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                <h3 class="text-2xl font-black text-gray-900 tracking-tight">{{ $totalUsers }}</h3>
+                <p class="text-gray-400 text-[9px] font-black uppercase tracking-widest mt-0.5">Total Users</p>
             </div>
-            <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                <div class="p-3 bg-red-50 rounded-2xl text-autocheck-red w-fit mb-4"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
-                <h3 class="text-3xl font-black text-gray-900 tracking-tight">{{ $administrators }}</h3>
-                <p class="text-gray-400 text-xs font-black uppercase tracking-widest mt-1">Administrators</p>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="p-2.5 bg-red-50 rounded-xl text-autocheck-red w-fit mb-3"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
+                <h3 class="text-2xl font-black text-gray-900 tracking-tight">{{ $administrators }}</h3>
+                <p class="text-gray-400 text-[9px] font-black uppercase tracking-widest mt-0.5">Administrators</p>
             </div>
-            <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                <div class="p-3 bg-blue-50 rounded-2xl text-blue-600 w-fit mb-4"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></div>
-                <h3 class="text-3xl font-black text-gray-900 tracking-tight">{{ $staffMembers }}</h3>
-                <p class="text-gray-400 text-xs font-black uppercase tracking-widest mt-1">Staff Members</p>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="p-2.5 bg-blue-50 rounded-xl text-blue-600 w-fit mb-3"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></div>
+                <h3 class="text-2xl font-black text-gray-900 tracking-tight">{{ $staffMembers }}</h3>
+                <p class="text-gray-400 text-[9px] font-black uppercase tracking-widest mt-0.5">Staff Members</p>
             </div>
         </div>
 
         <!-- User Table Card -->
-        <div class="bg-white rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead>
-                        <tr class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] italic border-b border-gray-50">
-                            <th class="px-8 py-8">Identity</th>
-                            <th class="px-8 py-8">Access Role</th>
-                            <th class="px-8 py-8">Contact Information</th>
-                            <th class="px-8 py-8 text-right">Operations</th>
+                        <tr class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] italic border-b border-gray-50">
+                            <th class="px-6 py-4">Identity</th>
+                            <th class="px-6 py-4">Access Role</th>
+                            <th class="px-6 py-4">Contact Information</th>
+                            <th class="px-6 py-4 text-right">Operations</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
                         @foreach($users as $user)
                             <tr class="hover:bg-gray-50/50 transition-all duration-300 group">
-                                <td class="px-8 py-8">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="w-12 h-12 rounded-2xl bg-gray-900 flex items-center justify-center text-white font-black text-lg group-hover:bg-autocheck-red transition-colors">{{ substr($user->name, 0, 1) }}</div>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center text-white font-black text-base group-hover:bg-autocheck-red transition-colors">{{ substr($user->name, 0, 1) }}</div>
                                         <div>
-                                            <p class="text-sm font-black text-gray-900 tracking-tight">{{ $user->name }}</p>
-                                            <p class="text-[10px] font-bold text-gray-400 lowercase">{{ $user->email }}</p>
+                                            <p class="text-[13px] font-black text-gray-900 tracking-tight">{{ $user->name }}</p>
+                                            <p class="text-[9px] font-bold text-gray-400 lowercase">{{ $user->email }}</p>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-8 py-8">
-                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : ($user->role === 'staff' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600') }}">@ {{ $user->role }}</span>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : ($user->role === 'staff' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600') }}">@ {{ $user->role }}</span>
                                 </td>
-                                <td class="px-8 py-8 text-sm font-bold text-gray-500">{{ $user->phone ?? 'N/A' }}</td>
-                                <td class="px-8 py-8 text-right">
-                                    <div class="flex items-center justify-end space-x-2">
-                                        <button @click="editUser = { id: '{{ $user->id }}', name: '{{ addslashes($user->name) }}', email: '{{ $user->email }}', username: '{{ $user->username }}', phone: '{{ $user->phone }}', role: '{{ $user->role }}', address: '{{ addslashes($user->address) }}' }; showEditModal = true;" class="p-2.5 bg-gray-50 text-gray-400 hover:bg-gray-900 hover:text-white rounded-xl transition-all"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
-                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Archive this user? This action is permanent.')" class="inline">@csrf @method('DELETE') <button type="submit" class="p-2.5 bg-gray-50 text-red-400 hover:bg-red-100 hover:text-red-700 rounded-xl transition-all"><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></form>
+                                <td class="px-6 py-4 text-[13px] font-bold text-gray-500">{{ $user->phone ?? 'N/A' }}</td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex items-center justify-end space-x-1.5">
+                                        <button @click="editUser = { id: '{{ $user->id }}', name: '{{ addslashes($user->name) }}', email: '{{ $user->email }}', username: '{{ $user->username }}', phone: '{{ $user->phone }}', role: '{{ $user->role }}', address: '{{ addslashes($user->address) }}' }; showEditModal = true;" class="p-2 bg-gray-50 text-gray-400 hover:bg-gray-900 hover:text-white rounded-lg transition-all"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
+                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Archive this user? This action is permanent.')" class="inline">@csrf @method('DELETE') <button type="submit" class="p-2 bg-gray-50 text-red-400 hover:bg-red-100 hover:text-red-700 rounded-lg transition-all"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></form>
                                     </div>
                                 </td>
                             </tr>
@@ -119,7 +119,7 @@
                     </tbody>
                 </table>
             </div>
-            @if($users->hasPages()) <div class="px-8 py-6 bg-gray-50/30 border-t border-gray-50">{{ $users->links() }}</div> @endif
+            @if($users->hasPages()) <div class="px-6 py-4 bg-gray-50/30 border-t border-gray-50">{{ $users->links() }}</div> @endif
         </div>
 
         <!-- Add User Modal -->
@@ -136,7 +136,7 @@
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Username</label><input type="text" name="username" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label><input type="email" name="email" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone</label><input type="text" name="phone" value="+63" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
-                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Role</label><select name="role" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"><option value="customer">Customer</option><option value="staff">Staff</option><option value="admin">Admin</option></select></div>
+                                <input type="hidden" name="role" value="admin">
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Password</label><input type="password" name="password" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
                                 <div class="col-span-2 space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Address</label><textarea name="address" rows="2" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none"></textarea></div>
                             </div>
@@ -161,7 +161,7 @@
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Username</label><input type="text" name="username" x-model="editUser.username" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label><input type="email" name="email" x-model="editUser.email" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone</label><input type="text" name="phone" x-model="editUser.phone" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
-                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Role</label><select name="role" x-model="editUser.role" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"><option value="customer">Customer</option><option value="staff">Staff</option><option value="admin">Admin</option></select></div>
+                                <input type="hidden" name="role" value="admin">
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">New Password (Empty to keep)</label><input type="password" name="password" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
                                 <div class="col-span-2 space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Physical Address</label><textarea name="address" x-model="editUser.address" rows="2" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none"></textarea></div>
                             </div>

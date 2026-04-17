@@ -43,14 +43,7 @@
                         @error('user_id') <p class="text-xs text-autocheck-red font-bold mt-1 ml-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <!-- Assigned Mechanic -->
-                    <div class="space-y-2">
-                        <label for="mechanic_name" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Assigned Mechanic</label>
-                        <input type="text" name="mechanic_name" id="mechanic_name" value="{{ old('mechanic_name', $vehicle->mechanic_name) }}"
-                            class="block w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all"
-                            placeholder="e.g. Juan Mechanic">
-                        @error('mechanic_name') <p class="text-xs text-autocheck-red font-bold mt-1 ml-1">{{ $message }}</p> @enderror
-                    </div>
+
 
                     <!-- Make -->
                     <div class="space-y-2">
@@ -129,10 +122,8 @@
                         <div class="space-y-4">
                             <template x-for="(service, index) in services" :key="index">
                                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start bg-gray-50/50 p-4 rounded-2xl border border-gray-50">
-                                    <div class="md:col-span-7 space-y-1">
+                                    <div class="md:col-span-4 space-y-1">
                                         <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Type</label>
-                                        
-                                        <!-- Select Dropdown -->
                                         <select
                                             x-model="service.type"
                                             :name="`services[${index}][type]`"
@@ -143,6 +134,18 @@
                                             <template x-for="type in serviceTypes">
                                                 <option :value="type" x-text="type" :selected="service.type === type"></option>
                                             </template>
+                                        </select>
+                                    </div>
+                                    <div class="md:col-span-3 space-y-1">
+                                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Mode</label>
+                                        <select
+                                            x-model="service.mode"
+                                            :name="`services[${index}][mode]`"
+                                            required
+                                            class="block w-full px-4 py-3 bg-white border-transparent rounded-xl text-sm font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
+                                            <option value="Walk-in">Walk-in</option>
+                                            <option value="Towing">Towing</option>
+                                            <option value="Home Service">Home Service</option>
                                         </select>
                                     </div>
                                     <div class="md:col-span-4 space-y-1">

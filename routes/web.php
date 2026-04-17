@@ -29,7 +29,7 @@ Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
     }
     if ($user->isCustomer()) {
-        return redirect()->route('customer.dashboard');
+        return redirect()->route('customer.landing');
     }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -83,13 +83,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 Route::middleware(['auth', 'customer'])->prefix('customer')->name('customer.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\Customer\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/home', [\App\Http\Controllers\Customer\DashboardController::class, 'landing'])->name('landing');
+    Route::get('/dashboard', function() { return redirect()->route('customer.landing'); })->name('dashboard');
     Route::get('/timeline', [\App\Http\Controllers\Customer\MaintenanceTimelineController::class, 'index'])->name('maintenance.timeline');
 
     // Chat System
     Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'customerIndex'])->name('chat.index');
     Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
     Route::get('/chat/fetch', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.fetch');
+
+    // Vehicle Management
+    Route::resource('vehicles', \App\Http\Controllers\Customer\VehicleController::class);
+    Route::post('/vehicles/{vehicle}/log-service', [\App\Http\Controllers\Customer\VehicleController::class, 'logService'])->name('vehicles.log-service');
 
     // Loyalty Rewards
     Route::get('/rewards', [\App\Http\Controllers\Customer\RewardController::class, 'index'])->name('rewards.index');

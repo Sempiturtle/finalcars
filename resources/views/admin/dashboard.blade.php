@@ -1,10 +1,10 @@
 <x-admin-layout>
-    <div class="space-y-8">
+    <div class="space-y-6">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-black text-gray-900 tracking-tight">Dashboard <span class="text-autocheck-red">Overview</span></h1>
-                <p class="text-gray-500 font-medium mt-1">Real-time snapshots of your fleet and customer activity.</p>
+                <h1 class="text-2xl font-black text-gray-900 tracking-tight">Dashboard <span class="text-autocheck-red">Overview</span></h1>
+                <p class="text-[13px] text-gray-500 font-medium mt-0.5">Real-time snapshots of your fleet and customer activity.</p>
             </div>
             <div class="flex items-center space-x-3">
                 <div class="bg-white px-6 py-3 rounded-2xl border border-gray-100 shadow-sm flex items-center space-x-3">
@@ -15,53 +15,53 @@
         </div>
 
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-autocheck-red/20 group">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-3 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-autocheck-red group-hover:text-white transition-colors duration-300">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-autocheck-red/20 group">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2.5 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-autocheck-red group-hover:text-white transition-colors duration-300">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     </div>
                 </div>
-                <h3 class="text-3xl font-black text-gray-900">{{ number_format($stats['total_customers']) }}</h3>
-                <p class="text-sm font-bold text-gray-500 mt-1 uppercase tracking-wider">Total Customers</p>
+                <h3 class="text-xl font-black text-gray-900">{{ number_format($stats['total_customers']) }}</h3>
+                <p class="text-[11px] font-bold text-gray-400 mt-0.5 uppercase tracking-wider">Total Customers</p>
             </div>
 
-            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-autocheck-red/20 group">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-3 bg-purple-50 text-purple-600 rounded-2xl group-hover:bg-autocheck-red group-hover:text-white transition-colors duration-300">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-autocheck-red/20 group">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2.5 bg-purple-50 text-purple-600 rounded-xl group-hover:bg-autocheck-red group-hover:text-white transition-colors duration-300">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                 </div>
-                <h3 class="text-3xl font-black text-gray-900">{{ number_format($stats['total_vehicles']) }}</h3>
-                <p class="text-sm font-bold text-gray-500 mt-1 uppercase tracking-wider">Active Vehicles</p>
+                <h3 class="text-xl font-black text-gray-900">{{ number_format($stats['total_vehicles']) }}</h3>
+                <p class="text-[11px] font-bold text-gray-400 mt-0.5 uppercase tracking-wider">Active Vehicles</p>
             </div>
 
-            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-autocheck-red/20 group">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-3 bg-red-50 text-autocheck-red rounded-2xl group-hover:bg-autocheck-red group-hover:text-white transition-colors duration-300">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-autocheck-red/20 group">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2.5 bg-red-50 text-autocheck-red rounded-xl group-hover:bg-autocheck-red group-hover:text-white transition-colors duration-300">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                     </div>
                 </div>
-                <h3 class="text-3xl font-black text-gray-900">{{ number_format($stats['total_services']) }}</h3>
-                <p class="text-sm font-bold text-gray-500 mt-1 uppercase tracking-wider">Total Services</p>
+                <h3 class="text-xl font-black text-gray-900">{{ number_format($stats['total_services']) }}</h3>
+                <p class="text-[11px] font-bold text-gray-400 mt-0.5 uppercase tracking-wider">Total Services</p>
             </div>
 
-            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-autocheck-red/20 group">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-3 bg-yellow-50 text-yellow-600 rounded-2xl group-hover:bg-autocheck-red group-hover:text-white transition-colors duration-300">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-autocheck-red/20 group">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="p-2.5 bg-yellow-50 text-yellow-600 rounded-xl group-hover:bg-autocheck-red group-hover:text-white transition-colors duration-300">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     </div>
                 </div>
-                <h3 class="text-3xl font-black text-gray-900">{{ number_format($stats['emails_sent']) }}</h3>
-                <p class="text-sm font-bold text-gray-500 mt-1 uppercase tracking-wider">Emails Sent</p>
+                <h3 class="text-xl font-black text-gray-900">{{ number_format($stats['emails_sent']) }}</h3>
+                <p class="text-[11px] font-bold text-gray-400 mt-0.5 uppercase tracking-wider">Emails Sent</p>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <!-- Main Content Area -->
-            <div class="lg:col-span-2 space-y-8">
+            <div class="lg:col-span-2 space-y-6">
                 <!-- Maintenance Overview & Chart -->
-                <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm overflow-hidden">
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm overflow-hidden">
                     <div class="flex items-center justify-between mb-8">
                         <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight">Maintenance <span class="text-autocheck-red">Status</span></h2>
                     </div>
@@ -102,9 +102,9 @@
                 </div>
 
                 <!-- Recent Services -->
-                <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm overflow-hidden">
-                    <div class="flex items-center justify-between mb-8">
-                        <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight">Recent <span class="text-autocheck-red">Services</span></h2>
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-black text-gray-900 uppercase tracking-tight">Recent <span class="text-autocheck-red">Services</span></h2>
                         <a href="{{ route('admin.maintenance.index') }}" class="text-sm font-bold text-autocheck-red hover:underline italic">Manage All</a>
                     </div>
                     <div class="overflow-x-auto">
@@ -149,9 +149,9 @@
             </div>
 
             <!-- Sidebar Area -->
-            <div class="space-y-8">
+            <div class="space-y-5">
                 <!-- Quick Tracking -->
-                <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden group">
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm relative overflow-hidden group">
                     <div class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-autocheck-red/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
                     <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight mb-4 relative z-10">Quick <span class="text-autocheck-red">Tracking</span></h2>
                     <p class="text-xs font-bold text-gray-400 mb-6 relative z-10 italic">Instantly monitor vehicle maintenance records.</p>
@@ -171,9 +171,9 @@
                 </div>
 
                 <!-- Attention Required -->
-                <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden group/attn">
-                    <div class="flex items-center justify-between mb-8">
-                        <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight">Attention <span class="text-autocheck-red">Required</span></h2>
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm relative overflow-hidden group/attn">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-black text-gray-900 uppercase tracking-tight">Attention <span class="text-autocheck-red">Required</span></h2>
                         <a href="{{ route('admin.attention-required') }}" class="text-[10px] font-black text-autocheck-red uppercase tracking-widest hover:underline italic">View All</a>
                     </div>
                     <div class="space-y-4">
@@ -221,7 +221,7 @@
                 </div>
 
                 <!-- Quick Actions / Live Stream Placeholder -->
-                <div class="bg-autocheck-red rounded-[2.5rem] p-8 text-white shadow-xl shadow-red-500/20">
+                <div class="bg-autocheck-red rounded-2xl p-5 text-white shadow-xl shadow-red-500/20">
                     <h3 class="text-lg font-black uppercase tracking-tight mb-4">System Alerts</h3>
                     <p class="text-sm font-medium text-white/80 leading-relaxed mb-6">
                         Automated reminders for <span class="font-bold text-white">{{ $maintenanceOverview['due_soon'] }} vehicles</span> will be sent at 8:00 AM (Manila Time).

@@ -42,14 +42,7 @@
                         @error('user_id') <p class="text-xs text-autocheck-red font-bold mt-1 ml-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <!-- Assigned Mechanic -->
-                    <div class="space-y-2">
-                        <label for="mechanic_name" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Assigned Mechanic</label>
-                        <input type="text" name="mechanic_name" id="mechanic_name" value="{{ old('mechanic_name') }}"
-                            class="block w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all"
-                            placeholder="e.g. Juan Mechanic">
-                        @error('mechanic_name') <p class="text-xs text-autocheck-red font-bold mt-1 ml-1">{{ $message }}</p> @enderror
-                    </div>
+
 
                     <!-- Make -->
                     <div class="space-y-2">

@@ -114,6 +114,7 @@ class Vehicle extends Model
                 
                 $this->serviceLogs()->create([
                     'service_type' => $type,
+                    'service_mode' => $service['mode'] ?? 'Walk-in',
                     'cost' => $service['cost'] ?? 0,
                     'status' => 'completed',
                     'service_date' => $this->updated_at ?? now(),
