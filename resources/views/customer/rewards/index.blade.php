@@ -16,10 +16,22 @@
                 </div>
             </div>
 
-            <div class="mt-8 md:mt-0 relative z-10 bg-gray-50 rounded-2xl p-6 border border-gray-100 text-center md:text-right min-w-full md:min-w-[200px]">
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Available Points</p>
-                <div class="text-3xl md:text-4xl font-black text-autocheck-red tabular-nums">{{ number_format($user->availablePoints()) }}</div>
-                <p class="text-[10px] font-bold text-gray-500 mt-1">Total Earned: {{ number_format($user->loyalty_points) }}</p>
+            <div class="mt-8 md:mt-0 relative z-10 bg-gray-50 rounded-2xl p-6 border border-gray-100 flex flex-col items-center md:items-end justify-center">
+                <div class="text-right">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Current Available Balance</p>
+                    <div class="text-3xl md:text-4xl font-black text-autocheck-red tabular-nums">{{ number_format($user->availablePoints()) }} <span class="text-sm">Pts</span></div>
+                </div>
+                <div class="mt-4 flex items-center space-x-4 border-t border-gray-200 pt-4 w-full justify-center md:justify-end">
+                    <div class="text-center md:text-right">
+                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total Earned</p>
+                        <p class="text-xs font-black text-gray-700">{{ number_format($user->loyalty_points) }}</p>
+                    </div>
+                    <div class="w-px h-6 bg-gray-200"></div>
+                    <div class="text-center md:text-right">
+                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Spent / Claimed</p>
+                        <p class="text-xs font-black text-gray-700">{{ number_format($user->totalSpentPoints()) }}</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -78,29 +90,44 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @foreach($rewards as $reward)
-                        <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group h-full">
+                        @php
+                            $availableForThis = $rewardPoints[$reward->id] ?? 0;
+                            $canClaim = $availableForThis >= $reward->points_cost;
+                        @endphp
+                        <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group h-full {{ !$canClaim ? 'opacity-80' : '' }}">
                             <div class="flex items-start justify-between mb-4">
-                                <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-autocheck-red group-hover:bg-autocheck-red group-hover:text-white transition-colors duration-300">
+                                <div class="w-12 h-12 {{ $canClaim ? 'bg-gray-50 text-autocheck-red group-hover:bg-autocheck-red group-hover:text-white' : 'bg-gray-100 text-gray-400' }} rounded-2xl flex items-center justify-center transition-colors duration-300">
                                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
                                 </div>
-                                <span class="bg-autocheck-red/10 text-autocheck-red text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
-                                    {{ $reward->points_cost }} Pts
-                                </span>
+                                <div class="text-right">
+                                    <span class="{{ $canClaim ? 'bg-autocheck-red/10 text-autocheck-red' : 'bg-gray-100 text-gray-400' }} text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
+                                        Cost: {{ $reward->points_cost }} Pts
+                                    </span>
+                                    <p class="text-[9px] font-bold mt-2 {{ $canClaim ? 'text-green-600' : 'text-gray-400' }}">
+                                        Available: {{ number_format($availableForThis) }} Pts
+                                    </p>
+                                </div>
                             </div>
                             
-                            <h3 class="text-lg font-black text-gray-900 group-hover:text-autocheck-red transition-colors">{{ $reward->name }}</h3>
-                            <p class="text-gray-500 text-sm font-medium mt-2 flex-grow line-clamp-2">{{ $reward->description }}</p>
+                            <h3 class="text-lg font-black text-gray-900 {{ $canClaim ? 'group-hover:text-autocheck-red' : '' }} transition-colors uppercase">{{ $reward->name }}</h3>
+                            <p class="text-gray-500 text-sm font-medium mt-2 flex-grow line-clamp-2 italic">
+                                @if($reward->serviceType)
+                                    Requires points from <span class="text-autocheck-red font-bold">{{ $reward->serviceType->name }}</span>.
+                                @else
+                                    Redeemable using total loyalty points.
+                                @endif
+                            </p>
                             
                             <div class="mt-6">
                                 <form action="{{ route('customer.rewards.claim', $reward) }}" method="POST">
                                     @csrf
                                     <button type="submit" 
                                             class="w-full py-4 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] transition-all shadow-lg
-                                                   {{ $user->availablePoints() >= $reward->points_cost 
+                                                   {{ $canClaim 
                                                       ? 'bg-autocheck-red text-white hover:bg-red-700 shadow-red-500/20 active:scale-95' 
                                                       : 'bg-gray-100 text-gray-400 cursor-not-allowed' }}"
-                                             {{ $user->availablePoints() < $reward->points_cost ? 'disabled' : '' }}>
-                                        {{ $user->availablePoints() >= $reward->points_cost ? 'Claim Reward Now' : 'Insufficient Points' }}
+                                             {{ !$canClaim ? 'disabled' : '' }}>
+                                        {{ $canClaim ? 'Claim Reward Now' : 'Not Enough ' . ($reward->serviceType ? 'Specific ' : '') . 'Points' }}
                                     </button>
                                 </form>
                             </div>
@@ -140,6 +167,59 @@
                             <p class="text-sm font-bold text-gray-500">No claimed promos yet.</p>
                         </div>
                     @endforelse
+                </div>
+
+                <!-- How I Earned Points Breakdown -->
+                <div class="mt-8">
+                    <h2 class="text-xl font-black text-gray-900 flex items-center mb-4">
+                        <span class="w-1.5 h-6 bg-autocheck-red rounded-full mr-3"></span>
+                        How I Earned Points
+                    </h2>
+                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                        @if($pointsBreakdown->count() > 0)
+                            <div class="divide-y divide-gray-50">
+                                @foreach($pointsBreakdown as $log)
+                                <div class="flex items-center justify-between px-6 py-4 hover:bg-gray-50/50 transition-colors">
+                                    <div>
+                                        <p class="text-sm font-black text-gray-900">{{ $log['service_type'] }}</p>
+                                        <p class="text-[10px] font-bold text-gray-400 mt-0.5">{{ $log['service_date'] }} &mdash; ₱{{ number_format($log['cost'], 2) }}</p>
+                                    </div>
+                                    <span class="flex-shrink-0 ml-4 px-3 py-1 bg-green-50 text-green-600 text-[10px] font-black rounded-full uppercase tracking-widest">+{{ $log['points_earned'] }} pts</span>
+                                </div>
+                                @endforeach
+                            </div>
+                            <div class="flex items-center justify-between px-6 py-4 bg-gray-50 border-t border-gray-100">
+                                <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Total Points Earned</span>
+                                <span class="text-lg font-black text-autocheck-red">{{ number_format($user->loyalty_points) }} pts</span>
+                            </div>
+                        @else
+                            <div class="flex flex-col items-center justify-center py-10 text-center opacity-40">
+                                <svg class="h-10 w-10 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                <p class="text-sm font-bold text-gray-500">No points earned yet.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Ways to Earn Points -->
+                <div class="mt-8">
+                    <h2 class="text-xl font-black text-gray-900 flex items-center mb-4">
+                        <span class="w-1.5 h-6 bg-autocheck-red rounded-full mr-3"></span>
+                        Ways to Earn
+                    </h2>
+                    <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                        <p class="text-xs text-gray-500 font-bold mb-4">Accumulate points by availing these services during your visit!</p>
+                        <div class="space-y-3">
+                            @foreach($serviceTypes as $type)
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-2xl hover:bg-red-50/50 transition-colors">
+                                <span class="text-sm font-black text-gray-900">{{ $type->name }}</span>
+                                <span class="bg-white text-autocheck-red text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                                    +{{ $type->points_awarded }} PTS
+                                </span>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </div>
 

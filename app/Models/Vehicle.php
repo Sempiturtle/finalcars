@@ -110,8 +110,10 @@ class Vehicle extends Model
 
         if (is_array($this->services)) {
             foreach ($this->services as $service) {
+                $type = $service['type'] ?? 'N/A';
+                
                 $this->serviceLogs()->create([
-                    'service_type' => $service['type'] ?? 'N/A',
+                    'service_type' => $type,
                     'cost' => $service['cost'] ?? 0,
                     'status' => 'completed',
                     'service_date' => $this->updated_at ?? now(),

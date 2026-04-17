@@ -42,7 +42,8 @@ class VehicleController extends Controller
     public function create()
     {
         $users = User::where('role', 'customer')->orderBy('name')->get();
-        return view('admin.vehicles.create', compact('users'));
+        $serviceTypes = \App\Models\ServiceType::orderBy('name')->get();
+        return view('admin.vehicles.create', compact('users', 'serviceTypes'));
     }
 
     /**
@@ -109,7 +110,8 @@ class VehicleController extends Controller
     public function edit(Vehicle $vehicle)
     {
         $users = User::where('role', 'customer')->orderBy('name')->get();
-        return view('admin.vehicles.edit', compact('vehicle', 'users'));
+        $serviceTypes = \App\Models\ServiceType::orderBy('name')->get();
+        return view('admin.vehicles.edit', compact('vehicle', 'users', 'serviceTypes'));
     }
 
     /**

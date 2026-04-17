@@ -73,13 +73,7 @@
                                 </div>
                             </div>
                         </div>
-                        <form action="{{ route('admin.notifications.send', $v['id']) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="inline-flex items-center px-8 py-3.5 bg-autocheck-red text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20">
-                                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                Send Email
-                            </button>
-                        </form>
+                        <!-- Send Email button removed by request -->
                     </div>
                 @empty
                     <div class="p-20 text-center">

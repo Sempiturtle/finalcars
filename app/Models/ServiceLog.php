@@ -24,4 +24,18 @@ class ServiceLog extends Model
     {
         return $this->belongsTo(Vehicle::class);
     }
+
+    public function getPointsEarnedAttribute()
+    {
+        if ($this->status !== 'completed') {
+            return 0;
+        }
+        
+        $serviceType = \App\Models\ServiceType::where('name', $this->service_type)->first();
+        if ($serviceType) {
+            return $serviceType->points_awarded;
+        }
+
+        return floor(($this->cost ?? 0) / 10);
+    }
 }

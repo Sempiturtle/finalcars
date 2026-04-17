@@ -101,14 +101,8 @@
                     <div class="md:col-span-2 space-y-6" 
                         x-data="{
                             services: {{ json_encode(old('services', [])) }},
-                            serviceTypes: [
-                                'Transmission Service (Transmission fluid change and inspection)',
-                                'General Inspection (Comprehensive vehicle safety inspection)',
-                                'Oil Change (Regular oil change and filter replacement)',
-                                'Brake Inspection (Complete brake system inspection)',
-                                'Engine Tune-up (Full engine diagnostic and tune-up)',
-                                'Regular Maintenance service'
-                            ],
+                            serviceTypes: {{ json_encode($serviceTypes->pluck('name')) }},
+                            prices: {{ json_encode($serviceTypes->pluck('base_cost', 'name')) }},
                             addService() {
                                 this.services.push({ type: '', cost: '' });
                             },
@@ -136,11 +130,17 @@
                                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start bg-gray-50/50 p-4 rounded-2xl border border-gray-50">
                                     <div class="md:col-span-7 space-y-1">
                                         <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Type</label>
-                                        <select :name="`services[${index}][type]`" x-model="service.type" required
+                                        
+                                        <!-- Select Dropdown -->
+                                        <select
+                                            x-model="service.type"
+                                            :name="`services[${index}][type]`"
+                                            @change="service.cost = prices[service.type] || 0"
+                                            required
                                             class="block w-full px-4 py-3 bg-white border-transparent rounded-xl text-sm font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
                                             <option value="">Select Service Type</option>
                                             <template x-for="type in serviceTypes">
-                                                <option :value="type" x-text="type"></option>
+                                                <option :value="type" x-text="type" :selected="service.type === type"></option>
                                             </template>
                                         </select>
                                     </div>
@@ -168,6 +168,8 @@
                             <span class="text-2xl font-black text-autocheck-red" x-text="'₱' + totalCost"></span>
                             <input type="hidden" name="total_cost" :value="totalCost">
                         </div>
+
+                        <!-- Manage Service Types Removed (Now in Sidebar) -->
                     </div>
 
                     <!-- Status -->

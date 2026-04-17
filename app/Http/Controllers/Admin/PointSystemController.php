@@ -13,15 +13,27 @@ class PointSystemController extends Controller
     {
         $customers = User::where('role', 'customer')
             ->orderBy('loyalty_points', 'desc')
+            ->with(['vehicles.serviceLogs' => function($q) {
+                $q->where('status', 'completed')->orderBy('service_date', 'desc');
+            }])
             ->get()
             ->map(function (User $user) {
+                $allLogs = $user->vehicles->flatMap->serviceLogs;
                 return [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'points' => $user->loyalty_points,
-                    'status' => $user->calculateActivityLevel(),
+                    'id'            => $user->id,
+                    'name'          => $user->name,
+                    'email'         => $user->email,
+                    'points'        => $user->loyalty_points,
+                    'status'        => $user->calculateActivityLevel(),
                     'vehicle_count' => $user->vehicles()->count(),
+                    'service_logs'  => $allLogs->map(function($log) {
+                        return [
+                            'service_type'   => $log->service_type,
+                            'points_earned'  => $log->points_earned,
+                            'cost'           => $log->cost,
+                            'service_date'   => optional($log->service_date)->format('M d, Y'),
+                        ];
+                    })->values()->toArray(),
                 ];
             });
 

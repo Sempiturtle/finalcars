@@ -48,7 +48,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::resource('vehicles', \App\Http\Controllers\Admin\VehicleController::class);
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+    Route::resource('service-types', \App\Http\Controllers\Admin\ServiceTypeController::class)->except(['create', 'show', 'edit']);
+    
     Route::get('/maintenance', [\App\Http\Controllers\Admin\MaintenanceController::class, 'index'])->name('maintenance.index');
+    Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::get('/service-history', [\App\Http\Controllers\Admin\ServiceHistoryController::class, 'index'])->name('service-history.index');
+    
     Route::get('/notifications', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{vehicle}/send', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'send'])->name('notifications.send');
     
@@ -56,9 +61,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/attention-required', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'attentionRequired'])->name('attention-required');
     Route::post('/attention-required/notify-all', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'notifyAll'])->name('attention-required.notify-all');
     Route::post('/notifications/{vehicle}/call', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'call'])->name('notifications.call');
-
-    Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
-    Route::get('/service-history', [\App\Http\Controllers\Admin\ServiceHistoryController::class, 'index'])->name('service-history.index');
+    
     // Pointing System
     Route::get('/pointing-system', [\App\Http\Controllers\Admin\PointSystemController::class, 'index'])->name('points.index');
     Route::post('/point-system/adjust/{user?}', [\App\Http\Controllers\Admin\PointSystemController::class, 'adjust'])->name('points.adjust');
