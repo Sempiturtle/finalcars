@@ -28,6 +28,7 @@
             box-shadow: 0 10px 15px -3px rgba(245, 48, 3, 0.3);
         }
     </style>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}?v=2">
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased overflow-x-hidden">
     <div class="flex h-screen overflow-hidden" 

@@ -52,12 +52,12 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-xl border border-gray-100">
             <div>
-                <h1 class="text-2xl font-black text-gray-900 tracking-tight">User <span class="text-autocheck-red">Management</span></h1>
-                <p class="text-[13px] text-gray-500 font-bold mt-0.5">Manage system administrators, staff, and customers.</p>
+                <h1 class="text-2xl font-black text-gray-900 tracking-tight">Admin <span class="text-autocheck-red">Management</span></h1>
+                <p class="text-[13px] text-gray-500 font-bold mt-0.5">Manage system administrator accounts.</p>
             </div>
             <button @click="showAddModal = true" class="px-6 py-3 bg-autocheck-red text-white font-black rounded-xl hover:bg-red-700 transition-all shadow-xl shadow-red-500/20 flex items-center space-x-2 text-[11px] uppercase tracking-widest">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
-                <span>Add Member</span>
+                <span>Add Admin</span>
             </button>
         </div>
 
@@ -70,13 +70,13 @@
             </div>
             <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                 <div class="p-2.5 bg-red-50 rounded-xl text-autocheck-red w-fit mb-3"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
-                <h3 class="text-2xl font-black text-gray-900 tracking-tight">{{ $administrators }}</h3>
+                <h3 class="text-2xl font-black text-gray-900 tracking-tight">{{ $totalAdmins }}</h3>
                 <p class="text-gray-400 text-[9px] font-black uppercase tracking-widest mt-0.5">Administrators</p>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                <div class="p-2.5 bg-blue-50 rounded-xl text-blue-600 w-fit mb-3"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg></div>
-                <h3 class="text-2xl font-black text-gray-900 tracking-tight">{{ $staffMembers }}</h3>
-                <p class="text-gray-400 text-[9px] font-black uppercase tracking-widest mt-0.5">Staff Members</p>
+                <div class="p-2.5 bg-blue-50 rounded-xl text-blue-600 w-fit mb-3"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+                <h3 class="text-2xl font-black text-gray-900 tracking-tight">{{ $totalCustomers }}</h3>
+                <p class="text-gray-400 text-[9px] font-black uppercase tracking-widest mt-0.5">Customers</p>
             </div>
         </div>
 
@@ -105,7 +105,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : ($user->role === 'staff' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600') }}">@ {{ $user->role }}</span>
+                                    <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }}">@ {{ $user->role }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-[13px] font-bold text-gray-500">{{ $user->phone ?? 'N/A' }}</td>
                                 <td class="px-6 py-4 text-right">
@@ -128,7 +128,7 @@
             <div class="fixed inset-0 overflow-y-auto flex items-center justify-center p-4">
                 <div class="bg-white w-full max-w-xl rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden" x-show="showAddModal" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="scale-95 opacity-0" x-transition:enter-end="scale-100 opacity-100">
                     <div class="p-8">
-                        <div class="flex items-center justify-between mb-8"><h2 class="text-2xl font-black text-gray-900">New <span class="text-autocheck-red">Member</span></h2><button @click="showAddModal = false" class="text-gray-400 hover:text-gray-600"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+                        <div class="flex items-center justify-between mb-8"><h2 class="text-2xl font-black text-gray-900">New <span class="text-autocheck-red">Admin</span></h2><button @click="showAddModal = false" class="text-gray-400 hover:text-gray-600"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
                         <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-4">
                             @csrf
                             <div class="grid grid-cols-2 gap-4">

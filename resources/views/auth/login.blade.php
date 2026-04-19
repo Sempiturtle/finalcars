@@ -14,6 +14,7 @@
             .bg-autocheck-red { background-color: #F53003; }
             .text-autocheck-red { color: #F53003; }
         </style>
+        <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}?v=2">
     </head>
     <body class="antialiased bg-gray-50 flex items-center justify-center min-h-screen p-4 border-t-8 border-autocheck-red">
         @php $loginType = request('type', 'customer'); @endphp

@@ -23,6 +23,7 @@
                 border-color: #F53003;
             }
         </style>
+        <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}?v=2">
     </head>
     <body class="antialiased bg-gray-50 text-gray-900 border-t-4 border-autocheck-red">
         <!-- Header -->
