@@ -9,6 +9,7 @@ class ServiceLog extends Model
     protected $fillable = [
         'vehicle_id',
         'service_type',
+        'service_mode',
         'cost',
         'status',
         'service_date',
@@ -23,5 +24,19 @@ class ServiceLog extends Model
     public function vehicle()
     {
         return $this->belongsTo(Vehicle::class);
+    }
+
+    public function getPointsEarnedAttribute()
+    {
+        if ($this->status !== 'completed') {
+            return 0;
+        }
+        
+        $serviceType = \App\Models\ServiceType::where('name', $this->service_type)->first();
+        if ($serviceType) {
+            return $serviceType->points_awarded;
+        }
+
+        return floor(($this->cost ?? 0) / 10);
     }
 }

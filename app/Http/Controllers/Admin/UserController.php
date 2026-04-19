@@ -29,12 +29,12 @@ class UserController extends Controller implements HasMiddleware
     public function index()
     {
         $totalUsers = User::count();
-        $administrators = User::where('role', 'admin')->count();
-        $staffMembers = User::where('role', 'staff')->count();
+        $totalAdmins = User::where('role', 'admin')->count();
+        $totalCustomers = User::where('role', 'customer')->count();
 
         $users = User::latest()->paginate(10);
 
-        return view('admin.users.index', compact('users', 'totalUsers', 'administrators', 'staffMembers'));
+        return view('admin.users.index', compact('users', 'totalUsers', 'totalAdmins', 'totalCustomers'));
     }
 
     /**
@@ -48,7 +48,7 @@ class UserController extends Controller implements HasMiddleware
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
-            'role' => 'required|in:admin,staff,customer',
+            'role' => 'required|in:admin',
             'password' => 'required|string|min:8',
         ]);
 
@@ -97,7 +97,7 @@ class UserController extends Controller implements HasMiddleware
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
-            'role' => 'required|in:admin,staff,customer',
+            'role' => 'required|in:admin',
         ]);
 
         if ($request->filled('password')) {

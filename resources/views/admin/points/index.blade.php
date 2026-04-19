@@ -50,8 +50,8 @@
                             <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
                         @foreach($customers as $index => $customer)
+                        <tbody x-data="{ showBreakdown: false }">
                             <tr class="group hover:bg-gray-50/50 transition-colors">
                                 <td class="px-8 py-6">
                                     <span class="text-sm font-black {{ $index < 3 ? 'text-autocheck-red' : 'text-gray-400' }}">
@@ -87,17 +87,53 @@
                                     </div>
                                 </td>
                                 <td class="px-8 py-6">
-                                    <button 
-                                        @click="selectedUser = {{ json_encode($customer) }}; showAdjustModal = true"
-                                        class="p-2.5 bg-gray-50 text-gray-400 hover:text-autocheck-red hover:bg-red-50 rounded-xl transition-all"
-                                        title="Adjust Points"
-                                    >
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                    </button>
+                                    <div class="flex items-center space-x-2">
+                                        {{-- Points Breakdown toggle --}}
+                                        <button @click="showBreakdown = !showBreakdown"
+                                            class="p-2.5 bg-gray-50 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all"
+                                            title="View Points Breakdown">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                        </button>
+                                        {{-- Adjust Points --}}
+                                        <button
+                                            @click="selectedUser = {{ json_encode($customer) }}; showAdjustModal = true"
+                                            class="p-2.5 bg-gray-50 text-gray-400 hover:text-autocheck-red hover:bg-red-50 rounded-xl transition-all"
+                                            title="Adjust Points">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
+
+                            {{-- Points Breakdown Row --}}
+                            <tr x-show="showBreakdown" style="display: none;">
+                                <td colspan="5" class="px-8 pb-6 bg-gray-50/30">
+                                    <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Points Breakdown — {{ $customer['name'] }}</p>
+                                        @if(count($customer['service_logs']) > 0)
+                                            <div class="space-y-2">
+                                                @foreach($customer['service_logs'] as $log)
+                                                <div class="flex items-center justify-between bg-gray-50 rounded-2xl px-5 py-3 border border-gray-100">
+                                                    <div>
+                                                        <p class="text-sm font-black text-gray-900">{{ $log['service_type'] }}</p>
+                                                        <p class="text-[10px] font-bold text-gray-400">{{ $log['service_date'] }} &mdash; ₱{{ number_format($log['cost'], 2) }}</p>
+                                                    </div>
+                                                    <span class="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-black rounded-full uppercase tracking-widest">+{{ $log['points_earned'] }} pts</span>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                            <div class="mt-4 flex justify-end items-center border-t border-gray-100 pt-4">
+                                                <span class="text-xs font-black text-gray-400 uppercase tracking-widest mr-3">Total Earned</span>
+                                                <span class="text-xl font-black text-autocheck-red">{{ number_format($customer['points']) }} pts</span>
+                                            </div>
+                                        @else
+                                            <p class="text-sm text-gray-400 font-bold text-center py-4">No completed services found for this customer.</p>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
                         @endforeach
-                    </tbody>
                 </table>
             </div>
         </div>

@@ -55,6 +55,7 @@
                                         <th class="pb-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Date</th>
                                         <th class="pb-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Service Type</th>
                                         <th class="pb-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Mechanic</th>
+                                        <th class="pb-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Points</th>
                                         <th class="pb-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Cost</th>
                                     </tr>
                                 </thead>
@@ -75,6 +76,15 @@
                                             </td>
                                             <td class="py-4">
                                                 <span class="text-sm font-bold text-gray-600 italic">{{ $log->mechanic_name ?? 'N/A' }}</span>
+                                            </td>
+                                            <td class="py-4 text-center">
+                                                @if($log->points_earned > 0)
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-green-50 text-green-600 uppercase tracking-widest">
+                                                        +{{ $log->points_earned }} pts
+                                                    </span>
+                                                @else
+                                                    <span class="text-xs text-gray-300 font-bold">—</span>
+                                                @endif
                                             </td>
                                             <td class="py-4 text-right">
                                                 <span class="text-sm font-black text-gray-900">₱{{ number_format($log->cost, 2) }}</span>
@@ -109,6 +119,12 @@
                                             <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mechanic</p>
                                             <p class="text-sm font-bold text-gray-600 italic">{{ $log->mechanic_name ?? 'N/A' }}</p>
                                         </div>
+                                        @if($log->points_earned > 0)
+                                        <div class="flex items-center justify-between pt-2 border-t border-gray-200 border-dashed">
+                                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Points Earned</p>
+                                            <span class="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-black rounded-full uppercase tracking-widest">+{{ $log->points_earned }} pts</span>
+                                        </div>
+                                        @endif
                                     </div>
                                 </div>
                             @empty

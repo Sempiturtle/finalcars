@@ -71,11 +71,31 @@ class Vehicle extends Model
     {
         static::created(function ($vehicle) {
             $vehicle->syncServiceLogs();
+            
+            // Notify owner of new vehicle registration
+            if ($vehicle->owner) {
+                $vehicle->owner->notify(new \App\Notifications\SystemNotification(
+                    'New Vehicle Registered',
+                    "A new {$vehicle->make} {$vehicle->model} (Plate: {$vehicle->plate_number}) has been added to your account.",
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />',
+                    route('customer.dashboard')
+                ));
+            }
         });
 
         static::updated(function ($vehicle) {
             if ($vehicle->isDirty('services') || $vehicle->isDirty('mechanic_name')) {
                 $vehicle->syncServiceLogs();
+            }
+
+            // Notify owner of vehicle reassignment
+            if ($vehicle->isDirty('user_id') && $vehicle->owner) {
+                $vehicle->owner->notify(new \App\Notifications\SystemNotification(
+                    'Vehicle Reassigned To You',
+                    "The {$vehicle->make} {$vehicle->model} (Plate: {$vehicle->plate_number}) is now under your management.",
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />',
+                    route('customer.dashboard')
+                ));
             }
         });
     }
@@ -90,8 +110,11 @@ class Vehicle extends Model
 
         if (is_array($this->services)) {
             foreach ($this->services as $service) {
+                $type = $service['type'] ?? 'N/A';
+                
                 $this->serviceLogs()->create([
-                    'service_type' => $service['type'] ?? 'N/A',
+                    'service_type' => $type,
+                    'service_mode' => $service['mode'] ?? 'Walk-in',
                     'cost' => $service['cost'] ?? 0,
                     'status' => 'completed',
                     'service_date' => $this->updated_at ?? now(),

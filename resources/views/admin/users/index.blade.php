@@ -1,5 +1,26 @@
 <x-admin-layout>
-    <div class="space-y-8" x-data="{ showAddModal: {{ $errors->any() ? 'true' : 'false' }}, showEditModal: false, editUserId: null, showToast: {{ session('success') || session('error') ? 'true' : 'false' }} }">
+    <div class="space-y-8" 
+        x-data="{ 
+            showAddModal: {{ $errors->any() ? 'true' : 'false' }}, 
+            showEditModal: false, 
+            editUser: { id: null, name: '', email: '', username: '', phone: '+63', role: '', address: '' },
+            showToast: {{ session('success') || session('error') ? 'true' : 'false' }},
+            updateScrollLock() {
+                const main = document.querySelector('main');
+                if (this.showAddModal || this.showEditModal) {
+                    main.style.overflow = 'hidden';
+                    main.style.paddingRight = '0px'; 
+                } else {
+                    main.style.overflow = 'auto';
+                    main.style.paddingRight = '0px';
+                }
+            }
+        }"
+        x-init="
+            $watch('showAddModal', () => updateScrollLock());
+            $watch('showEditModal', () => updateScrollLock());
+        "
+    >
         <!-- Toast Notification -->
         <div 
             x-show="showToast"
@@ -10,160 +31,87 @@
             x-transition:leave="transition ease-in duration-200 transform"
             x-transition:leave-start="translate-y-0 opacity-100"
             x-transition:leave-end="translate-y-[-100%] opacity-0"
-            class="fixed top-4 right-4 z-[70] max-w-md"
+            class="fixed top-4 right-4 z-[80] max-w-md"
         >
             @if(session('success'))
                 <div class="bg-white border-l-4 border-green-500 rounded-2xl shadow-2xl p-4 flex items-start space-x-3">
-                    <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-bold text-gray-900">Success!</p>
-                        <p class="text-sm text-gray-600 mt-1">{{ session('success') }}</p>
-                    </div>
-                    <button @click="showToast = false" class="flex-shrink-0 text-gray-400 hover:text-gray-600">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
+                    <div class="flex-shrink-0"><svg class="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                    <div class="flex-1"><p class="text-sm font-bold text-gray-900">Success!</p><p class="text-sm text-gray-600 mt-1">{{ session('success') }}</p></div>
+                    <button @click="showToast = false" class="flex-shrink-0 text-gray-400 hover:text-gray-600"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
                 </div>
             @endif
-
             @if(session('error'))
                 <div class="bg-white border-l-4 border-red-500 rounded-2xl shadow-2xl p-4 flex items-start space-x-3">
-                    <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-bold text-gray-900">Error!</p>
-                        <p class="text-sm text-gray-600 mt-1">{{ session('error') }}</p>
-                    </div>
-                    <button @click="showToast = false" class="flex-shrink-0 text-gray-400 hover:text-gray-600">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
+                    <div class="flex-shrink-0"><svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                    <div class="flex-1"><p class="text-sm font-bold text-gray-900">Error!</p><p class="text-sm text-gray-600 mt-1">{{ session('error') }}</p></div>
+                    <button @click="showToast = false" class="flex-shrink-0 text-gray-400 hover:text-gray-600"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
                 </div>
-            @endif>
+            @endif
         </div>
 
-        <!-- Validation Errors (Keep for form validation) -->
-        @if($errors->any())
-            <div class="bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-2xl">
-                <div class="flex items-start">
-                    <svg class="h-5 w-5 mr-3 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <div>
-                        <p class="font-bold mb-2">Please fix the following errors:</p>
-                        <ul class="list-disc list-inside space-y-1">
-                            @foreach($errors->all() as $error)
-                                <li class="text-sm">{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        @endif
-
         <!-- Header -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-xl border border-gray-100">
             <div>
-                <h1 class="text-3xl font-black text-gray-900 tracking-tight">User Management</h1>
-                <p class="text-gray-500 font-medium mt-1">Manage system administrators, staff members, and customers.</p>
+                <h1 class="text-2xl font-black text-gray-900 tracking-tight">Admin <span class="text-autocheck-red">Management</span></h1>
+                <p class="text-[13px] text-gray-500 font-bold mt-0.5">Manage system administrator accounts.</p>
             </div>
-            <button @click="showAddModal = true" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-bold rounded-2xl text-white bg-autocheck-red hover:bg-red-700 transition-all shadow-lg shadow-red-500/30">
-                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                Add New User
+            <button @click="showAddModal = true" class="px-6 py-3 bg-autocheck-red text-white font-black rounded-xl hover:bg-red-700 transition-all shadow-xl shadow-red-500/20 flex items-center space-x-2 text-[11px] uppercase tracking-widest">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                <span>Add Admin</span>
             </button>
         </div>
 
         <!-- Stats Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Total Users -->
-            <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-3 bg-gray-50 rounded-2xl text-gray-400">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    </div>
-                </div>
-                <h3 class="text-3xl font-black text-gray-900 tracking-tight">{{ $totalUsers }}</h3>
-                <p class="text-gray-400 text-xs font-black uppercase tracking-widest mt-1">Total Users</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="p-2.5 bg-gray-50 rounded-xl text-gray-400 w-fit mb-3"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                <h3 class="text-2xl font-black text-gray-900 tracking-tight">{{ $totalUsers }}</h3>
+                <p class="text-gray-400 text-[9px] font-black uppercase tracking-widest mt-0.5">Total Users</p>
             </div>
-
-            <!-- Administrators -->
-            <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-3 bg-red-50 rounded-2xl text-autocheck-red">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    </div>
-                </div>
-                <h3 class="text-3xl font-black text-gray-900 tracking-tight">{{ $administrators }}</h3>
-                <p class="text-gray-400 text-xs font-black uppercase tracking-widest mt-1">Administrators</p>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="p-2.5 bg-red-50 rounded-xl text-autocheck-red w-fit mb-3"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
+                <h3 class="text-2xl font-black text-gray-900 tracking-tight">{{ $totalAdmins }}</h3>
+                <p class="text-gray-400 text-[9px] font-black uppercase tracking-widest mt-0.5">Administrators</p>
             </div>
-
-            <!-- Staff Members -->
-            <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="p-3 bg-blue-50 rounded-2xl text-blue-600">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    </div>
-                </div>
-                <h3 class="text-3xl font-black text-gray-900 tracking-tight">{{ $staffMembers }}</h3>
-                <p class="text-gray-400 text-xs font-black uppercase tracking-widest mt-1">Staff Members</p>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="p-2.5 bg-blue-50 rounded-xl text-blue-600 w-fit mb-3"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+                <h3 class="text-2xl font-black text-gray-900 tracking-tight">{{ $totalCustomers }}</h3>
+                <p class="text-gray-400 text-[9px] font-black uppercase tracking-widest mt-0.5">Customers</p>
             </div>
         </div>
 
-        <!-- Users Table -->
-        <div class="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
+        <!-- User Table Card -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left">
                     <thead>
-                        <tr class="border-b border-gray-50 bg-gray-50/50">
-                            <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">User</th>
-                            <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Username</th>
-                            <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Role</th>
-                            <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Address</th>
-                            <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Actions</th>
+                        <tr class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] italic border-b border-gray-50">
+                            <th class="px-6 py-4">Identity</th>
+                            <th class="px-6 py-4">Access Role</th>
+                            <th class="px-6 py-4">Contact Information</th>
+                            <th class="px-6 py-4 text-right">Operations</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
                         @foreach($users as $user)
-                            <tr class="group hover:bg-gray-50/50 transition-colors">
-                                <td class="px-8 py-6">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-sm font-black text-gray-400 group-hover:bg-white transition-colors border border-transparent group-hover:border-gray-100 uppercase">
-                                            {{ substr($user->name, 0, 1) }}
-                                        </div>
+                            <tr class="hover:bg-gray-50/50 transition-all duration-300 group">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center text-white font-black text-base group-hover:bg-autocheck-red transition-colors">{{ substr($user->name, 0, 1) }}</div>
                                         <div>
-                                            <p class="text-sm font-black text-gray-900 tracking-tight">{{ $user->name }}</p>
-                                            <p class="text-xs font-bold text-gray-400">{{ $user->email }} @if($user->phone) • {{ $user->phone }} @endif</p>
+                                            <p class="text-[13px] font-black text-gray-900 tracking-tight">{{ $user->name }}</p>
+                                            <p class="text-[9px] font-bold text-gray-400 lowercase">{{ $user->email }}</p>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-8 py-6">
-                                    <span class="text-sm font-bold text-gray-600">@ {{ $user->username ?? 'N/A' }}</span>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }}">@ {{ $user->role }}</span>
                                 </td>
-                                <td class="px-8 py-6">
-                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] {{ 
-                                        match($user->role) {
-                                            'admin' => 'bg-red-50 text-autocheck-red',
-                                            'staff' => 'bg-blue-50 text-blue-600',
-                                            default => 'bg-gray-50 text-gray-600',
-                                        }
-                                    }}">
-                                        {{ $user->role }}
-                                    </span>
-                                </td>
-                                <td class="px-8 py-6">
-                                    <p class="text-sm font-bold text-gray-500 max-w-xs truncate">{{ $user->address ?? 'N/A' }}</p>
-                                </td>
-                                <td class="px-8 py-6 text-right">
-                                    <div class="flex items-center space-x-2 transition-opacity justify-end">
-                                        <button @click="editUserId = {{ $user->id }}; showEditModal = true" class="p-2.5 bg-gray-50 text-blue-600 hover:bg-blue-100 rounded-xl transition-all" title="Edit User">
-                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                        </button>
-                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="p-2.5 bg-gray-50 text-red-600 hover:bg-red-100 rounded-xl transition-all" title="Delete User">
-                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                            </button>
-                                        </form>
+                                <td class="px-6 py-4 text-[13px] font-bold text-gray-500">{{ $user->phone ?? 'N/A' }}</td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex items-center justify-end space-x-1.5">
+                                        <button @click="editUser = { id: '{{ $user->id }}', name: '{{ addslashes($user->name) }}', email: '{{ $user->email }}', username: '{{ $user->username }}', phone: '{{ $user->phone }}', role: '{{ $user->role }}', address: '{{ addslashes($user->address) }}' }; showEditModal = true;" class="p-2 bg-gray-50 text-gray-400 hover:bg-gray-900 hover:text-white rounded-lg transition-all"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
+                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Archive this user? This action is permanent.')" class="inline">@csrf @method('DELETE') <button type="submit" class="p-2 bg-gray-50 text-red-400 hover:bg-red-100 hover:text-red-700 rounded-lg transition-all"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></form>
                                     </div>
                                 </td>
                             </tr>
@@ -171,123 +119,28 @@
                     </tbody>
                 </table>
             </div>
-            @if($users->hasPages())
-                <div class="px-8 py-6 bg-gray-50/30 border-t border-gray-50">
-                    {{ $users->links() }}
-                </div>
-            @endif
+            @if($users->hasPages()) <div class="px-6 py-4 bg-gray-50/30 border-t border-gray-50">{{ $users->links() }}</div> @endif
         </div>
 
         <!-- Add User Modal -->
-        <div 
-            x-show="showAddModal" 
-            class="fixed inset-0 z-[60] overflow-y-auto" 
-            x-cloak
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-        >
-            <div class="flex items-center justify-center min-h-screen px-4 py-8">
-                <div @click="showAddModal = false" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm"></div>
-                
-                <div 
-                    class="relative bg-white w-full max-w-xl rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden"
-                    x-show="showAddModal"
-                    x-transition:enter="transition ease-out duration-300 transform"
-                    x-transition:enter-start="scale-95 translate-y-4"
-                    x-transition:enter-end="scale-100 translate-y-0"
-                >
-                    <div class="p-6 md:p-8">
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <h2 class="text-2xl font-black text-gray-900 tracking-tight">Create New User</h2>
-                                <p class="text-gray-500 font-medium text-sm mt-1">Assign roles and set up access credentials.</p>
-                            </div>
-                            <button @click="showAddModal = false" class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
-                        </div>
-
+        <div x-show="showAddModal" class="fixed inset-0 z-[60]" x-cloak>
+            <div @click="showAddModal = false" class="fixed inset-0 bg-gray-900/80 backdrop-blur-2xl transition-opacity duration-300" x-show="showAddModal" x-transition:enter="ease-out" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"></div>
+            <div class="fixed inset-0 overflow-y-auto flex items-center justify-center p-4">
+                <div class="bg-white w-full max-w-xl rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden" x-show="showAddModal" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="scale-95 opacity-0" x-transition:enter-end="scale-100 opacity-100">
+                    <div class="p-8">
+                        <div class="flex items-center justify-between mb-8"><h2 class="text-2xl font-black text-gray-900">New <span class="text-autocheck-red">Admin</span></h2><button @click="showAddModal = false" class="text-gray-400 hover:text-gray-600"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
                         <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-4">
                             @csrf
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Full Name -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Full Name</label>
-                                    <input type="text" name="name" value="{{ old('name') }}" required class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all @error('name') border-red-500 @enderror" placeholder="John Doe">
-                                    @error('name')
-                                        <p class="text-red-600 text-xs font-bold ml-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Username -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Username</label>
-                                    <input type="text" name="username" value="{{ old('username') }}" required class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all @error('username') border-red-500 @enderror" placeholder="johndoe">
-                                    @error('username')
-                                        <p class="text-red-600 text-xs font-bold ml-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Email -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Email Address</label>
-                                    <input type="email" name="email" value="{{ old('email') }}" required class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all @error('email') border-red-500 @enderror" placeholder="john@example.com">
-                                    @error('email')
-                                        <p class="text-red-600 text-xs font-bold ml-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Phone -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Phone Number</label>
-                                    <input type="text" name="phone" value="{{ old('phone', '+63') }}" class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all @error('phone') border-red-500 @enderror" placeholder="+639296645607">
-                                    @error('phone')
-                                        <p class="text-red-600 text-xs font-bold ml-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Role -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Access Role</label>
-                                    <select name="role" required class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all @error('role') border-red-500 @enderror">
-                                        <option value="customer" {{ old('role') == 'customer' ? 'selected' : '' }}>User (Customer)</option>
-                                        <option value="staff" {{ old('role') == 'staff' ? 'selected' : '' }}>Staff Member</option>
-                                        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Administrator</option>
-                                    </select>
-                                    @error('role')
-                                        <p class="text-red-600 text-xs font-bold ml-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Password -->
-                                <div class="space-y-2 md:col-span-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Initial Password</label>
-                                    <input type="password" name="password" required class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all @error('password') border-red-500 @enderror" placeholder="••••••••">
-                                    @error('password')
-                                        <p class="text-red-600 text-xs font-bold ml-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Address -->
-                                <div class="space-y-2 md:col-span-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Physical Address</label>
-                                    <textarea name="address" rows="3" class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all @error('address') border-red-500 @enderror" placeholder="Enter full address...">{{ old('address') }}</textarea>
-                                    @error('address')
-                                        <p class="text-red-600 text-xs font-bold ml-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Name</label><input type="text" name="name" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Username</label><input type="text" name="username" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label><input type="email" name="email" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone</label><input type="text" name="phone" value="+63" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <input type="hidden" name="role" value="admin">
+                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Password</label><input type="password" name="password" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <div class="col-span-2 space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Address</label><textarea name="address" rows="2" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none"></textarea></div>
                             </div>
-
-                            <div class="pt-4">
-                                <button type="submit" class="w-full py-4 bg-autocheck-red text-white font-black rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/30 uppercase tracking-[0.2em] text-xs">
-                                    Create User Account
-                                </button>
-                            </div>
+                            <button type="submit" class="w-full py-4 bg-autocheck-red text-white font-black rounded-xl hover:bg-red-700 transition-all mt-4 tracking-widest shadow-xl shadow-red-500/10">AUTHENTICATE REGISTRATION</button>
                         </form>
                     </div>
                 </div>
@@ -295,100 +148,27 @@
         </div>
 
         <!-- Edit User Modal -->
-        <div 
-            x-show="showEditModal" 
-            class="fixed inset-0 z-[60] overflow-y-auto" 
-            x-cloak
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-        >
-            <div class="flex items-center justify-center min-h-screen px-4 py-8">
-                <div @click="showEditModal = false" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm"></div>
-                
-                @foreach($users as $user)
-                <div 
-                    x-show="editUserId === {{ $user->id }}"
-                    class="relative bg-white w-full max-w-xl rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden"
-                    x-transition:enter="transition ease-out duration-300 transform"
-                    x-transition:enter-start="scale-95 translate-y-4"
-                    x-transition:enter-end="scale-100 translate-y-0"
-                >
-                    <div class="p-6 md:p-8">
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <h2 class="text-2xl font-black text-gray-900 tracking-tight">Edit User</h2>
-                                <p class="text-gray-500 font-medium text-sm mt-1">Update user information and access level.</p>
+        <div x-show="showEditModal" class="fixed inset-0 z-[60]" x-cloak>
+            <div @click="showEditModal = false" class="fixed inset-0 bg-gray-900/80 backdrop-blur-2xl transition-opacity duration-300" x-show="showEditModal" x-transition:enter="ease-out" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"></div>
+            <div class="fixed inset-0 overflow-y-auto flex items-center justify-center p-4">
+                <div class="bg-white w-full max-w-xl rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden" x-show="showEditModal" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="scale-95 opacity-0" x-transition:enter-end="scale-100 opacity-100">
+                    <div class="p-8">
+                        <div class="flex items-center justify-between mb-8"><h2 class="text-2xl font-black text-gray-900">Modify <span class="text-autocheck-red" x-text="editUser.name"></span></h2><button @click="showEditModal = false" class="text-gray-400 hover:text-gray-600"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+                        <form :action="'/admin/users/' + editUser.id" method="POST" class="space-y-4">
+                            @csrf @method('PUT')
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label><input type="text" name="name" x-model="editUser.name" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Username</label><input type="text" name="username" x-model="editUser.username" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label><input type="email" name="email" x-model="editUser.email" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone</label><input type="text" name="phone" x-model="editUser.phone" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <input type="hidden" name="role" value="admin">
+                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">New Password (Empty to keep)</label><input type="password" name="password" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <div class="col-span-2 space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Physical Address</label><textarea name="address" x-model="editUser.address" rows="2" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none"></textarea></div>
                             </div>
-                            <button @click="showEditModal = false" class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
-                        </div>
-
-                        <form action="{{ route('admin.users.update', $user) }}" method="POST" class="space-y-4">
-                            @csrf
-                            @method('PUT')
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Full Name -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Full Name</label>
-                                    <input type="text" name="name" value="{{ $user->name }}" required class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
-                                </div>
-
-                                <!-- Username -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Username</label>
-                                    <input type="text" name="username" value="{{ $user->username }}" required class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
-                                </div>
-
-                                <!-- Email -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Email Address</label>
-                                    <input type="email" name="email" value="{{ $user->email }}" required class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
-                                </div>
-
-                                <!-- Phone -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Phone Number</label>
-                                    <input type="text" name="phone" value="{{ $user->phone ?? '+63' }}" class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all" placeholder="+639296645607">
-                                </div>
-
-                                <!-- Role -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Access Role</label>
-                                    <select name="role" required class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
-                                        <option value="customer" {{ $user->role == 'customer' ? 'selected' : '' }}>User (Customer)</option>
-                                        <option value="staff" {{ $user->role == 'staff' ? 'selected' : '' }}>Staff Member</option>
-                                        <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Administrator</option>
-                                    </select>
-                                </div>
-
-                                <!-- Password (Optional) -->
-                                <div class="space-y-2 md:col-span-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">New Password (Leave blank to keep current)</label>
-                                    <input type="password" name="password" class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all" placeholder="••••••••">
-                                </div>
-
-                                <!-- Address -->
-                                <div class="space-y-2 md:col-span-2">
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Physical Address</label>
-                                    <textarea name="address" rows="3" class="w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all" placeholder="Enter full address...">{{ $user->address }}</textarea>
-                                </div>
-                            </div>
-
-                            <div class="pt-4">
-                                <button type="submit" class="w-full py-4 bg-autocheck-red text-white font-black rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/30 uppercase tracking-[0.2em] text-xs">
-                                    Update User Account
-                                </button>
-                            </div>
+                            <button type="submit" class="w-full py-4 bg-autocheck-red text-white font-black rounded-xl hover:bg-red-700 transition-all mt-4 tracking-widest shadow-xl shadow-red-500/10">FINALIZE MODIFICATIONS</button>
                         </form>
                     </div>
                 </div>
-                @endforeach
             </div>
         </div>
     </div>

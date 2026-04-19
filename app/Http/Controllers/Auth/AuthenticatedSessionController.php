@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         if (Auth::user()->isCustomer()) {
-            return redirect()->intended(route('customer.dashboard', absolute: false));
+            return redirect()->intended(route('customer.landing', absolute: false));
         }
 
         return redirect()->intended(route('dashboard', absolute: false));

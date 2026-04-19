@@ -45,8 +45,46 @@ class User extends Authenticatable
 
     public function recalculateLoyaltyPoints()
     {
-        $serviceCount = $this->vehicles()->withCount('serviceLogs')->get()->sum('service_logs_count');
-        $this->update(['loyalty_points' => $serviceCount * 100]);
+        $serviceLogs = $this->vehicles()->with(['serviceLogs' => function($q) {
+            $q->where('status', 'completed');
+        }])->get()->flatMap(function($vehicle) {
+            return $vehicle->serviceLogs;
+        });
+
+        $points = 0;
+
+        foreach ($serviceLogs as $log) {
+            $points += $log->points_earned;
+        }
+        
+        $this->update(['loyalty_points' => $points]);
+    }
+
+    /**
+     * Calculate how many points the user has earned specifically from a given service type.
+     */
+    public function pointsForServiceType(string $serviceTypeName): int
+    {
+        $earned = (int) $this->vehicles()
+            ->with(['serviceLogs' => fn($q) => $q->where('status', 'completed')])
+            ->get()
+            ->flatMap(function($vehicle) {
+                return $vehicle->serviceLogs;
+            })
+            ->filter(function($log) use ($serviceTypeName) {
+                return strtolower(trim($log->service_type)) === strtolower(trim($serviceTypeName));
+            })
+            ->sum(function($log) {
+                return $log->points_earned;
+            });
+
+        $spent = (int) $this->rewards()
+            ->whereHas('serviceType', function($q) use ($serviceTypeName) {
+                $q->where('name', $serviceTypeName);
+            })
+            ->sum('points_cost');
+
+        return max(0, $earned - $spent);
     }
 
     public function isAdmin(): bool

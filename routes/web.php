@@ -29,7 +29,7 @@ Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
     }
     if ($user->isCustomer()) {
-        return redirect()->route('customer.dashboard');
+        return redirect()->route('customer.landing');
     }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -48,7 +48,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::resource('vehicles', \App\Http\Controllers\Admin\VehicleController::class);
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+    Route::resource('service-types', \App\Http\Controllers\Admin\ServiceTypeController::class)->except(['create', 'show', 'edit']);
+    
     Route::get('/maintenance', [\App\Http\Controllers\Admin\MaintenanceController::class, 'index'])->name('maintenance.index');
+    Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::get('/service-history', [\App\Http\Controllers\Admin\ServiceHistoryController::class, 'index'])->name('service-history.index');
+    
     Route::get('/notifications', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{vehicle}/send', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'send'])->name('notifications.send');
     
@@ -56,14 +61,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/attention-required', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'attentionRequired'])->name('attention-required');
     Route::post('/attention-required/notify-all', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'notifyAll'])->name('attention-required.notify-all');
     Route::post('/notifications/{vehicle}/call', [\App\Http\Controllers\Admin\EmailNotificationController::class, 'call'])->name('notifications.call');
-
-    Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
-    Route::get('/service-history', [\App\Http\Controllers\Admin\ServiceHistoryController::class, 'index'])->name('service-history.index');
+    
     // Pointing System
     Route::get('/pointing-system', [\App\Http\Controllers\Admin\PointSystemController::class, 'index'])->name('points.index');
     Route::post('/point-system/adjust/{user?}', [\App\Http\Controllers\Admin\PointSystemController::class, 'adjust'])->name('points.adjust');
     Route::post('/point-system/sync-all', [\App\Http\Controllers\Admin\PointSystemController::class, 'syncAll'])->name('points.sync-all');
     Route::post('/test-email', [\App\Http\Controllers\Admin\TestEmailController::class, 'send'])->name('test-email.send');
+    
+    // Reward Management
+    Route::resource('rewards', \App\Http\Controllers\Admin\RewardController::class);
+    Route::patch('/rewards/{reward}/toggle', [\App\Http\Controllers\Admin\RewardController::class, 'updateStatus'])->name('rewards.toggle');
     
     // Timeline Monitoring
     Route::get('/timeline', [\App\Http\Controllers\Admin\MaintenanceTimelineController::class, 'index'])->name('maintenance.timeline');
@@ -76,13 +83,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 Route::middleware(['auth', 'customer'])->prefix('customer')->name('customer.')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\Customer\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/home', [\App\Http\Controllers\Customer\DashboardController::class, 'landing'])->name('landing');
+    Route::get('/dashboard', function() { return redirect()->route('customer.landing'); })->name('dashboard');
     Route::get('/timeline', [\App\Http\Controllers\Customer\MaintenanceTimelineController::class, 'index'])->name('maintenance.timeline');
 
     // Chat System
     Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'customerIndex'])->name('chat.index');
     Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
     Route::get('/chat/fetch', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.fetch');
+
+    // Vehicle Management
+    Route::resource('vehicles', \App\Http\Controllers\Customer\VehicleController::class);
+    Route::post('/vehicles/{vehicle}/log-service', [\App\Http\Controllers\Customer\VehicleController::class, 'logService'])->name('vehicles.log-service');
 
     // Loyalty Rewards
     Route::get('/rewards', [\App\Http\Controllers\Customer\RewardController::class, 'index'])->name('rewards.index');

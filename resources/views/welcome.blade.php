@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>AutoCheck Enterprises – Preventive Maintenance Tracking System</title>
+        <title>AutoCheck Enterprises</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
@@ -23,6 +23,7 @@
                 border-color: #F53003;
             }
         </style>
+        <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}?v=2">
     </head>
     <body class="antialiased bg-gray-50 text-gray-900 border-t-4 border-autocheck-red">
         <!-- Header -->
@@ -33,17 +34,21 @@
                             <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-12 w-12 rounded-full object-cover border-2 border-autocheck-red shadow-sm">
                             <span class="text-xl font-bold tracking-tight text-gray-900">
                                 AutoCheck <span class="text-autocheck-red">Enterprises</span>
-                                <span class="hidden lg:inline text-gray-400 font-normal text-sm ml-2">| Preventive Maintenance Tracking System</span>
                             </span>
                         </a>
 
                     <!-- Desktop Nav -->
-                    <div class="hidden md:flex items-center space-x-8">
+                    <div class="hidden lg:flex items-center space-x-4">
                         <a href="#home" class="text-sm font-medium text-gray-700 hover:text-autocheck-red transition-colors">Home</a>
                         <a href="{{ route('about') }}" class="text-sm font-medium text-gray-700 hover:text-autocheck-red transition-colors">About</a>
                         <a href="{{ route('announcements.index') }}" class="text-sm font-medium text-gray-700 hover:text-autocheck-red transition-colors">Announcements & Updates</a>
                         <a href="{{ route('services.index') }}" class="text-sm font-medium text-gray-700 hover:text-autocheck-red transition-colors">Services</a>
                         <a href="{{ route('features.index') }}" class="text-sm font-medium text-gray-700 hover:text-autocheck-red transition-colors">Features</a>
+
+                        <a href="{{ route('register') }}" class="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-semibold rounded-full text-white bg-autocheck-red hover:bg-red-700 focus:outline-none transition-all shadow-lg shadow-red-500/30">
+                            Register
+                            <svg class="ml-2 -mr-0.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                        </a>
 
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" class="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-semibold rounded-full text-white bg-autocheck-red hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all shadow-lg shadow-red-500/30">
@@ -92,6 +97,7 @@
                 <a href="{{ route('services.index') }}" class="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg">Services</a>
                 <a href="{{ route('features.index') }}" class="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg">Features</a>
                 <hr class="my-2 border-gray-100">
+                <a href="{{ route('register') }}" class="block px-4 py-2 text-base font-bold text-autocheck-red uppercase tracking-wider border-t border-gray-100">Register</a>
                 <a href="{{ route('login', ['type' => 'customer']) }}" class="block px-4 py-2 text-base font-bold text-autocheck-red uppercase tracking-wider">Customer Login</a>
                 <a href="{{ route('login', ['type' => 'admin']) }}" class="block px-4 py-2 text-base font-bold text-autocheck-red uppercase tracking-wider">Admin Login</a>
             </div>
@@ -129,8 +135,8 @@
                             </div>
 
                             <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                                <a href="{{ route('services.index') }}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-2xl text-white bg-autocheck-red hover:bg-red-700 transition-all shadow-xl shadow-red-500/20">
-                                    Explore Services
+                                <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-2xl text-white bg-autocheck-red hover:bg-red-700 transition-all shadow-xl shadow-red-500/20">
+                                    Get Started
                                 </a>
                                 <a href="{{ route('about') }}" class="inline-flex items-center justify-center px-8 py-4 border border-gray-200 text-lg font-bold rounded-2xl text-gray-900 bg-white hover:bg-gray-50 transition-all">
                                     Learn More
@@ -230,7 +236,7 @@
                 </div>
 
                 <div class="border-t border-gray-900 pt-12 text-center text-sm text-gray-500 font-medium">
-                    <p class="mb-4">© 2026 AutoCheck Enterprises. Vehicle Preventive Maintenance Tracking System.</p>
+                    <p class="mb-4">© 2026 AutoCheck Enterprises.</p>
                     <p>All rights reserved. | Founded by Mr. Mark Paul Colocado</p>
                 </div>
             </div>

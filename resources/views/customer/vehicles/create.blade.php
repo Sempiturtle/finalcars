@@ -1,0 +1,169 @@
+<x-customer-layout>
+    <div class="max-w-4xl mx-auto space-y-8" 
+        x-data="{
+            services: [],
+            serviceTypes: {{ json_encode($serviceTypes->pluck('name')) }},
+            prices: {{ json_encode($serviceTypes->pluck('base_cost', 'name')) }},
+            addService() {
+                this.services.push({ type: '', cost: '' });
+            },
+            removeService(index) {
+                this.services.splice(index, 1);
+            },
+            get totalCost() {
+                return this.services.reduce((sum, service) => sum + (parseFloat(service.cost) || 0), 0).toFixed(2);
+            }
+        }"
+    >
+        <!-- Header -->
+        <div class="flex items-center space-x-6">
+            <a href="{{ route('customer.vehicles.index') }}" class="p-3 bg-white border border-gray-100 rounded-2xl text-gray-400 hover:text-autocheck-red transition-all shadow-sm">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </a>
+            <div>
+                <h1 class="text-2xl font-black text-gray-900 tracking-tight uppercase">Register <span class="text-autocheck-red italic">Your Vehicle</span></h1>
+                <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1 italic">Add vehicle details and initial service history.</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[3rem] p-8 md:p-12 shadow-xl border border-gray-100 relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mt-12 -mr-12 w-64 h-64 bg-autocheck-red/5 rounded-full"></div>
+            
+            <form action="{{ route('customer.vehicles.store') }}" method="POST" class="relative z-10 space-y-10">
+                @csrf
+                
+                <!-- Section: Basic Information -->
+                <div class="space-y-6">
+                    <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center">
+                        <span class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center mr-3 text-autocheck-red">01</span>
+                        Basic Information
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 px-1">Plate Number</label>
+                            <input type="text" name="plate_number" value="{{ old('plate_number') }}" required
+                                   class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-2xl text-xs font-black uppercase tracking-widest focus:bg-white focus:ring-4 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all"
+                                   placeholder="ABC 1234">
+                            @error('plate_number') <p class="text-[10px] font-bold text-red-500 ml-2 mt-1">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 px-1">Vehicle Make</label>
+                            <input type="text" name="make" value="{{ old('make') }}" required
+                                   class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all"
+                                   placeholder="e.g. Toyota">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Vehicle Model</label>
+                            <input type="text" name="model" value="{{ old('model') }}" required
+                                   class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all"
+                                   placeholder="e.g. Vios">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Year</label>
+                            <input type="text" name="year" value="{{ old('year') }}" required
+                                   class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all"
+                                   placeholder="2024">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Color</label>
+                            <input type="text" name="color" value="{{ old('color') }}"
+                                   class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all"
+                                   placeholder="e.g. White">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Registration Date</label>
+                            <input type="date" name="registration_date" value="{{ old('registration_date') }}"
+                                   class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Next Service Date</label>
+                            <input type="date" name="next_service_date" value="{{ old('next_service_date') }}"
+                                   class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-4 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-gray-50">
+
+                <!-- Section: Initial Service History (Ported from Admin) -->
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest flex items-center">
+                            <span class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center mr-3 text-autocheck-red">02</span>
+                            Service Records
+                        </h3>
+                        <button type="button" @click="addService()" class="px-4 py-2 bg-gray-900 text-white text-[10px] font-black rounded-xl hover:bg-black transition-all uppercase tracking-widest flex items-center shadow-xl shadow-black/10">
+                            <svg class="h-3 w-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                            Add Service Log
+                        </button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <template x-for="(service, index) in services" :key="index">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-gray-50/50 p-6 rounded-3xl border border-gray-100 group animate-fade-in text-left">
+                                <div class="md:col-span-4 space-y-2 text-left">
+                                    <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest px-2">Service Description</label>
+                                    <select
+                                        x-model="service.type"
+                                        :name="`services[${index}][type]`"
+                                        @change="service.cost = prices[service.type] || 0"
+                                        required
+                                        class="block w-full px-5 py-3 bg-white border-transparent rounded-2xl text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all">
+                                        <option value="">Select Type</option>
+                                        @foreach($serviceTypes as $type)
+                                            <option value="{{ $type->name }}" data-base_cost="{{ $type->base_cost }}">{{ $type->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="md:col-span-4 space-y-2 text-left">
+                                    <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest px-2">Service Mode</label>
+                                    <select
+                                        x-model="service.mode"
+                                        :name="`services[${index}][mode]`"
+                                        required
+                                        class="block w-full px-5 py-3 bg-white border-transparent rounded-2xl text-xs font-black uppercase tracking-widest focus:ring-4 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all">
+                                        <option value="Walk-in">Walk-in</option>
+                                        <option value="Towing">Towing</option>
+                                        <option value="Home Service">Home Service</option>
+                                    </select>
+                                </div>
+                                <div class="md:col-span-3 space-y-2 text-left">
+                                    <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest px-2">Cost (PHP)</label>
+                                    <input type="number" :name="`services[${index}][cost]`" x-model="service.cost" readonly step="0.1" min="0"
+                                        class="block w-full px-5 py-3 bg-gray-100 border-transparent rounded-2xl text-xs font-black italic focus:ring-4 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all cursor-not-allowed"
+                                        placeholder="0.00">
+                                </div>
+                                <div class="md:col-span-1 flex items-center justify-center pb-2">
+                                    <button type="button" @click="removeService(index)" class="p-2 text-gray-400 hover:text-autocheck-red transition-colors">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <div x-show="services.length === 0" class="text-center py-10 text-gray-300 text-[10px] font-black uppercase tracking-[0.2em] bg-gray-50 border-2 border-dashed border-gray-100 rounded-[2.5rem]">
+                            No initial services logged.
+                        </div>
+
+                        <div class="flex justify-end items-center gap-6 pt-4" x-show="services.length > 0">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest italic">Cumulative Maintenance Investment</span>
+                            <span class="text-2xl font-black text-autocheck-red" x-text="'₱' + parseFloat(totalCost).toLocaleString()"></span>
+                            <input type="hidden" name="total_cost" :value="totalCost">
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-gray-50">
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="max-w-xs">
+                        <p class="text-[10px] text-gray-400 font-bold leading-relaxed uppercase tracking-widest">By registering, you agree to receive maintenance notifications based on the timeline generated.</p>
+                    </div>
+                    <button type="submit" class="px-12 py-5 bg-autocheck-red text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-red-700 transition-all shadow-2xl shadow-red-500/30 active:scale-95 transform">
+                        Complete Registration
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</x-customer-layout>

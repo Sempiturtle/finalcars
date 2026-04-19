@@ -78,5 +78,32 @@ class DatabaseSeeder extends Seeder
                 'is_active' => true,
             ]
         );
+
+        \App\Models\Reward::updateOrCreate(
+            ['name' => 'Free Brake Inspection'],
+            [
+                'description' => 'Comprehensive safety check of your brake pads, rotors, and fluid levels.',
+                'points_cost' => 750,
+                'is_active' => true,
+            ]
+        );
+
+        \App\Models\Reward::updateOrCreate(
+            ['name' => 'Premium Wax & Polish'],
+            [
+                'description' => 'Enhance your vehicle\'s shine and protect its paint with a premium detailing service.',
+                'points_cost' => 1500,
+                'is_active' => true,
+            ]
+        );
+
+        \App\Models\Reward::updateOrCreate(
+            ['name' => 'Free Engine Diagnostic'],
+            [
+                'description' => 'Full computer scan and expert analysis of your engine performance and fault codes.',
+                'points_cost' => 1200,
+                'is_active' => true,
+            ]
+        );
     }
 }

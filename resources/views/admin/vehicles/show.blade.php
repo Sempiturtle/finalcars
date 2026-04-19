@@ -114,14 +114,26 @@
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th class="px-8 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Service Type</th>
+                                    <th class="px-8 py-4 text-xs font-black text-gray-400 uppercase tracking-widest text-center">Points Earned</th>
                                     <th class="px-8 py-4 text-xs font-black text-gray-400 uppercase tracking-widest text-right">Cost</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @foreach($vehicle->services as $service)
+                                @php
+                                    $sType = \App\Models\ServiceType::where('name', $service['type'])->first();
+                                    $pts = $sType ? $sType->points_awarded : floor(($service['cost'] ?? 0) / 10);
+                                @endphp
                                 <tr>
                                     <td class="px-8 py-4">
                                         <p class="text-sm font-bold text-gray-900">{{ $service['type'] }}</p>
+                                    </td>
+                                    <td class="px-8 py-4 text-center">
+                                        @if($pts > 0)
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-green-50 text-green-600 uppercase tracking-widest">+{{ $pts }} pts</span>
+                                        @else
+                                            <span class="text-xs text-gray-300">&mdash;</span>
+                                        @endif
                                     </td>
                                     <td class="px-8 py-4 text-right">
                                         <p class="text-sm font-bold text-gray-600">₱{{ number_format($service['cost'], 2) }}</p>
