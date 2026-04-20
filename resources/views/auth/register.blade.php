@@ -236,6 +236,11 @@
                 username: '{{ old('username', '') }}',
                 email: '{{ old('email', '') }}',
                 phone: '{{ old('phone', '') }}',
+                otpCode: '',
+                otpSent: false,
+                otpVerified: false,
+                isSendingOtp: false,
+                isVerifyingOtp: false,
                 password: '',
                 password_confirmation: '',
                 showSuccess: false,
@@ -244,6 +249,64 @@
                 get progressWidth() {
                     if (this.showSuccess) return '100%';
                     return ((this.currentStep - 1) / this.totalSteps * 100) + '%';
+                },
+
+                async sendOtp() {
+                    if (!this.phone.trim() || this.phone.length < 10) {
+                        this.errors.phone = 'Entre a valid Globe/TM number';
+                        return;
+                    }
+                    this.isSendingOtp = true;
+                    this.errors = {};
+                    try {
+                        let response = await fetch('{{ route('otp.send') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ phone: this.phone })
+                        });
+                        let data = await response.json();
+                        if (data.success) {
+                            this.otpSent = true;
+                        } else {
+                            this.errors.phone = data.message;
+                        }
+                    } catch (e) {
+                        this.errors.phone = 'Network error. Try again.';
+                    } finally {
+                        this.isSendingOtp = false;
+                    }
+                },
+
+                async verifyOtp() {
+                    if (!this.otpCode.trim()) {
+                        this.errors.otp = 'Please enter the code';
+                        return;
+                    }
+                    this.isVerifyingOtp = true;
+                    this.errors = {};
+                    try {
+                        let response = await fetch('{{ route('otp.verify') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ phone: this.phone, otp: this.otpCode })
+                        });
+                        let data = await response.json();
+                        if (data.success) {
+                            this.otpVerified = true;
+                        } else {
+                            this.errors.otp = data.message;
+                        }
+                    } catch (e) {
+                        this.errors.otp = 'Verification failed. Try again.';
+                    } finally {
+                        this.isVerifyingOtp = false;
+                    }
                 },
 
                 validateStep(step) {
@@ -260,6 +323,7 @@
                         if (this.password !== this.password_confirmation) this.errors.password_confirmation = 'Passwords don\'t match';
                     } else if (step === 3) {
                         if (!this.phone.trim()) this.errors.phone = 'Phone number is required';
+                        if (!this.otpVerified) this.errors.phone = 'Please verify your phone via OTP';
                     }
                     return Object.keys(this.errors).length === 0;
                 },
@@ -506,11 +570,52 @@
                                     <input x-model="phone"
                                            type="text"
                                            class="flex-1 px-3 py-3.5 bg-transparent outline-none font-bold text-sm tracking-wider"
-                                           placeholder="9XX XXX XXXX"
-                                           @keydown.enter="submitForm()">
+                                            placeholder="9XX XXX XXXX"
+                                           :disabled="otpSent && !otpVerified"
+                                           :class="otpSent && !otpVerified ? 'opacity-50' : ''">
+                                    <button @click="sendOtp()"
+                                            type="button"
+                                            x-show="!otpSent"
+                                            :disabled="isSendingOtp"
+                                            class="mr-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-wider hover:bg-blue-700 transition-all disabled:opacity-50">
+                                        <span x-show="!isSendingOtp">Send Code</span>
+                                        <span x-show="isSendingOtp">Sending...</span>
+                                    </button>
+                                    <button @click="otpSent = false; otpVerified = false; otpCode = ''"
+                                            type="button"
+                                            x-show="otpSent && !otpVerified"
+                                            class="mr-2 px-3 py-2 bg-gray-200 text-gray-600 rounded-xl font-bold text-[10px] uppercase tracking-wider hover:bg-gray-300 transition-all">
+                                        Edit
+                                    </button>
                                 </div>
                                 <p x-show="errors.phone" x-text="errors.phone" class="mt-1 text-[10px] font-bold text-red-500 px-1"></p>
                                 @error('phone') <p class="mt-1 text-[10px] font-bold text-red-500 px-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            {{-- OTP CODE INPUT --}}
+                            <div class="field-enter" x-show="otpSent" :key="'otp-verify-' + currentStep" x-transition>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 px-1">Verification Code</label>
+                                <div class="flex gap-2">
+                                    <input x-model="otpCode"
+                                           type="text"
+                                           class="wizard-input flex-1 px-5 py-3 bg-gray-50 border border-gray-100 rounded-2xl outline-none font-bold text-xs tracking-[0.5em] text-center"
+                                           placeholder="XXXXXX"
+                                           maxlength="6"
+                                           :disabled="otpVerified">
+                                    <button @click="verifyOtp()"
+                                            type="button"
+                                            x-show="!otpVerified"
+                                            :disabled="isVerifyingOtp"
+                                            class="px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-wider hover:bg-emerald-700 transition-all disabled:opacity-50">
+                                        <span x-show="!isVerifyingOtp">Verify</span>
+                                        <span x-show="isVerifyingOtp">...</span>
+                                    </button>
+                                    <div x-show="otpVerified" class="flex items-center gap-2 text-emerald-600 px-2 animate-bounce">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        <span class="text-[10px] font-black uppercase">Verified</span>
+                                    </div>
+                                </div>
+                                <p x-show="errors.otp" x-text="errors.otp" class="mt-1 text-[10px] font-bold text-red-500 px-1"></p>
                             </div>
 
                             {{-- Summary Preview --}}
@@ -538,7 +643,8 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                             </button>
                             <button @click="submitForm()" type="button"
-                                    class="btn-next flex-1 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-emerald-500/20 active:scale-95 transform flex items-center justify-center gap-2">
+                                    :disabled="!otpVerified"
+                                    class="btn-next flex-1 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-emerald-500/20 active:scale-95 transform flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                 Create Account
                             </button>

@@ -45,4 +45,9 @@ return [
         'from' => env('TWILIO_FROM'),
     ],
 
+    'philsms' => [
+        'token' => env('PHILSMS_API_TOKEN'),
+        'sender_id' => env('PHILSMS_SENDER_ID', 'PhilSMS'),
+    ],
+
 ];
