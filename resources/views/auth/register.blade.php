@@ -243,6 +243,7 @@
                 isVerifyingOtp: false,
                 password: '',
                 password_confirmation: '',
+                showPassword: false,
                 showSuccess: false,
                 errors: {},
 
@@ -265,7 +266,7 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
-                            body: JSON.stringify({ phone: this.phone })
+                            body: JSON.stringify({ phone: '+63' + this.phone.trim() })
                         });
                         let data = await response.json();
                         if (data.success) {
@@ -294,7 +295,7 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
-                            body: JSON.stringify({ phone: this.phone, otp: this.otpCode })
+                            body: JSON.stringify({ phone: '+63' + this.phone.trim(), otp: this.otpCode })
                         });
                         let data = await response.json();
                         if (data.success) {
@@ -349,7 +350,7 @@
                     document.getElementById('hidden-name').value = this.firstName.trim() + ' ' + this.lastName.trim();
                     document.getElementById('hidden-username').value = this.username.trim();
                     document.getElementById('hidden-email').value = this.email.trim();
-                    document.getElementById('hidden-phone').value = this.phone.trim();
+                    document.getElementById('hidden-phone').value = '+63' + this.phone.trim();
                     document.getElementById('hidden-password').value = this.password;
                     document.getElementById('hidden-password-confirm').value = this.password_confirmation;
 
@@ -514,24 +515,36 @@
                                 <p x-show="errors.email" x-text="errors.email" class="mt-1 text-[10px] font-bold text-red-500 px-1"></p>
                                 @error('email') <p class="mt-1 text-[10px] font-bold text-red-500 px-1">{{ $message }}</p> @enderror
                             </div>
-                            <div class="grid grid-cols-2 gap-3 field-enter" :key="'s2-2-' + currentStep">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 field-enter" :key="'s2-2-' + currentStep">
                                 <div>
                                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 px-1">Password</label>
-                                    <input x-model="password"
-                                           type="password"
-                                           class="wizard-input w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-2xl outline-none font-bold text-xs"
-                                           placeholder="••••••••"
-                                           @keydown.enter="nextStep()">
+                                    <div class="relative">
+                                        <input x-model="password"
+                                               :type="showPassword ? 'text' : 'password'"
+                                               class="wizard-input w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-2xl outline-none font-bold text-xs"
+                                               placeholder="••••••••"
+                                               @keydown.enter="nextStep()">
+                                        <button type="button" @click="showPassword = !showPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                                            <template x-if="!showPassword">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                            </template>
+                                            <template x-if="showPassword">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path></svg>
+                                            </template>
+                                        </button>
+                                    </div>
                                     <p x-show="errors.password" x-text="errors.password" class="mt-1 text-[10px] font-bold text-red-500 px-1"></p>
                                     @error('password') <p class="mt-1 text-[10px] font-bold text-red-500 px-1">{{ $message }}</p> @enderror
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 px-1">Confirm</label>
-                                    <input x-model="password_confirmation"
-                                           type="password"
-                                           class="wizard-input w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-2xl outline-none font-bold text-xs"
-                                           placeholder="••••••••"
-                                           @keydown.enter="nextStep()">
+                                    <div class="relative">
+                                        <input x-model="password_confirmation"
+                                               :type="showPassword ? 'text' : 'password'"
+                                               class="wizard-input w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-2xl outline-none font-bold text-xs"
+                                               placeholder="••••••••"
+                                               @keydown.enter="nextStep()">
+                                    </div>
                                     <p x-show="errors.password_confirmation" x-text="errors.password_confirmation" class="mt-1 text-[10px] font-bold text-red-500 px-1"></p>
                                 </div>
                             </div>
@@ -565,27 +578,32 @@
                         <div class="space-y-4 text-left">
                             <div class="field-enter" :key="'s3-1-' + currentStep">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 px-1">Phone Number</label>
-                                <div class="flex items-center bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 transition-all">
-                                    <span class="pl-5 pr-2 py-3.5 text-sm font-black text-gray-400 select-none border-r border-gray-200 bg-gray-100/60">+63</span>
-                                    <input x-model="phone"
-                                           type="text"
-                                           class="flex-1 px-3 py-3.5 bg-transparent outline-none font-bold text-sm tracking-wider"
-                                            placeholder="9XX XXX XXXX"
-                                           :disabled="otpSent && !otpVerified"
-                                           :class="otpSent && !otpVerified ? 'opacity-50' : ''">
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex items-center bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500 transition-all">
+                                        <span class="pl-5 pr-2 py-3.5 text-sm font-black text-gray-400 select-none border-r border-gray-200 bg-gray-100/60">+63</span>
+                                        <input x-model="phone"
+                                               type="text"
+                                               class="flex-1 px-3 py-3.5 bg-transparent outline-none font-bold text-sm tracking-wider"
+                                                placeholder="9XX XXX XXXX"
+                                               :disabled="otpSent && !otpVerified"
+                                               :class="otpSent && !otpVerified ? 'opacity-50' : ''">
+                                        <button @click="otpSent = false; otpVerified = false; otpCode = ''"
+                                                type="button"
+                                                x-show="otpSent && !otpVerified"
+                                                class="mr-2 px-3 py-2 bg-gray-200 text-gray-600 rounded-xl font-bold text-[10px] uppercase tracking-wider hover:bg-gray-300 transition-all">
+                                            Edit
+                                        </button>
+                                    </div>
                                     <button @click="sendOtp()"
                                             type="button"
                                             x-show="!otpSent"
                                             :disabled="isSendingOtp"
-                                            class="mr-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-wider hover:bg-blue-700 transition-all disabled:opacity-50">
-                                        <span x-show="!isSendingOtp">Send Code</span>
-                                        <span x-show="isSendingOtp">Sending...</span>
-                                    </button>
-                                    <button @click="otpSent = false; otpVerified = false; otpCode = ''"
-                                            type="button"
-                                            x-show="otpSent && !otpVerified"
-                                            class="mr-2 px-3 py-2 bg-gray-200 text-gray-600 rounded-xl font-bold text-[10px] uppercase tracking-wider hover:bg-gray-300 transition-all">
-                                        Edit
+                                            class="w-full md:w-auto md:self-end px-6 py-3 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95 transform disabled:opacity-50">
+                                        <span x-show="!isSendingOtp">Send Verification Code</span>
+                                        <span x-show="isSendingOtp" class="flex items-center justify-center gap-2">
+                                            <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                            Sending...
+                                        </span>
                                     </button>
                                 </div>
                                 <p x-show="errors.phone" x-text="errors.phone" class="mt-1 text-[10px] font-bold text-red-500 px-1"></p>
