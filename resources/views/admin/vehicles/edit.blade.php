@@ -1,7 +1,11 @@
 <x-admin-layout>
-    <div class="max-w-4xl mx-auto space-y-8">
+    <div class="max-w-4xl mx-auto space-y-8 relative">
+        <!-- Watermark Background -->
+        <div class="fixed inset-0 z-0 pointer-events-none opacity-[0.2] overflow-hidden">
+            <img src="{{ asset('images/background.jfif') }}" alt="" class="w-full h-full object-cover grayscale brightness-90">
+        </div>
         <!-- Header -->
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between relative z-10">
             <div>
                 <h1 class="text-3xl font-black text-gray-900 tracking-tight">Edit Vehicle</h1>
                 <p class="text-gray-500 font-medium mt-1">Update information for vehicle: {{ $vehicle->plate_number }}</p>
@@ -13,7 +17,7 @@
         </div>
 
         <!-- Form -->
-        <div class="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden relative z-10">
             <form action="{{ route('admin.vehicles.update', $vehicle) }}" method="POST" class="p-8 md:p-12 space-y-8">
                 @csrf
                 @method('PUT')

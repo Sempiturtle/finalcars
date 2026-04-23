@@ -13,9 +13,13 @@
             get totalCost() {
                 return this.services.reduce((sum, s) => sum + (parseFloat(s.cost) || 0), 0);
             }
-         }">
+         }" class="relative">
+        <!-- Watermark Background -->
+        <div class="fixed inset-0 z-0 pointer-events-none opacity-[0.2] overflow-hidden">
+            <img src="{{ asset('images/background.jfif') }}" alt="" class="w-full h-full object-cover grayscale brightness-90">
+        </div>
         <!-- Header -->
-        <div class="flex items-center space-x-6">
+        <div class="flex items-center space-x-6 relative z-10">
             <a href="{{ route('customer.vehicles.index') }}" class="p-3 bg-white border border-gray-100 rounded-2xl text-gray-400 hover:text-autocheck-red transition-all shadow-sm">
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             </a>
@@ -25,7 +29,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-[3rem] p-8 md:p-12 shadow-xl border border-gray-100 relative overflow-hidden">
+        <div class="bg-white rounded-[3rem] p-8 md:p-12 shadow-xl border border-gray-100 relative overflow-hidden z-10">
             <div class="absolute top-0 right-0 -mt-12 -mr-12 w-64 h-64 bg-autocheck-red/5 rounded-full"></div>
             
             <form action="{{ route('customer.vehicles.update', $vehicle) }}" method="POST" class="relative z-10 space-y-12 text-left">
