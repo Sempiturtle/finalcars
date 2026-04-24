@@ -37,6 +37,19 @@
             color: white;
             box-shadow: 0 10px 15px -3px rgba(245, 48, 3, 0.3);
         }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 20px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #d1d5db;
+        }
     </style>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}?v=2">
 </head>
