@@ -1,7 +1,11 @@
 <x-admin-layout>
-    <div class="max-w-4xl mx-auto space-y-8">
+    <div class="max-w-4xl mx-auto space-y-8 relative">
+        <!-- Watermark Background -->
+        <div class="fixed inset-0 z-0 pointer-events-none opacity-[0.2] overflow-hidden">
+            <img src="{{ asset('images/background.jfif') }}" alt="" class="w-full h-full object-cover grayscale brightness-90">
+        </div>
         <!-- Header -->
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between relative z-10">
             <div>
                 <h1 class="text-3xl font-black text-gray-900 tracking-tight">Add New Vehicle</h1>
                 <p class="text-gray-500 font-medium mt-1">Register a new vehicle to the fleet.</p>
@@ -13,7 +17,7 @@
         </div>
 
         <!-- Form -->
-        <div class="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden relative z-10">
             <form action="{{ route('admin.vehicles.store') }}" method="POST" class="p-8 md:p-12 space-y-8">
                 @csrf
                 
@@ -97,7 +101,7 @@
                             serviceTypes: {{ json_encode($serviceTypes->pluck('name')) }},
                             prices: {{ json_encode($serviceTypes->pluck('base_cost', 'name')) }},
                             addService() {
-                                this.services.push({ type: '', cost: '' });
+                                this.services.push({ type: '', mode: 'Walk-in', cost: '' });
                             },
                             removeService(index) {
                                 this.services.splice(index, 1);
@@ -121,23 +125,53 @@
                         <div class="space-y-4">
                             <template x-for="(service, index) in services" :key="index">
                                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start bg-gray-50/50 p-4 rounded-2xl border border-gray-50">
-                                    <div class="md:col-span-7 space-y-1">
-                                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Type</label>
-                                        
-                                        <!-- Select Dropdown -->
-                                        <select
-                                            x-model="service.type"
-                                            :name="`services[${index}][type]`"
-                                            @change="service.cost = prices[service.type] || 0"
-                                            required
-                                            class="block w-full px-4 py-3 bg-white border-transparent rounded-xl text-sm font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
-                                            <option value="">Select Service Type</option>
-                                            <template x-for="type in serviceTypes">
-                                                <option :value="type" x-text="type" :selected="service.type === type"></option>
-                                            </template>
-                                        </select>
+                                    <div class="md:col-span-12 space-y-3 text-left">
+                                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Description</label>
+                                        <div class="relative" x-data="{ open: false }">
+                                            <button type="button" @click="open = !open" 
+                                                    class="flex items-center justify-between w-full px-6 py-4 bg-white border-2 border-gray-100 rounded-2xl text-xs font-black uppercase tracking-widest focus:border-autocheck-red transition-all group">
+                                                <span x-text="service.type || 'Select Type'"></span>
+                                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-300" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                                            </button>
+                                            <div x-show="open" @click.away="open = false" 
+                                                 x-transition:enter="transition ease-out duration-200"
+                                                 x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                                                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                                 class="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden">
+                                                <div class="max-h-60 overflow-y-auto custom-scrollbar">
+                                                    <template x-for="type in serviceTypes">
+                                                        <button type="button" 
+                                                                @click="service.type = type; service.cost = prices[type] || 0; open = false"
+                                                                class="w-full px-6 py-3.5 text-left text-[10px] font-black uppercase tracking-widest hover:bg-gray-50 transition-colors flex items-center justify-between group"
+                                                                :class="service.type === type ? 'bg-gray-50 text-autocheck-red' : 'text-gray-500'">
+                                                            <span x-text="type"></span>
+                                                            <template x-if="service.type === type">
+                                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                                            </template>
+                                                        </button>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" :name="`services[${index}][type]`" x-model="service.type" required>
                                     </div>
-                                    <div class="md:col-span-4 space-y-1">
+
+                                    <div class="md:col-span-12 space-y-3 text-left">
+                                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Mode</label>
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="mode in ['Walk-in', 'Towing', 'Home Service']">
+                                                <button type="button" 
+                                                    @click="service.mode = mode"
+                                                    :class="service.mode === mode ? 'bg-gray-900 text-white shadow-lg shadow-black/20' : 'bg-white text-gray-500 hover:bg-gray-100 border border-gray-100'"
+                                                    class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all transform active:scale-95">
+                                                    <span x-text="mode"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                        <input type="hidden" :name="`services[${index}][mode]`" x-model="service.mode" required>
+                                    </div>
+
+                                    <div class="md:col-span-11 space-y-1">
                                         <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Cost (PHP)</label>
                                         <input type="number" :name="`services[${index}][cost]`" x-model="service.cost" required step="0.01" min="0"
                                             class="block w-full px-4 py-3 bg-white border-transparent rounded-xl text-sm font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all"
