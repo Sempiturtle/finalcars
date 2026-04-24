@@ -102,7 +102,7 @@
                             serviceTypes: {{ json_encode($serviceTypes->pluck('name')) }},
                             prices: {{ json_encode($serviceTypes->pluck('base_cost', 'name')) }},
                             addService() {
-                                this.services.push({ type: '', cost: '' });
+                                this.services.push({ type: '', mode: 'Walk-in', cost: '' });
                             },
                             removeService(index) {
                                 this.services.splice(index, 1);
@@ -126,31 +126,34 @@
                         <div class="space-y-4">
                             <template x-for="(service, index) in services" :key="index">
                                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start bg-gray-50/50 p-4 rounded-2xl border border-gray-50">
-                                    <div class="md:col-span-4 space-y-1">
+                                    <div class="md:col-span-12 space-y-3 text-left">
                                         <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Type</label>
-                                        <select
-                                            x-model="service.type"
-                                            :name="`services[${index}][type]`"
-                                            @change="service.cost = prices[service.type] || 0"
-                                            required
-                                            class="block w-full px-4 py-3 bg-white border-transparent rounded-xl text-sm font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
-                                            <option value="">Select Service Type</option>
+                                        <div class="flex flex-wrap gap-2">
                                             <template x-for="type in serviceTypes">
-                                                <option :value="type" x-text="type" :selected="service.type === type"></option>
+                                                <button type="button" 
+                                                    @click="service.type = type; service.cost = prices[type] || 0"
+                                                    :class="service.type === type ? 'bg-autocheck-red text-white shadow-lg shadow-red-500/30' : 'bg-white text-gray-500 hover:bg-gray-100 border border-gray-100'"
+                                                    class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all transform active:scale-95">
+                                                    <span x-text="type"></span>
+                                                </button>
                                             </template>
-                                        </select>
+                                        </div>
+                                        <input type="hidden" :name="`services[${index}][type]`" x-model="service.type" required>
                                     </div>
-                                    <div class="md:col-span-3 space-y-1">
+
+                                    <div class="md:col-span-12 space-y-3 text-left">
                                         <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Mode</label>
-                                        <select
-                                            x-model="service.mode"
-                                            :name="`services[${index}][mode]`"
-                                            required
-                                            class="block w-full px-4 py-3 bg-white border-transparent rounded-xl text-sm font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
-                                            <option value="Walk-in">Walk-in</option>
-                                            <option value="Towing">Towing</option>
-                                            <option value="Home Service">Home Service</option>
-                                        </select>
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="mode in ['Walk-in', 'Towing', 'Home Service']">
+                                                <button type="button" 
+                                                    @click="service.mode = mode"
+                                                    :class="service.mode === mode ? 'bg-gray-900 text-white shadow-lg shadow-black/20' : 'bg-white text-gray-500 hover:bg-gray-100 border border-gray-100'"
+                                                    class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all transform active:scale-95">
+                                                    <span x-text="mode"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                        <input type="hidden" :name="`services[${index}][mode]`" x-model="service.mode" required>
                                     </div>
                                     <div class="md:col-span-4 space-y-1">
                                         <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Cost (PHP)</label>
