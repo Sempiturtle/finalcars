@@ -14,12 +14,20 @@ class ServiceLog extends Model
         'status',
         'service_date',
         'mechanic_name',
+        'notes',
+        'verification_photo',
+        'completed_by_id',
     ];
 
     protected $casts = [
         'service_date' => 'date',
         'cost' => 'decimal:2',
     ];
+
+    public function completedBy()
+    {
+        return $this->belongsTo(User::class, 'completed_by_id');
+    }
 
     public function vehicle()
     {
@@ -32,7 +40,7 @@ class ServiceLog extends Model
             return 0;
         }
         
-        $serviceType = \App\Models\ServiceType::where('name', $this->service_type)->first();
+        $serviceType = \App\Models\ServiceType::whereRaw('LOWER(name) = ?', [strtolower($this->service_type)])->first();
         if ($serviceType) {
             return $serviceType->points_awarded;
         }

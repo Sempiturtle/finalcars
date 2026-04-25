@@ -141,15 +141,27 @@
                     <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                         @if($pointsBreakdown->count() > 0)
                             <div class="divide-y divide-gray-50">
-                                @foreach($pointsBreakdown as $log)
-                                <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50/50 transition-colors">
-                                    <div class="min-w-0">
-                                        <p class="text-[10px] font-black text-gray-900 truncate">{{ $log['service_type'] }}</p>
-                                        <p class="text-[8px] font-bold text-gray-400 mt-0.5 italic">{{ $log['service_date'] }}</p>
+                                    @foreach($pointsBreakdown as $log)
+                                    <div class="flex flex-col px-4 py-3 hover:bg-gray-50/50 transition-colors border-b last:border-0 border-gray-50">
+                                        <div class="flex items-center justify-between">
+                                            <div class="min-w-0">
+                                                <p class="text-[10px] font-black text-gray-900 truncate uppercase">{{ $log['service_type'] }}</p>
+                                                <p class="text-[8px] font-bold text-gray-400 mt-0.5 italic">{{ $log['service_date'] }}</p>
+                                            </div>
+                                            <span class="flex-shrink-0 ml-3 text-[9px] font-black text-green-600">+{{ $log['points_earned'] }}</span>
+                                        </div>
+                                        @if(!empty($log['notes']))
+                                            <div class="mt-2 p-2 bg-gray-50 rounded-lg border border-gray-100">
+                                                <p class="text-[8px] font-bold text-gray-500 uppercase tracking-widest mb-1 italic">Service Audit Trail</p>
+                                                <p class="text-[9px] text-gray-700 font-medium leading-relaxed italic">"{{ $log['notes'] }}"</p>
+                                                <div class="mt-1.5 flex items-center text-[7px] font-black text-gray-400 uppercase tracking-tighter">
+                                                    <svg class="w-2.5 h-2.5 mr-1 text-autocheck-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 12l2 2 4-4"></path></svg>
+                                                    Verified by: {{ $log['completed_by'] }}
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
-                                    <span class="flex-shrink-0 ml-3 text-[9px] font-black text-green-600">+{{ $log['points_earned'] }}</span>
-                                </div>
-                                @endforeach
+                                    @endforeach
                             </div>
                         @else
                             <div class="py-10 text-center opacity-30 italic text-[10px] font-bold">No data.</div>

@@ -64,6 +64,9 @@ class VehicleController extends Controller
             'services' => 'nullable|array',
             'services.*.type' => 'required_with:services|string',
             'services.*.cost' => 'required_with:services|numeric|min:0',
+            'services.*.status' => 'nullable|string|in:scheduled,in progress,completed',
+            'services.*.notes' => 'nullable|string|max:1000',
+            'services.*.date' => 'nullable|date',
             'total_cost' => 'nullable|numeric|min:0',
         ]);
 
@@ -131,6 +134,9 @@ class VehicleController extends Controller
             'services' => 'nullable|array',
             'services.*.type' => 'required_with:services|string',
             'services.*.cost' => 'required_with:services|numeric|min:0',
+            'services.*.status' => 'nullable|string|in:scheduled,in progress,completed',
+            'services.*.notes' => 'nullable|string|max:1000',
+            'services.*.date' => 'nullable|date',
             'total_cost' => 'nullable|numeric|min:0',
         ]);
 
@@ -169,5 +175,29 @@ class VehicleController extends Controller
 
         return redirect()->route('admin.vehicles.index')
             ->with('success', 'Vehicle removed from the fleet.');
+    }
+
+    public function quickVerify(Request $request, Vehicle $vehicle)
+    {
+        $validated = $request->validate([
+            'completed_indexes' => 'required|array',
+            'completed_indexes.*' => 'integer',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $services = $vehicle->services ?? [];
+        
+        foreach ($validated['completed_indexes'] as $index) {
+            if (isset($services[$index])) {
+                $services[$index]['status'] = 'completed';
+                if ($request->filled('notes')) {
+                    $services[$index]['notes'] = trim(($services[$index]['notes'] ?? '') . " " . $request->notes);
+                }
+            }
+        }
+
+        $vehicle->update(['services' => $services]);
+
+        return redirect()->back()->with('success', 'Services verified and moved to maintenance history.');
     }
 }

@@ -89,9 +89,13 @@
 
                     <!-- Next Service Date -->
                     <div class="space-y-2">
-                        <label for="next_service_date" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Next Service Date</label>
-                        <input type="date" name="next_service_date" id="next_service_date" value="{{ old('next_service_date') }}"
-                            class="block w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
+                        <div class="flex items-center justify-between">
+                            <label for="next_service_date" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Next Service Date</label>
+                            <span class="text-[8px] font-black text-autocheck-red uppercase tracking-tighter bg-red-50 px-2 py-0.5 rounded-full border border-red-100">Auto-calculated</span>
+                        </div>
+                        <input type="date" id="next_service_date" disabled
+                            class="block w-full px-6 py-4 bg-gray-100 border-transparent rounded-2xl text-sm font-bold text-gray-400 cursor-not-allowed opacity-70">
+                        <p class="text-[9px] text-gray-400 font-bold italic ml-1 mt-1">Automatically set based on your selected service dates.</p>
                     </div>
 
                     <!-- Services & Cost Section -->
@@ -101,7 +105,7 @@
                             serviceTypes: {{ json_encode($serviceTypes->pluck('name')) }},
                             prices: {{ json_encode($serviceTypes->pluck('base_cost', 'name')) }},
                             addService() {
-                                this.services.push({ type: '', mode: 'Walk-in', cost: '' });
+                                this.services.push({ type: '', mode: 'Walk-in', cost: '', status: 'scheduled', notes: '', date: '{{ date('Y-m-d') }}' });
                             },
                             removeService(index) {
                                 this.services.splice(index, 1);
@@ -156,31 +160,55 @@
                                         <input type="hidden" :name="`services[${index}][type]`" x-model="service.type" required>
                                     </div>
 
-                                    <div class="md:col-span-12 space-y-3 text-left">
-                                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Mode</label>
-                                        <div class="flex flex-wrap gap-2">
-                                            <template x-for="mode in ['Walk-in', 'Towing', 'Home Service']">
-                                                <button type="button" 
-                                                    @click="service.mode = mode"
-                                                    :class="service.mode === mode ? 'bg-gray-900 text-white shadow-lg shadow-black/20' : 'bg-white text-gray-500 hover:bg-gray-100 border border-gray-100'"
-                                                    class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all transform active:scale-95">
-                                                    <span x-text="mode"></span>
-                                                </button>
-                                            </template>
+                                    <div class="md:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6 py-4 border-t border-gray-100/50 mt-2">
+                                        <!-- Service Mode Dropdown -->
+                                        <div class="space-y-2">
+                                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Mode</label>
+                                            <select :name="`services[${index}][mode]`" x-model="service.mode"
+                                                class="block w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all uppercase">
+                                                <option value="Walk-in">Walk-in</option>
+                                                <option value="Towing">Towing</option>
+                                                <option value="Home Service">Home Service</option>
+                                            </select>
                                         </div>
-                                        <input type="hidden" :name="`services[${index}][mode]`" x-model="service.mode" required>
+
+                                        <!-- Service Status Dropdown -->
+                                        <div class="space-y-2">
+                                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Status</label>
+                                            <select :name="`services[${index}][status]`" x-model="service.status"
+                                                class="block w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all uppercase"
+                                                :class="{
+                                                    'text-green-600': service.status === 'completed',
+                                                    'text-blue-600': service.status === 'in progress',
+                                                    'text-yellow-600': service.status === 'scheduled'
+                                                }">
+                                                <option value="scheduled">Scheduled</option>
+                                                <option value="in progress">In Progress</option>
+                                                <option value="completed">Completed</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Service Date Picker -->
+                                        <div class="space-y-2">
+                                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Date</label>
+                                            <input type="date" :name="`services[${index}][date]`" x-model="service.date"
+                                                class="block w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
+                                        </div>
                                     </div>
 
-                                    <div class="md:col-span-11 space-y-1">
-                                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Cost (PHP)</label>
-                                        <input type="number" :name="`services[${index}][cost]`" x-model="service.cost" required step="0.01" min="0"
-                                            class="block w-full px-4 py-3 bg-white border-transparent rounded-xl text-sm font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all"
-                                            placeholder="0.00">
-                                    </div>
-                                    <div class="md:col-span-1 flex items-center justify-center pt-6">
-                                        <button type="button" @click="removeService(index)" class="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                        </button>
+                                    <!-- Service Notes -->
+                                    <div class="md:col-span-12 flex items-center gap-4">
+                                        <div class="flex-1">
+                                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2 block">Internal Audit Notes</label>
+                                            <input type="text" :name="`services[${index}][notes]`" x-model="service.notes"
+                                                class="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-bold focus:ring-1 focus:ring-autocheck-red transition-all"
+                                                placeholder="Service Notes (optional)">
+                                        </div>
+                                        <div class="pt-6">
+                                            <button type="button" @click="removeService(index)" class="p-3 text-gray-400 hover:text-red-500 transition-colors bg-white rounded-xl border border-gray-100 group">
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </template>

@@ -84,7 +84,8 @@ class Vehicle extends Model
         });
 
         static::updated(function ($vehicle) {
-            if ($vehicle->isDirty('services') || $vehicle->isDirty('mechanic_name')) {
+            // Trigger sync if services, mechanic, or STATUS changes
+            if ($vehicle->isDirty('services') || $vehicle->isDirty('mechanic_name') || $vehicle->isDirty('status')) {
                 $vehicle->syncServiceLogs();
             }
 
@@ -101,30 +102,158 @@ class Vehicle extends Model
     }
 
     /**
+     * Calculate the real status based on individual services.
+     */
+    public function getCalculatedStatusAttribute()
+    {
+        if ($this->status === 'inactive') {
+            return 'inactive';
+        }
+
+        if (!is_array($this->services) || empty($this->services)) {
+            // Check if overdue based on date even if no services are listed
+            if ($this->next_service_date && $this->next_service_date->isPast()) {
+                return 'overdue';
+            }
+            return $this->status;
+        }
+
+        $completed = 0;
+        $total = count($this->services);
+        $anyInProgress = false;
+
+        foreach ($this->services as $service) {
+            $status = $service['status'] ?? 'scheduled';
+            if ($status === 'completed') {
+                $completed++;
+            }
+            if ($status === 'in progress') {
+                $anyInProgress = true;
+            }
+        }
+
+        if ($total === 0) return $this->status ?: 'scheduled';
+        if ($completed === $total) return 'completed';
+        
+        // If date has passed and not everything is done, it's overdue
+        if ($this->next_service_date && $this->next_service_date->isPast() && $completed < $total) {
+            return 'overdue';
+        }
+
+        if ($anyInProgress || ($completed > 0 && $completed < $total)) return 'in progress';
+        
+        return 'scheduled';
+    }
+
+    /**
+     * Get detailed progress breakdown.
+     */
+    public function getServiceProgressAttribute()
+    {
+        $services = is_array($this->services) ? $this->services : [];
+        $total = count($services);
+        $completed = collect($services)->where('status', 'completed')->count();
+        
+        return [
+            'completed' => $completed,
+            'total' => $total,
+            'percent' => $total > 0 ? round(($completed / $total) * 100) : 0
+        ];
+    }
+
+    /**
      * Synchronize the services JSON array with the ServiceLog table.
      */
     public function syncServiceLogs()
     {
-        // For simplicity and to maintain 1:1 sync with the fleet record's service list
-        $this->serviceLogs()->delete();
+        if (!is_array($this->services)) {
+            return;
+        }
 
-        if (is_array($this->services)) {
-            foreach ($this->services as $service) {
-                $type = $service['type'] ?? 'N/A';
-                
-                $this->serviceLogs()->create([
-                    'service_type' => $type,
-                    'service_mode' => $service['mode'] ?? 'Walk-in',
-                    'cost' => $service['cost'] ?? 0,
-                    'status' => 'completed',
-                    'service_date' => $this->updated_at ?? now(),
-                    'mechanic_name' => $this->mechanic_name,
+        $isAdmin = (auth()->check() && auth()->user()->isAdmin());
+
+        foreach ($this->services as $service) {
+            $type = $service['type'] ?? 'N/A';
+            
+            // Try to find an existing log that matches this type and is not yet completed
+            $log = $this->serviceLogs()
+                ->where('service_type', $type)
+                ->where('status', '!=', 'completed')
+                ->first();
+
+            // Determine what the status should be
+            $targetStatus = $service['status'] ?? ($isAdmin && $this->status === 'completed' ? 'completed' : 'scheduled');
+
+            if ($log) {
+                // Update existing log with the status from the form/JSON
+                $oldStatus = $log->status;
+                $log->update([
+                    'status' => $targetStatus,
+                    'notes' => $service['notes'] ?? $log->notes,
+                    'service_date' => $service['date'] ?? $log->service_date,
                 ]);
+
+                // If just marked as completed, record WHO did it
+                if ($oldStatus !== 'completed' && $targetStatus === 'completed' && auth()->check()) {
+                    $log->update(['completed_by_id' => auth()->id()]);
+                }
+            } else {
+                // If no log exists at all (even a completed one), create it
+                $alreadyCompleted = $this->serviceLogs()
+                    ->where('service_type', $type)
+                    ->where('status', 'completed')
+                    ->exists();
+
+                if (!$alreadyCompleted || $targetStatus === 'completed') {
+                    $this->serviceLogs()->create([
+                        'service_type' => $type,
+                        'service_mode' => $service['mode'] ?? 'Walk-in',
+                        'cost' => $service['cost'] ?? 0,
+                        'status' => $targetStatus,
+                        'service_date' => $service['date'] ?? now(),
+                        'mechanic_name' => $this->mechanic_name ?? 'Pending Assignment',
+                        'notes' => $service['notes'] ?? null,
+                        'completed_by_id' => ($targetStatus === 'completed' && auth()->check()) ? auth()->id() : null,
+                    ]);
+                }
             }
         }
 
         if ($this->owner) {
             $this->owner->recalculateLoyaltyPoints();
+        }
+
+        // Keep the master status in sync with the actual work progress
+        $newStatus = $this->calculated_status;
+        
+        // Auto-calculate Next Service Date based on earliest pending service
+        $pendingServices = collect($this->services)->where('status', '!=', 'completed');
+        $earliestDate = $pendingServices->pluck('date')->filter(fn($d) => !empty($d))->min();
+        
+        $updateData = ['status' => $newStatus];
+        
+        // Ensure we handle date comparison properly (Carbon vs String)
+        $currentDateString = $this->next_service_date ? $this->next_service_date->format('Y-m-d') : null;
+        
+        if ($earliestDate) {
+            $updateData['next_service_date'] = $earliestDate;
+        }
+
+        // Always check if anything changed before updating quietly
+        $hasStatusChanged = ($this->status !== $newStatus);
+        $hasDateChanged = ($earliestDate && $currentDateString !== $earliestDate);
+
+        if ($hasStatusChanged || $hasDateChanged) {
+            // Use DB update to bypass observers and ensure immediate persistence
+            \Illuminate\Support\Facades\DB::table('vehicles')
+                ->where('id', $this->id)
+                ->update($updateData);
+            
+            // Sync the current model instance so the UI sees it immediately
+            $this->status = $newStatus;
+            if ($earliestDate) {
+                $this->next_service_date = \Carbon\Carbon::parse($earliestDate);
+            }
         }
     }
 }

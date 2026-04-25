@@ -90,55 +90,64 @@
             </nav>
 
             <!-- Mobile Nav -->
-            <div x-show="open" class="md:hidden bg-white border-b border-gray-200 py-4 px-4 space-y-2">
-                <a href="#home" class="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg">Home</a>
-                <a href="{{ route('about') }}" class="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg">About</a>
-                <a href="{{ route('announcements.index') }}" class="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg">Announcements</a>
-                <a href="{{ route('services.index') }}" class="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg">Services</a>
-                <a href="{{ route('features.index') }}" class="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg">Features</a>
-                <hr class="my-2 border-gray-100">
-                <a href="{{ route('register') }}" class="block px-4 py-2 text-base font-bold text-autocheck-red uppercase tracking-wider border-t border-gray-100">Register</a>
-                <a href="{{ route('login', ['type' => 'customer']) }}" class="block px-4 py-2 text-base font-bold text-autocheck-red uppercase tracking-wider">Customer Login</a>
-                <a href="{{ route('login', ['type' => 'admin']) }}" class="block px-4 py-2 text-base font-bold text-autocheck-red uppercase tracking-wider">Admin Login</a>
+            <div x-show="open" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-4"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="md:hidden bg-white/95 backdrop-blur-xl border-b border-gray-200 py-6 px-6 space-y-4 shadow-2xl relative z-40">
+                <a href="#home" class="block px-4 py-3 text-base font-bold text-gray-700 hover:bg-gray-50 rounded-2xl transition-colors">Home</a>
+                <a href="{{ route('about') }}" class="block px-4 py-3 text-base font-bold text-gray-700 hover:bg-gray-50 rounded-2xl transition-colors">About</a>
+                <a href="{{ route('announcements.index') }}" class="block px-4 py-3 text-base font-bold text-gray-700 hover:bg-gray-50 rounded-2xl transition-colors">Announcements</a>
+                <a href="{{ route('services.index') }}" class="block px-4 py-3 text-base font-bold text-gray-700 hover:bg-gray-50 rounded-2xl transition-colors">Services</a>
+                <a href="{{ route('features.index') }}" class="block px-4 py-3 text-base font-bold text-gray-700 hover:bg-gray-50 rounded-2xl transition-colors">Features</a>
+                <div class="grid grid-cols-1 gap-3 pt-4 border-t border-gray-100">
+                    <a href="{{ route('register') }}" class="flex items-center justify-center px-6 py-4 rounded-2xl text-base font-black bg-autocheck-red text-white shadow-lg shadow-red-500/20 uppercase tracking-widest">Register Now</a>
+                    <div class="grid grid-cols-2 gap-3">
+                        <a href="{{ route('login', ['type' => 'customer']) }}" class="flex items-center justify-center px-4 py-3 rounded-2xl text-[10px] font-black bg-blue-600 text-white uppercase tracking-widest">Customer</a>
+                        <a href="{{ route('login', ['type' => 'admin']) }}" class="flex items-center justify-center px-4 py-3 rounded-2xl text-[10px] font-black bg-gray-900 text-white uppercase tracking-widest">Admin</a>
+                    </div>
+                </div>
             </div>
         </header>
 
         <main>
             <!-- Hero Section -->
-            <section id="home" class="relative bg-white overflow-hidden py-24 sm:py-32">
+            <section id="home" class="relative bg-white overflow-hidden py-16 sm:py-24 md:py-32">
                 <div class="absolute inset-0 z-0">
-                    <div class="absolute right-0 top-0 h-full w-1/2 bg-gray-50 skew-x-12 transform origin-right"></div>
+                    <div class="absolute right-0 top-0 h-full w-full md:w-1/2 bg-gray-50 skew-x-0 md:skew-x-12 transform origin-right"></div>
                 </div>
                 
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div class="lg:flex lg:items-center lg:space-x-16">
-                        <div class="lg:w-1/2">
-                            <div class="inline-flex items-center px-4 py-2 rounded-full bg-red-50 text-autocheck-red text-sm font-bold mb-8 animate-pulse">
-                                <span class="uppercase tracking-widest">Est. 2017</span>
+                        <div class="lg:w-1/2 text-center lg:text-left">
+                            <div class="inline-flex items-center px-4 py-2 rounded-full bg-red-50 text-autocheck-red text-[10px] font-black mb-8 animate-pulse uppercase tracking-[0.3em]">
+                                Est. 2017
                             </div>
-                            <h1 class="text-5xl sm:text-7xl font-extrabold text-gray-900 tracking-tight leading-main mb-8">
+                            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-8">
                                 Welcome to <br>
                                 <span class="text-autocheck-red">AutoCheck Enterprises</span>
                             </h1>
-                            <p class="text-2xl text-gray-600 font-medium mb-12 max-w-lg">
+                            <p class="text-lg sm:text-2xl text-gray-600 font-medium mb-10 max-w-lg mx-auto lg:mx-0">
                                 Your Trusted Automotive Service Provider
                             </p>
                             
-                            <div class="flex items-center space-x-4 mb-12">
-                                <div class="p-3 bg-white shadow-lg rounded-2xl border border-gray-100">
-                                    <svg class="h-6 w-6 text-autocheck-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-bold text-gray-900">Aguinaldo Highway, Dasmariñas, Cavite</p>
-                                    <p class="text-xs text-gray-500 uppercase tracking-widest font-semibold leading-relaxed">Main Service Facility</p>
+                            <div class="flex flex-col items-center lg:items-start space-y-4 mb-12">
+                                <div class="flex items-center space-x-4">
+                                    <div class="p-3 bg-white shadow-lg rounded-2xl border border-gray-100">
+                                        <svg class="h-6 w-6 text-autocheck-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="text-xs sm:text-sm font-bold text-gray-900">Aguinaldo Highway, Dasmariñas, Cavite</p>
+                                        <p class="text-[9px] text-gray-400 uppercase tracking-widest font-black leading-relaxed">Main Service Facility</p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                                <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-2xl text-white bg-autocheck-red hover:bg-red-700 transition-all shadow-xl shadow-red-500/20">
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                                <a href="{{ route('register') }}" class="w-full sm:w-auto inline-flex items-center justify-center px-10 py-5 border border-transparent text-sm font-black rounded-[1.5rem] text-white bg-autocheck-red hover:bg-red-700 transition-all shadow-xl shadow-red-500/30 active:scale-95 transform uppercase tracking-widest">
                                     Get Started
                                 </a>
-                                <a href="{{ route('about') }}" class="inline-flex items-center justify-center px-8 py-4 border border-gray-200 text-lg font-bold rounded-2xl text-gray-900 bg-white hover:bg-gray-50 transition-all">
+                                <a href="{{ route('about') }}" class="w-full sm:w-auto inline-flex items-center justify-center px-10 py-5 border-2 border-gray-100 text-sm font-black rounded-[1.5rem] text-gray-900 bg-white hover:bg-gray-50 transition-all active:scale-95 transform uppercase tracking-widest">
                                     Learn More
                                 </a>
                             </div>

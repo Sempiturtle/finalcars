@@ -45,13 +45,16 @@ class VehicleController extends Controller
             'services.*.type' => 'required|string',
             'services.*.mode' => 'required|string',
             'services.*.cost' => 'required|numeric',
+            'services.*.date' => 'nullable|date',
+            'services.*.notes' => 'nullable|string|max:1000',
+            'services.*.status' => 'nullable|string',
         ]);
 
         $user = Auth::user();
         $vehicleData = $validated;
         $vehicleData['user_id'] = $user->id;
         $vehicleData['owner_name'] = $user->name;
-        $vehicleData['status'] = $request->status ?? 'scheduled';
+        $vehicleData['status'] = 'scheduled'; // Force scheduled status for customers
         $vehicleData['total_cost'] = $request->total_cost ?? 0;
 
         // Set default next service date if not provided
@@ -153,8 +156,12 @@ class VehicleController extends Controller
             'services.*.type' => 'required|string',
             'services.*.mode' => 'required|string',
             'services.*.cost' => 'required|numeric',
+            'services.*.date' => 'nullable|date',
+            'services.*.notes' => 'nullable|string|max:1000',
+            'services.*.status' => 'nullable|string',
         ]);
 
+        $validated['status'] = 'scheduled'; // Ensure customers cannot self-complete services
         $vehicle->update($validated);
 
         return redirect()->route('customer.vehicles.index')

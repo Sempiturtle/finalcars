@@ -71,9 +71,9 @@
              class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40">
         </div>
 
-        <!-- Sidebar (Hidden by default, slides in as overlay) -->
+        <!-- Sidebar -->
         <aside 
-            class="fixed inset-y-0 left-0 z-50 w-60 bg-white shadow-2xl transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) transform border-r border-gray-100"
+            class="fixed inset-y-0 left-0 z-50 w-60 bg-white shadow-2xl lg:shadow-none transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) transform border-r border-gray-100 lg:translate-x-0 lg:static lg:inset-0"
             :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
         >
             <div class="flex flex-col h-full">
@@ -174,7 +174,7 @@
         <main class="flex-1 h-screen overflow-y-auto">
             <!-- Topbar -->
             <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-40">
-                <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:outline-none transition-colors">
+                <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:outline-none transition-colors">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                 </button>
 

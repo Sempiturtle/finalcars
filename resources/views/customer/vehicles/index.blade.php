@@ -35,10 +35,10 @@
                         <thead>
                             <tr class="bg-gray-50/50 border-b border-gray-100">
                                 <th class="px-6 py-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
-                                <th class="px-6 py-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Vehicle Details</th>
-                                <th class="px-6 py-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Plate Number</th>
-                                <th class="px-6 py-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Next Service</th>
-                                <th class="px-6 py-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Total Investment</th>
+                                <th class="px-6 py-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Vehicle</th>
+                                <th class="px-6 py-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Plate</th>
+                                <th class="px-6 py-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] text-center hidden md:table-cell">Next Service</th>
+                                <th class="px-6 py-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] text-right hidden sm:table-cell">Investment</th>
                                 <th class="px-6 py-4 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Actions</th>
                             </tr>
                         </thead>
@@ -47,23 +47,37 @@
                                 <tr class="group hover:bg-gray-50/30 transition-all duration-300">
                                     <!-- Status -->
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest {{ 
-                                            match($vehicle->status) {
-                                                'completed' => 'bg-green-50 text-green-600',
-                                                'in progress' => 'bg-blue-50 text-blue-600',
-                                                'scheduled' => 'bg-yellow-50 text-yellow-600',
-                                                'overdue' => 'bg-red-50 text-autocheck-red border border-red-100',
-                                                default => 'bg-gray-50 text-gray-600',
-                                            }
-                                        }}">
-                                            {{ $vehicle->status }}
-                                        </span>
+                                        @php
+                                            $displayStatus = $vehicle->calculated_status;
+                                            $progress = $vehicle->service_progress;
+                                        @endphp
+                                        <div class="flex flex-col space-y-2">
+                                            <div class="flex items-center justify-between gap-3">
+                                                <span class="px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest {{ 
+                                                    match($displayStatus) {
+                                                        'completed' => 'bg-green-50 text-green-600',
+                                                        'in progress' => 'bg-blue-50 text-blue-600',
+                                                        'scheduled' => 'bg-yellow-50 text-yellow-600',
+                                                        'overdue' => 'bg-red-50 text-autocheck-red border border-red-100',
+                                                        default => 'bg-gray-50 text-gray-600',
+                                                    }
+                                                }}">
+                                                    {{ $displayStatus }}
+                                                </span>
+                                                <span class="text-[8px] font-black text-gray-400 italic">{{ $progress['completed'] }}/{{ $progress['total'] }} Done</span>
+                                            </div>
+                                            <!-- Progress Bar -->
+                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                                                <div class="h-full transition-all duration-500 {{ $displayStatus === 'completed' ? 'bg-green-500' : 'bg-autocheck-red' }}" 
+                                                     style="width: {{ $progress['percent'] }}%"></div>
+                                            </div>
+                                        </div>
                                     </td>
 
                                     <!-- Vehicle Details -->
                                     <td class="px-6 py-4">
                                         <div class="flex items-center space-x-3">
-                                            <div class="w-9 h-9 bg-gray-50 rounded-lg flex items-center justify-center shrink-0 border border-gray-100 group-hover:bg-white group-hover:border-red-100 transition-colors">
+                                            <div class="hidden sm:flex w-9 h-9 bg-gray-50 rounded-lg items-center justify-center shrink-0 border border-gray-100 group-hover:bg-white group-hover:border-red-100 transition-colors">
                                                 <span class="text-[10px] font-black text-autocheck-red uppercase">{{ substr($vehicle->make, 0, 1) }}</span>
                                             </div>
                                             <div>
@@ -81,7 +95,7 @@
                                     </td>
 
                                     <!-- Next Service -->
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <td class="px-6 py-4 whitespace-nowrap text-center hidden md:table-cell">
                                         <div class="flex flex-col items-center">
                                             <span class="text-[11px] font-black {{ ($vehicle->next_service_date && $vehicle->next_service_date->isPast()) ? 'text-autocheck-red' : 'text-gray-900' }} tracking-wider">
                                                 {{ $vehicle->next_service_date ? $vehicle->next_service_date->format('M d, Y') : 'N/A' }}
@@ -91,13 +105,13 @@
                                     </td>
 
                                     <!-- Total Investment -->
-                                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                                    <td class="px-6 py-4 whitespace-nowrap text-right hidden sm:table-cell">
                                         <p class="text-[11px] font-black text-autocheck-red tracking-tight">₱{{ number_format($vehicle->total_cost ?? 0, 2) }}</p>
                                     </td>
 
                                     <!-- Actions -->
                                     <td class="px-6 py-4 whitespace-nowrap text-right">
-                                        <div class="flex items-center justify-end space-x-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+                                        <div class="flex items-center justify-end space-x-1.5 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 lg:transform lg:translate-x-2 lg:group-hover:translate-x-0">
                                             <a href="{{ route('customer.dashboard', ['vehicle_id' => $vehicle->id]) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-autocheck-red hover:bg-red-50 rounded-lg transition-all" title="View History">
                                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
                                             </a>

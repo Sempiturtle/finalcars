@@ -47,6 +47,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('vehicles', \App\Http\Controllers\Admin\VehicleController::class);
+    Route::post('/vehicles/{vehicle}/quick-verify', [\App\Http\Controllers\Admin\VehicleController::class, 'quickVerify'])->name('vehicles.quick-verify');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::resource('service-types', \App\Http\Controllers\Admin\ServiceTypeController::class)->except(['create', 'show', 'edit']);
     

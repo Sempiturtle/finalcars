@@ -28,6 +28,8 @@ class RewardController extends Controller
                 'service_type'  => $log->service_type,
                 'points_earned' => $log->points_earned,
                 'cost'          => $log->cost,
+                'notes'         => $log->notes,
+                'completed_by'  => $log->completedBy ? $log->completedBy->name : 'System/Staff',
                 'service_date'  => optional($log->service_date)->format('M d, Y'),
             ]);
 
