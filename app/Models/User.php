@@ -51,13 +51,17 @@ class User extends Authenticatable
             return $vehicle->serviceLogs;
         });
 
-        $points = 0;
-
+        $earnedPoints = 0;
         foreach ($serviceLogs as $log) {
-            $points += $log->points_earned;
+            $earnedPoints += $log->points_earned;
         }
+
+        // Subtract spent points from claimed rewards
+        $spentPoints = $this->rewards()->sum('points_cost');
         
-        $this->update(['loyalty_points' => $points]);
+        $finalPoints = max(0, $earnedPoints - $spentPoints);
+        
+        $this->update(['loyalty_points' => $finalPoints]);
     }
 
     /**
