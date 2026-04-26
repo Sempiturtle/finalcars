@@ -253,13 +253,16 @@ class Vehicle extends Model
 
         // 2. Now calculate status based on the updated date
         $newStatus = $this->calculated_status;
-        $updateData['status'] = $newStatus;
+        
+        // CRITICAL: 'due today' is for UI only. Map back to 'scheduled' for DB persistence.
+        $dbStatus = ($newStatus === 'due today') ? 'scheduled' : $newStatus;
+        $updateData['status'] = $dbStatus;
         
         // 3. ALWAYS apply changes to DB — never skip, to prevent stale status
         \Illuminate\Support\Facades\DB::table('vehicles')
             ->where('id', $this->id)
             ->update($updateData);
         
-        $this->status = $newStatus;
+        $this->status = $dbStatus;
     }
 }

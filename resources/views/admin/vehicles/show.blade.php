@@ -7,6 +7,51 @@
                 <p class="text-gray-500 font-medium mt-1">{{ $vehicle->make }} {{ $vehicle->model }} ({{ $vehicle->plate_number }})</p>
             </div>
             <div class="flex items-center space-x-4">
+                @php
+                    $pendingServices = collect($vehicle->services ?? [])
+                        ->map(fn($s, $i) => array_merge($s, ['original_index' => $i]))
+                        ->where('status', '!=', 'completed')
+                        ->values();
+                @endphp
+
+                <div x-data="{ 
+                    showVerifyModal: false, 
+                    showStartModal: false,
+                    currentVehicleId: {{ $vehicle->id }}, 
+                    currentPlate: '{{ $vehicle->plate_number }}', 
+                    pendingServices: {{ $pendingServices->toJson() }}, 
+                    scheduledServices: {{ $pendingServices->filter(fn($s) => in_array($s['status'] ?? '', ['scheduled', '']))->toJson() }},
+                    selectedServices: [], 
+                    notes: '',
+                    openVerify() {
+                        this.selectedServices = this.pendingServices.map(s => String(s.original_index));
+                        this.showVerifyModal = true;
+                    },
+                    openStart() {
+                        this.selectedServices = this.scheduledServices.map(s => String(s.original_index));
+                        this.showStartModal = true;
+                    }
+                }">
+                    <div class="flex items-center space-x-2">
+                        @if($pendingServices->filter(fn($s) => in_array($s['status'] ?? '', ['scheduled', '']))->count() > 0)
+                            <button @click="openStart()" class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all border border-blue-100">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Start Work
+                            </button>
+                        @endif
+
+                        @if($pendingServices->count() > 0)
+                            <button @click="openVerify()" class="inline-flex items-center px-4 py-2 bg-green-50 text-green-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-green-600 hover:text-white transition-all border border-green-100">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                Verify Service
+                            </button>
+                        @endif
+                    </div>
+
+                    <!-- Modals Ported from Index -->
+                    @include('admin.vehicles.partials.modals')
+                </div>
+
                 <a href="{{ route('admin.vehicles.edit', $vehicle) }}" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-bold rounded-2xl text-white bg-autocheck-red hover:bg-red-700 transition-all shadow-lg shadow-red-500/30">
                     Edit Vehicle
                 </a>

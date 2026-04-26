@@ -20,9 +20,16 @@ class DashboardController extends Controller
 
         // Corrective pass: fix any stale status values in the DB
         // This catches vehicles whose status got stuck (e.g., 'overdue' when services are 'in progress')
-        Vehicle::where('next_service_date', '<', $today)->chunk(50, function ($vehicles) {
+        Vehicle::where('next_service_date', '<=', $today)->chunk(50, function ($vehicles) {
             foreach ($vehicles as $vehicle) {
                 $calc = $vehicle->calculated_status;
+                
+                // CRITICAL: 'due today' is a UI-only status and NOT part of the database ENUM.
+                // We should only persist core database statuses.
+                if ($calc === 'due today') {
+                    $calc = 'scheduled'; // Map back to DB-safe value
+                }
+
                 if ($vehicle->getRawOriginal('status') !== $calc) {
                     \Illuminate\Support\Facades\DB::table('vehicles')
                         ->where('id', $vehicle->id)
