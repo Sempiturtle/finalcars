@@ -1,3 +1,4 @@
+<x-customer-layout>
     <div class="max-w-4xl mx-auto space-y-8 relative" 
         x-data="{
             services: [],
@@ -389,23 +390,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>v>
-                </div>
-
-                <hr class="border-gray-50">
-
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div class="max-w-xs">
-                        <p class="text-[10px] text-gray-400 font-bold leading-relaxed uppercase tracking-widest">By registering, you agree to receive maintenance notifications based on the timeline generated.</p>
                     </div>
-                    <button type="submit" class="px-12 py-5 bg-autocheck-red text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-red-700 transition-all shadow-2xl shadow-red-500/30 active:scale-95 transform">
-                        Complete Registration
-                    </button>
                 </div>
-            </form>
-        </div>
-    </div>
-</x-customer-layout>
 
                 <hr class="border-gray-50">
 
