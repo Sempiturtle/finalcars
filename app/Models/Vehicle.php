@@ -111,7 +111,10 @@ class Vehicle extends Model
 
         if (!is_array($this->services) || empty($this->services)) {
             // Check if overdue based on date even if no services are listed
-            if ($this->next_service_date && $this->next_service_date->isPast()) {
+            if ($this->next_service_date && $this->next_service_date->isToday()) {
+                return 'due today';
+            }
+            if ($this->next_service_date && $this->next_service_date->lt(now()->startOfDay())) {
                 return 'overdue';
             }
             return $this->status;
@@ -129,8 +132,13 @@ class Vehicle extends Model
             return 'in progress';
         }
 
-        // 2. Overdue: Only if NOT in progress and the date has passed.
-        if ($this->next_service_date && $this->next_service_date->isPast() && ($total === 0 || $completedCount < $total)) {
+        // 2. Due Today: If NOT in progress and the date is EXACTLY today.
+        if ($this->next_service_date && $this->next_service_date->isToday() && ($total === 0 || $completedCount < $total)) {
+            return 'due today';
+        }
+
+        // 3. Overdue: Only if NOT in progress and the date has strictly passed.
+        if ($this->next_service_date && $this->next_service_date->lt(now()->startOfDay()) && ($total === 0 || $completedCount < $total)) {
             return 'overdue';
         }
 
@@ -165,24 +173,31 @@ class Vehicle extends Model
         }
 
         $isAdmin = (auth()->check() && auth()->user()->isAdmin());
+        
+        // Keep track of which logs we've already matched in this pass 
+        // to handle multiple services of the same type correctly.
+        $matchedLogIds = [];
 
         foreach ($this->services as $service) {
             $type = $service['type'] ?? 'N/A';
+            $targetStatus = $service['status'] ?? ($isAdmin && $this->status === 'completed' ? 'completed' : 'scheduled');
             
-            // Try to find an existing log that matches this type and is not yet completed
+            // Try to find an existing log that matches this type, is not yet completed,
+            // and hasn't been matched yet in this loop.
             $log = $this->serviceLogs()
                 ->where('service_type', $type)
                 ->where('status', '!=', 'completed')
+                ->whereNotIn('id', $matchedLogIds)
                 ->first();
 
-            // Determine what the status should be
-            $targetStatus = $service['status'] ?? ($isAdmin && $this->status === 'completed' ? 'completed' : 'scheduled');
-
             if ($log) {
-                // Update existing log with the status from the form/JSON
+                $matchedLogIds[] = $log->id;
                 $oldStatus = $log->status;
+                
                 $log->update([
                     'status' => $targetStatus,
+                    'cost' => $service['cost'] ?? $log->cost,
+                    'service_mode' => $service['mode'] ?? $log->service_mode,
                     'notes' => $service['notes'] ?? $log->notes,
                     'service_date' => $service['date'] ?? $log->service_date,
                 ]);
@@ -192,23 +207,29 @@ class Vehicle extends Model
                     $log->update(['completed_by_id' => auth()->id()]);
                 }
             } else {
-                // If no log exists at all (even a completed one), create it
-                $alreadyCompleted = $this->serviceLogs()
+                // If no pending log matches, check if we should create a new one.
+                $alreadyCompletedCount = $this->serviceLogs()
                     ->where('service_type', $type)
                     ->where('status', 'completed')
-                    ->exists();
+                    ->whereNotIn('id', $matchedLogIds)
+                    ->count();
+                
+                // If there are more entries in JSON than in the table, we need to create one.
+                $jsonCountOfThisType = collect($this->services)->where('type', $type)->count();
+                $tableCountOfThisType = $this->serviceLogs()->where('service_type', $type)->count();
 
-                if (!$alreadyCompleted || $targetStatus === 'completed') {
-                    $this->serviceLogs()->create([
+                if ($tableCountOfThisType < $jsonCountOfThisType) {
+                    $newLog = $this->serviceLogs()->create([
                         'service_type' => $type,
                         'service_mode' => $service['mode'] ?? 'Walk-in',
                         'cost' => $service['cost'] ?? 0,
                         'status' => $targetStatus,
                         'service_date' => $service['date'] ?? now(),
-                        'mechanic_name' => $this->mechanic_name ?? 'Pending Assignment',
+                        'mechanic_name' => 'Pending Assignment',
                         'notes' => $service['notes'] ?? null,
                         'completed_by_id' => ($targetStatus === 'completed' && auth()->check()) ? auth()->id() : null,
                     ]);
+                    $matchedLogIds[] = $newLog->id;
                 }
             }
         }

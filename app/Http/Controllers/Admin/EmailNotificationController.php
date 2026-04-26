@@ -42,7 +42,7 @@ class EmailNotificationController extends Controller
                     $email = $user ? $user->email : 'no-email@example.com';
                 }
 
-                $isOverdue = Carbon::parse($vehicle->next_service_date)->isPast();
+                $isOverdue = Carbon::parse($vehicle->next_service_date)->lt($today);
                 
                 return [
                     'id' => $vehicle->id,
@@ -77,7 +77,7 @@ class EmailNotificationController extends Controller
         $user = $vehicle->owner ?? User::where('name', $vehicle->owner_name)->first();
         $email = $user ? $user->email : 'no-email@example.com';
         
-        $type = Carbon::parse($vehicle->next_service_date)->isPast() ? 'overdue' : 'before_due';
+        $type = Carbon::parse($vehicle->next_service_date)->lt(Carbon::today()) ? 'overdue' : 'before_due';
 
         EmailLog::create([
             'vehicle_id' => $vehicle->id,

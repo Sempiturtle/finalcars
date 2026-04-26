@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 use Illuminate\Support\Facades\Schedule;
 Schedule::command('maintenance:send-reminders')->dailyAt('08:00');
 Schedule::command('app:check-vehicle-overdue')->dailyAt('09:00');
+Schedule::command('app:sync-fleet-data --repair')->dailyAt('02:00');

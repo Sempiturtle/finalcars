@@ -146,6 +146,31 @@ class VehicleController extends Controller
 
         $oldUserId = $vehicle->user_id;
 
+        // --- MERGE LOGIC TO PREVENT DATA LOSS ---
+        // If the admin is saving, we need to make sure we don't overwrite 
+        // services added by the customer while the admin had the edit page open.
+        $incomingServices = $validated['services'] ?? [];
+        $existingServices = $vehicle->fresh()->services ?? [];
+        
+        // We identify "Customer Added" services by looking for entries 
+        // in the DB that aren't present in the incoming form data.
+        // For simplicity and safety, we merge them based on type and date.
+        foreach ($existingServices as $existing) {
+            $found = false;
+            foreach ($incomingServices as $incoming) {
+                if (($incoming['type'] ?? '') === ($existing['type'] ?? '') && 
+                    ($incoming['date'] ?? '') === ($existing['date'] ?? '')) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $incomingServices[] = $existing;
+            }
+        }
+        $validated['services'] = $incomingServices;
+        // ----------------------------------------
+
         $vehicle->update($validated);
 
         // If user_id changed, notify the new owner

@@ -52,5 +52,16 @@ class ServiceHistoryController extends Controller
             'totalCost',
             'vehicles'
         ));
+    public function destroy(ServiceLog $log)
+    {
+        $user = $log->vehicle->owner;
+        $log->delete();
+
+        // Recalculate points for the user automatically to keep data clean
+        if ($user) {
+            $user->recalculateLoyaltyPoints();
+        }
+
+        return back()->with('success', 'Service record deleted and points updated.');
     }
 }

@@ -104,17 +104,21 @@ class VehicleController extends Controller
 
         $serviceType = \App\Models\ServiceType::find($validated['service_type_id']);
 
-        $vehicle->serviceLogs()->create([
-            'service_type' => $serviceType->name,
-            'service_mode' => $validated['service_mode'],
+        // Update the services JSON array (the source of truth for Admin Fleet view)
+        $services = $vehicle->services ?? [];
+        $services[] = [
+            'type' => $serviceType->name,
+            'mode' => $validated['service_mode'],
             'cost' => $serviceType->base_cost,
             'status' => 'scheduled',
-            'service_date' => $validated['service_date'],
-            'mechanic_name' => 'Pending Assignment',
-        ]);
-
-        // Automatically push next service date forward
+            'date' => $validated['service_date'],
+            'notes' => $validated['notes'] ?? null,
+        ];
+        
+        // This update will trigger the Vehicle model's 'updated' observer 
+        // which calls syncServiceLogs() to create the database record.
         $vehicle->update([
+            'services' => $services,
             'next_service_date' => Carbon::parse($validated['service_date'])->addMonths(6)->toDateString(),
             'status' => 'scheduled'
         ]);

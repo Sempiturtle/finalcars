@@ -192,7 +192,7 @@
                              x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                              x-transition:leave-end="opacity-0 scale-95 translate-y-2"
                              @click.away="open = false" 
-                             class="absolute right-0 mt-3 w-72 bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 z-50 overflow-hidden"
+                             class="fixed inset-x-4 md:absolute md:inset-auto md:right-0 mt-3 w-auto md:w-72 bg-white rounded-[2rem] md:rounded-3xl shadow-2xl border border-gray-100 p-6 z-50 overflow-hidden"
                              style="display: none;"
                         >
                             <div class="absolute top-0 right-0 -mt-2 -mr-2 w-16 h-16 bg-autocheck-red/5 rounded-full"></div>

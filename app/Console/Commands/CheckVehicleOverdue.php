@@ -44,11 +44,17 @@ class CheckVehicleOverdue extends Command
             ->get()
             ->each(fn($v) => $this->notifyOwner($v, "Maintenance Reminder (Tomorrow)", "Your vehicle ({$v->plate_number}) is due for service tomorrow."));
 
-        // Overdue (Today or Past)
-        Vehicle::whereDate('next_service_date', '<=', $today)
+        // Due Today
+        Vehicle::whereDate('next_service_date', $today)
             ->whereNotIn('status', ['inactive', 'in progress', 'completed'])
             ->get()
-            ->each(fn($v) => $this->notifyOwner($v, "Service Overdue", "Your vehicle ({$v->plate_number}) is overdue for maintenance. Please schedule a service."));
+            ->each(fn($v) => $this->notifyOwner($v, "Maintenance Due Today", "Your vehicle ({$v->plate_number}) is scheduled for maintenance today. Please visit the service center."));
+
+        // Overdue (Past Days)
+        Vehicle::whereDate('next_service_date', '<', $today)
+            ->whereNotIn('status', ['inactive', 'in progress', 'completed'])
+            ->get()
+            ->each(fn($v) => $this->notifyOwner($v, "Service Overdue", "Your vehicle ({$v->plate_number}) is overdue for maintenance. Please schedule a service as soon as possible."));
 
         $this->info('Vehicle overdue checks completed.');
     }

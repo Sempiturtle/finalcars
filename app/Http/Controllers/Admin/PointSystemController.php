@@ -28,6 +28,7 @@ class PointSystemController extends Controller
                     'vehicle_count' => $user->vehicles()->count(),
                     'service_logs'  => $allLogs->map(function($log) {
                         return [
+                            'id'             => $log->id,
                             'service_type'   => $log->service_type,
                             'points_earned'  => $log->points_earned,
                             'cost'           => $log->cost,

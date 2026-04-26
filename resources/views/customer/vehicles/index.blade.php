@@ -57,6 +57,7 @@
                                                     match($displayStatus) {
                                                         'completed' => 'bg-green-50 text-green-600',
                                                         'in progress' => 'bg-blue-50 text-blue-600',
+                                                        'due today' => 'bg-amber-50 text-amber-600 border border-amber-100',
                                                         'scheduled' => 'bg-yellow-50 text-yellow-600',
                                                         'overdue' => 'bg-red-50 text-autocheck-red border border-red-100',
                                                         default => 'bg-gray-50 text-gray-600',
@@ -100,8 +101,16 @@
                                             <span class="text-[11px] font-black {{ ($vehicle->next_service_date && $vehicle->next_service_date->isPast()) ? 'text-autocheck-red' : 'text-gray-900' }} tracking-wider">
                                                 {{ $vehicle->next_service_date ? $vehicle->next_service_date->format('M d, Y') : 'N/A' }}
                                             </span>
-                                            <span class="text-[8px] font-black {{ ($vehicle->next_service_date && $vehicle->next_service_date->isPast() && !in_array(strtolower($vehicle->calculated_status), ['in progress', 'completed'])) ? 'text-autocheck-red' : 'text-gray-400' }} uppercase tracking-widest mt-0.5">
-                                                {{ ($vehicle->next_service_date && $vehicle->next_service_date->isPast() && !in_array(strtolower($vehicle->calculated_status), ['in progress', 'completed'])) ? 'Overdue' : (strtolower($vehicle->calculated_status) === 'in progress' ? 'In Progress' : 'Scheduled') }}
+                                            <span class="text-[8px] font-black {{ ($vehicle->next_service_date && $vehicle->next_service_date->isPast() && !in_array(strtolower($vehicle->calculated_status), ['in progress', 'completed', 'due today'])) ? 'text-autocheck-red' : 'text-gray-400' }} uppercase tracking-widest mt-0.5">
+                                                @if(strtolower($vehicle->calculated_status) === 'due today')
+                                                    Due Today
+                                                @elseif($vehicle->next_service_date && $vehicle->next_service_date->isPast() && !in_array(strtolower($vehicle->calculated_status), ['in progress', 'completed']))
+                                                    Overdue
+                                                @elseif(strtolower($vehicle->calculated_status) === 'in progress')
+                                                    In Progress
+                                                @else
+                                                    Scheduled
+                                                @endif
                                             </span>
                                         </div>
                                     </td>

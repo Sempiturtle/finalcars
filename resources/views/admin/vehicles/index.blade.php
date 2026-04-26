@@ -103,6 +103,7 @@
                                                     match($displayStatus) {
                                                         'completed' => 'bg-green-50 text-green-600',
                                                         'in progress' => 'bg-blue-50 text-blue-600',
+                                                        'due today' => 'bg-amber-50 text-amber-600 border border-amber-100',
                                                         'scheduled' => 'bg-yellow-50 text-yellow-600',
                                                         'overdue' => 'bg-red-50 text-autocheck-red',
                                                         default => 'bg-gray-50 text-gray-600',

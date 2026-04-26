@@ -186,7 +186,7 @@
                              x-transition:enter="transition ease-out duration-200"
                              x-transition:enter-start="opacity-0 scale-95 translate-y-2"
                              x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                             class="absolute right-0 mt-4 w-80 md:w-96 bg-white/95 backdrop-blur-xl rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden z-50 origin-top-right">
+                             class="fixed inset-x-4 md:absolute md:inset-auto md:right-0 mt-4 w-auto md:w-96 bg-white/95 backdrop-blur-xl rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden z-50 origin-top-right">
                             
                             <div class="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
                                 <h3 class="text-sm font-black text-gray-900 tracking-tight italic">Notifications <span class="text-autocheck-red" x-text="notifications.length"></span></h3>

@@ -188,7 +188,9 @@
                                                     'text-autocheck-red': service.status === 'scheduled' && isLate(service.date, service.status),
                                                     'text-yellow-600': service.status === 'scheduled' && !isLate(service.date, service.status)
                                                 }">
-                                                <option value="scheduled" :class="isLate(service.date, service.status) ? 'text-autocheck-red font-black' : ''" x-text="isLate(service.date, service.status) ? 'Overdue (Late)' : 'Scheduled'"></option>
+                                                <option value="scheduled" 
+                                                        :class="isLate(service.date, service.status) ? 'text-autocheck-red font-black' : (new Date(service.date).toDateString() === new Date().toDateString() ? 'text-amber-600' : '')" 
+                                                        x-text="isLate(service.date, service.status) ? 'Overdue (Late)' : (new Date(service.date).toDateString() === new Date().toDateString() ? 'Due Today' : 'Scheduled')"></option>
                                                 <option value="in progress">In Progress</option>
                                                 <option value="completed">Completed</option>
                                             </select>
