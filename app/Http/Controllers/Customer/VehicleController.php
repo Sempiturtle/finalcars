@@ -45,7 +45,7 @@ class VehicleController extends Controller
             'services.*.type' => 'required|string',
             'services.*.mode' => 'required|string',
             'services.*.cost' => 'required|numeric',
-            'services.*.date' => 'nullable|date',
+            'services.*.date' => ['nullable', 'date', new \App\Rules\AvailableServiceDate],
             'services.*.notes' => 'nullable|string|max:1000',
             'services.*.status' => 'nullable|string',
         ]);
@@ -95,14 +95,15 @@ class VehicleController extends Controller
             abort(403);
         }
 
+        $serviceType = \App\Models\ServiceType::findOrFail($request->service_type_id);
+        $requiredSlots = $serviceType->required_slots ?? 1;
+
         $validated = $request->validate([
             'service_type_id' => 'required|exists:service_types,id',
-            'service_mode' => 'required|string',
-            'service_date' => 'required|date',
-            'notes' => 'nullable|string',
+            'service_mode' => 'required|in:Walk-in,Towing,Home Service',
+            'service_date' => ['required', 'date', new \App\Rules\AvailableServiceDate($requiredSlots)],
+            'notes' => 'nullable|string|max:1000',
         ]);
-
-        $serviceType = \App\Models\ServiceType::find($validated['service_type_id']);
 
         // Update the services JSON array (the source of truth for Admin Fleet view)
         $services = $vehicle->services ?? [];
@@ -160,7 +161,7 @@ class VehicleController extends Controller
             'services.*.type' => 'required|string',
             'services.*.mode' => 'required|string',
             'services.*.cost' => 'required|numeric',
-            'services.*.date' => 'nullable|date',
+            'services.*.date' => ['nullable', 'date', new \App\Rules\AvailableServiceDate],
             'services.*.notes' => 'nullable|string|max:1000',
             'services.*.status' => 'nullable|string',
         ]);
@@ -186,5 +187,77 @@ class VehicleController extends Controller
         return redirect()->route('customer.vehicles.index')
             ->with('success', 'Vehicle removed from your account.');
     }
-}
 
+    /**
+     * Check availability for a specific date.
+     */
+    public function fetchMonthAvailability(Request $request)
+    {
+        $month = $request->query('month', date('m'));
+        $year = $request->query('year', date('Y'));
+        
+        $startDate = Carbon::create($year, $month, 1)->startOfMonth();
+        $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+
+        $maxSlots = \App\Models\Setting::get('max_slots_per_day', 10);
+        $restDays = \App\Models\Setting::get('rest_days', [0]);
+
+        $logs = ServiceLog::whereBetween('service_date', [$startDate->toDateString(), $endDate->toDateString()])->get();
+        
+        $dailyUsage = [];
+        foreach ($logs as $log) {
+            $date = $log->service_date->toDateString();
+            if (!isset($dailyUsage[$date])) $dailyUsage[$date] = 0;
+            $st = \App\Models\ServiceType::whereRaw('LOWER(name) = ?', [strtolower($log->service_type)])->first();
+            $dailyUsage[$date] += ($st->required_slots ?? 1);
+        }
+
+        $days = [];
+        $tempDate = $startDate->copy();
+        while ($tempDate <= $endDate) {
+            $d = $tempDate->toDateString();
+            $used = $dailyUsage[$d] ?? 0;
+            $days[$d] = [
+                'used' => $used,
+                'total' => $maxSlots,
+                'available' => !in_array($tempDate->dayOfWeek, $restDays) && $used < $maxSlots && ($tempDate->isFuture() || $tempDate->isToday()),
+                'is_rest_day' => in_array($tempDate->dayOfWeek, $restDays)
+            ];
+            $tempDate->addDay();
+        }
+
+        return response()->json($days);
+    }
+
+    public function checkAvailability(Request $request)
+    {
+        $dateStr = $request->query('date');
+        if (!$dateStr) return response()->json(['error' => 'No date provided'], 400);
+
+        $date = Carbon::parse($dateStr);
+        $maxSlots = \App\Models\Setting::get('max_slots_per_day', 10);
+        $restDays = \App\Models\Setting::get('rest_days', [0]);
+
+        $isRestDay = in_array($date->dayOfWeek, $restDays);
+        $isPast = $date->isPast() && !$date->isToday();
+
+        // Calculate used slots based on weights
+        $existingLogs = ServiceLog::whereDate('service_date', $date->toDateString())->get();
+        $usedSlots = 0;
+        foreach ($existingLogs as $log) {
+            $st = \App\Models\ServiceType::whereRaw('LOWER(name) = ?', [strtolower($log->service_type)])->first();
+            $usedSlots += ($st->required_slots ?? 1);
+        }
+
+        return response()->json([
+            'date' => $date->toDateString(),
+            'available' => !$isRestDay && !$isPast && ($usedSlots < $maxSlots),
+            'slots_total' => $maxSlots,
+            'slots_used' => $usedSlots,
+            'slots_remaining' => max(0, $maxSlots - $usedSlots),
+            'is_rest_day' => $isRestDay,
+            'is_full' => $usedSlots >= $maxSlots,
+            'is_past' => $isPast
+        ]);
+    }
+}

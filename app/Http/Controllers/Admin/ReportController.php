@@ -48,12 +48,57 @@ class ReportController extends Controller
         }
 
         $recentActivity = $recentActivityQuery->take(10)->get();
-
-        return view('admin.reports.index', compact(
-            'reportType', 'startDate', 'endDate',
-            'totalCustomers', 'totalVehicles', 'servicesThisMonth', 'totalCostThisMonth',
-            'dueSoonCount', 'overdueCount', 'criticalOverdueCount', 'totalServicesAllTime', 'totalCostAllTime', 'avgCostPerService',
-            'recentActivity'
-        ));
-    }
-}
+ 
+         return view('admin.reports.index', compact(
+             'reportType', 'startDate', 'endDate',
+             'totalCustomers', 'totalVehicles', 'servicesThisMonth', 'totalCostThisMonth',
+             'dueSoonCount', 'overdueCount', 'criticalOverdueCount', 'totalServicesAllTime', 'totalCostAllTime', 'avgCostPerService',
+             'recentActivity'
+         ));
+     }
+ 
+     public function export(Request $request)
+     {
+         $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : Carbon::now()->startOfMonth();
+         $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date) : Carbon::now()->endOfMonth();
+ 
+         $fileName = 'service_report_' . $startDate->format('Ymd') . '_to_' . $endDate->format('Ymd') . '.csv';
+         
+         $services = ServiceLog::with('vehicle.owner')
+             ->whereBetween('service_date', [$startDate, $endDate])
+             ->orderBy('service_date', 'desc')
+             ->get();
+ 
+         $headers = [
+             "Content-type"        => "text/csv",
+             "Content-Disposition" => "attachment; filename=$fileName",
+             "Pragma"              => "no-cache",
+             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+             "Expires"             => "0"
+         ];
+ 
+         $columns = ['Date', 'Vehicle', 'Plate Number', 'Owner', 'Service Type', 'Mode', 'Cost', 'Status'];
+ 
+         $callback = function() use($services, $columns) {
+             $file = fopen('php://output', 'w');
+             fputcsv($file, $columns);
+ 
+             foreach ($services as $service) {
+                 fputcsv($file, [
+                     $service->service_date,
+                     $service->vehicle->make . ' ' . $service->vehicle->model,
+                     $service->vehicle->plate_number,
+                     $service->vehicle->owner ? $service->vehicle->owner->name : 'N/A',
+                     $service->service_type,
+                     $service->service_mode,
+                     $service->cost,
+                     $service->status,
+                 ]);
+             }
+ 
+             fclose($file);
+         };
+ 
+         return response()->stream($callback, 200, $headers);
+     }
+ }

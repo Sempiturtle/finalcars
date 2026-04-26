@@ -126,12 +126,12 @@
                                 </div>
                                 <div class="grid grid-cols-2 gap-6">
                                     <div>
-                                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Registration</p>
-                                        <p class="text-lg font-black text-gray-900">{{ $vehicle->registration_date?->format('m/d/Y') ?? 'N/A' }}</p>
+                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Registration</p>
+                                        <p class="text-lg font-black text-gray-900">{{ $vehicle->registration_date?->format('F j, Y') ?? 'N/A' }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Next Service</p>
-                                        <p class="text-lg font-black text-autocheck-red">{{ $vehicle->next_service_date?->format('m/d/Y') ?? 'N/A' }}</p>
+                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Next Service</p>
+                                        <p class="text-lg font-black text-autocheck-red">{{ $vehicle->next_service_date?->format('F j, Y') ?? 'N/A' }}</p>
                                     </div>
                                 </div>
                             </div>

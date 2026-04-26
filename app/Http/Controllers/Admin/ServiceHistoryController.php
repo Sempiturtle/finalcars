@@ -52,6 +52,8 @@ class ServiceHistoryController extends Controller
             'totalCost',
             'vehicles'
         ));
+    }
+
     public function destroy(ServiceLog $log)
     {
         $user = $log->vehicle->owner;

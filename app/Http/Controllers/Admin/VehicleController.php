@@ -66,7 +66,7 @@ class VehicleController extends Controller
             'services.*.cost' => 'required_with:services|numeric|min:0',
             'services.*.status' => 'nullable|string|in:scheduled,in progress,completed',
             'services.*.notes' => 'nullable|string|max:1000',
-            'services.*.date' => 'nullable|date',
+            'services.*.date' => ['nullable', 'date', new \App\Rules\AvailableServiceDate],
             'total_cost' => 'nullable|numeric|min:0',
         ]);
 
@@ -74,11 +74,21 @@ class VehicleController extends Controller
         $user = User::find($validated['user_id']);
         $validated['owner_name'] = $user->name;
 
+        // If next_service_date is not provided, calculate it based on registration (6 months)
         if (empty($validated['next_service_date'])) {
             $baseDate = !empty($validated['registration_date']) 
                 ? Carbon::parse($validated['registration_date']) 
                 : Carbon::now();
-            $validated['next_service_date'] = $baseDate->addMonths(6)->toDateString();
+            
+            $nextDate = $baseDate->addMonths(6);
+            
+            // Ensure next_service_date respects rest days
+            $restDays = array_map('intval', \App\Models\Setting::get('rest_days', [0]));
+            while (in_array((int)$nextDate->dayOfWeek, $restDays)) {
+                $nextDate->addDay();
+            }
+            
+            $validated['next_service_date'] = $nextDate->toDateString();
         }
 
         $vehicle = Vehicle::create($validated);
@@ -136,7 +146,7 @@ class VehicleController extends Controller
             'services.*.cost' => 'required_with:services|numeric|min:0',
             'services.*.status' => 'nullable|string|in:scheduled,in progress,completed',
             'services.*.notes' => 'nullable|string|max:1000',
-            'services.*.date' => 'nullable|date',
+            'services.*.date' => ['nullable', 'date', new \App\Rules\AvailableServiceDate],
             'total_cost' => 'nullable|numeric|min:0',
         ]);
 

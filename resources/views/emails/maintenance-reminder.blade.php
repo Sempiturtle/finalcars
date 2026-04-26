@@ -85,7 +85,7 @@
             <div class="vehicle-info">
                 <h2>{{ $vehicle->make }} {{ $vehicle->model }}</h2>
                 <p style="margin: 0; color: #6b7280;">Plate Number: <strong>{{ $vehicle->plate_number }}</strong></p>
-                <p style="margin: 8px 0 0 0; color: #6b7280;">Scheduled Date: <strong>{{ $vehicle->next_service_date->format('M d, Y') }}</strong></p>
+                <p style="margin: 8px 0 0 0; color: #6b7280;">Scheduled Date: <strong>{{ $vehicle->next_service_date->format('F j, Y') }}</strong></p>
             </div>
 
             <p>Regular maintenance ensures your vehicle remains in peak condition and helps prevent costly repairs down the road.</p>

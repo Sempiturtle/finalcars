@@ -16,21 +16,26 @@
         </style>
         <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}?v=2">
     </head>
-    <body class="antialiased bg-gray-50 flex items-center justify-center min-h-screen p-4 border-t-8 border-autocheck-red">
+    <body class="antialiased bg-gray-50 flex items-center justify-center min-h-screen p-4 border-t-8 border-autocheck-red overflow-hidden">
+        <!-- Watermark Background -->
+        <div class="fixed inset-0 z-0 pointer-events-none opacity-[0.2] overflow-hidden">
+            <img src="{{ asset('images/background.jfif') }}" alt="" class="w-full h-full object-cover grayscale brightness-90">
+        </div>
+
         @php $loginType = request('type', 'customer'); @endphp
-        <div class="max-w-[400px] w-full">
-            <div class="text-center mb-8">
-                <a href="/" class="inline-flex flex-col items-center space-y-3 mb-4">
-                    <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-14 w-14 rounded-full object-cover border-2 {{ $loginType === 'admin' ? 'border-autocheck-red' : 'border-blue-500' }} shadow-xl">
-                    <span class="text-2xl font-black tracking-tight text-gray-900">AutoCheck</span>
+        <div class="max-w-[400px] w-full relative z-10">
+            <div class="text-center mb-4">
+                <a href="/" class="inline-flex flex-col items-center space-y-2 mb-2">
+                    <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-12 w-12 rounded-full object-cover border-2 {{ $loginType === 'admin' ? 'border-autocheck-red' : 'border-blue-500' }} shadow-xl">
+                    <span class="text-xl font-black tracking-tight text-gray-900">AutoCheck</span>
                 </a>
-                <h2 class="text-lg font-bold text-gray-600">
+                <h2 class="text-sm font-bold text-gray-600">
                     {{ $loginType === 'admin' ? 'Admin Portal' : 'Customer Portal' }}
                 </h2>
-                <p class="text-[10px] text-gray-400 mt-1 uppercase tracking-widest">Sign in to access your account</p>
+                <p class="text-[9px] text-gray-400 mt-1 uppercase tracking-widest">Sign in to access your account</p>
             </div>
 
-            <div class="bg-white rounded-[2.5rem] shadow-2xl {{ $loginType === 'admin' ? 'shadow-red-500/10' : 'shadow-blue-500/10' }} border border-gray-100 p-8 md:p-10">
+            <div class="bg-white rounded-[2rem] shadow-2xl {{ $loginType === 'admin' ? 'shadow-red-500/10' : 'shadow-blue-500/10' }} border border-gray-100 p-6 md:p-8">
                 <!-- Session Status -->
                 <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -83,14 +88,14 @@
                     </div>
 
                     <div class="pt-2">
-                        <button type="submit" class="w-full py-4 {{ $loginType === 'admin' ? 'bg-autocheck-red shadow-red-500/20 hover:bg-red-700' : 'bg-blue-600 shadow-blue-500/20 hover:bg-blue-700' }} text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 transform">
+                        <button type="submit" class="w-full py-3 {{ $loginType === 'admin' ? 'bg-autocheck-red shadow-red-500/20 hover:bg-red-700' : 'bg-blue-600 shadow-blue-500/20 hover:bg-blue-700' }} text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 transform">
                             Secure Log In
                         </button>
                     </div>
 
                     @if($loginType === 'customer')
-                        <div class="mt-6 text-center border-t border-gray-50 pt-6">
-                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">New here?</p>
+                        <div class="mt-4 text-center border-t border-gray-50 pt-4">
+                            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">New here?</p>
                             <a href="{{ route('register') }}" class="inline-flex items-center text-[10px] font-black text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-widest">
                                 Create Account
                                 <svg class="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -100,7 +105,7 @@
                 </form>
             </div>
 
-            <div class="mt-8 text-center">
+            <div class="mt-4 text-center">
                 <a href="/" class="text-[10px] font-bold text-gray-400 hover:text-gray-600 transition-colors uppercase tracking-widest flex items-center justify-center group">
                     <svg class="h-4 w-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Back to Home

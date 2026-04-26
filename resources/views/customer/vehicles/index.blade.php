@@ -99,7 +99,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-center hidden md:table-cell">
                                         <div class="flex flex-col items-center">
                                             <span class="text-[11px] font-black {{ ($vehicle->next_service_date && $vehicle->next_service_date->isPast()) ? 'text-autocheck-red' : 'text-gray-900' }} tracking-wider">
-                                                {{ $vehicle->next_service_date ? $vehicle->next_service_date->format('M d, Y') : 'N/A' }}
+                                                {{ $vehicle->next_service_date ? $vehicle->next_service_date->format('F j, Y') : 'N/A' }}
                                             </span>
                                             <span class="text-[8px] font-black {{ ($vehicle->next_service_date && $vehicle->next_service_date->isPast() && !in_array(strtolower($vehicle->calculated_status), ['in progress', 'completed', 'due today'])) ? 'text-autocheck-red' : 'text-gray-400' }} uppercase tracking-widest mt-0.5">
                                                 @if(strtolower($vehicle->calculated_status) === 'due today')

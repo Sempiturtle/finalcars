@@ -32,7 +32,7 @@ class PointSystemController extends Controller
                             'service_type'   => $log->service_type,
                             'points_earned'  => $log->points_earned,
                             'cost'           => $log->cost,
-                            'service_date'   => optional($log->service_date)->format('M d, Y'),
+                            'service_date'   => optional($log->service_date)->format('F j, Y'),
                         ];
                     })->values()->toArray(),
                 ];

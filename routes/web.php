@@ -54,6 +54,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     Route::get('/maintenance', [\App\Http\Controllers\Admin\MaintenanceController::class, 'index'])->name('maintenance.index');
     Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export', [\App\Http\Controllers\Admin\ReportController::class, 'export'])->name('reports.export');
     Route::get('/service-history', [\App\Http\Controllers\Admin\ServiceHistoryController::class, 'index'])->name('service-history.index');
     Route::delete('/service-history/{log}', [\App\Http\Controllers\Admin\ServiceHistoryController::class, 'destroy'])->name('service-history.destroy');
     
@@ -83,6 +84,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/chat/{user}', [\App\Http\Controllers\ChatController::class, 'adminShow'])->name('chat.show');
     Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
     Route::get('/chat/fetch/{other_user_id}', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.fetch');
+    // Scheduling Management
+    Route::get('/scheduling', [\App\Http\Controllers\Admin\SchedulingController::class, 'index'])->name('scheduling.index');
+    Route::post('/scheduling/settings', [\App\Http\Controllers\Admin\SchedulingController::class, 'updateSettings'])->name('scheduling.update-settings');
+    Route::post('/scheduling/weights', [\App\Http\Controllers\Admin\SchedulingController::class, 'updateServiceWeights'])->name('scheduling.update-weights');
+
+    // Audit Logs
+    Route::get('/audit-logs', [\App\Http\Controllers\Admin\AuditLogController::class, 'index'])->name('audit-logs.index');
 });
 
 Route::middleware(['auth', 'customer'])->prefix('customer')->name('customer.')->group(function () {
@@ -97,6 +105,8 @@ Route::middleware(['auth', 'customer'])->prefix('customer')->name('customer.')->
 
     // Vehicle Management
     Route::resource('vehicles', \App\Http\Controllers\Customer\VehicleController::class);
+    Route::get('/vehicles/check-availability', [\App\Http\Controllers\Customer\VehicleController::class, 'checkAvailability'])->name('vehicles.check-availability');
+    Route::get('/vehicles/month-availability', [\App\Http\Controllers\Customer\VehicleController::class, 'fetchMonthAvailability'])->name('vehicles.month-availability');
     Route::post('/vehicles/{vehicle}/log-service', [\App\Http\Controllers\Customer\VehicleController::class, 'logService'])->name('vehicles.log-service');
 
     // Loyalty Rewards

@@ -78,10 +78,10 @@
         >
             <div class="flex flex-col h-full">
                 <!-- Branding -->
-                <div class="h-20 flex items-center px-8 border-b border-gray-100 shrink-0">
-                    <div class="flex items-center space-x-3">
-                        <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-10 w-10 rounded-full object-cover border-2 border-autocheck-red">
-                        <span class="text-xl font-black tracking-tight">AutoCheck <span class="text-autocheck-red">Admin</span></span>
+                <div class="h-16 flex items-center px-6 border-b border-gray-100 shrink-0">
+                    <div class="flex items-center space-x-2">
+                        <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-8 w-8 rounded-full object-cover border-2 border-autocheck-red">
+                        <span class="text-lg font-black tracking-tighter">AutoCheck <span class="text-autocheck-red">Admin</span></span>
                     </div>
                 </div>
 
@@ -107,6 +107,11 @@
                         Maintenance Schedule
                     </a>
 
+                    <a href="{{ route('admin.scheduling.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.scheduling.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
+                        <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Scheduling Dashboard
+                    </a>
+
                     <a href="{{ route('admin.maintenance.timeline') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.maintenance.timeline') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Timeline Monitoring
@@ -125,6 +130,11 @@
                     <a href="{{ route('admin.service-history.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.service-history.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                         Service History
+                    </a>
+
+                    <a href="{{ route('admin.audit-logs.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.audit-logs.index') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
+                        <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        Audit Logs
                     </a>
 
                     <a href="{{ route('admin.users.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.users.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
@@ -173,7 +183,7 @@
         <!-- Main Content -->
         <main class="flex-1 h-screen overflow-y-auto">
             <!-- Topbar -->
-            <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-40">
+            <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-40">
                 <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:outline-none transition-colors">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                 </button>
@@ -231,22 +241,22 @@
             </header>
 
             <!-- Page Content -->
-            <div class="p-5">
+            <div class="p-4">
                 @if(session('success'))
-                    <div class="mb-8 p-6 bg-green-50 rounded-3xl border border-green-100 flex items-center space-x-4 animate-fade-in shadow-sm">
-                        <div class="flex-shrink-0 w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-green-500/20">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <div class="mb-6 p-4 bg-green-50 rounded-2xl border border-green-100 flex items-center space-x-3 animate-fade-in shadow-sm">
+                        <div class="flex-shrink-0 w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-500/20">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                         </div>
-                        <p class="text-green-800 font-bold tracking-tight">{{ session('success') }}</p>
+                        <p class="text-green-800 font-bold text-xs tracking-tight">{{ session('success') }}</p>
                     </div>
                 @endif
-
+ 
                 @if(session('error'))
-                    <div class="mb-8 p-6 bg-red-50 rounded-3xl border border-red-100 flex items-center space-x-4 animate-fade-in shadow-sm">
-                        <div class="flex-shrink-0 w-12 h-12 bg-autocheck-red rounded-2xl flex items-center justify-center text-white shadow-lg shadow-red-500/20">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <div class="mb-6 p-4 bg-red-50 rounded-2xl border border-red-100 flex items-center space-x-3 animate-fade-in shadow-sm">
+                        <div class="flex-shrink-0 w-10 h-10 bg-autocheck-red rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-500/20">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         </div>
-                        <p class="text-red-800 font-bold tracking-tight">{{ session('error') }}</p>
+                        <p class="text-red-800 font-bold text-xs tracking-tight">{{ session('error') }}</p>
                     </div>
                 @endif
 

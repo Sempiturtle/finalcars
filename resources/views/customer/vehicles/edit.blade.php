@@ -4,6 +4,17 @@
             services: {{ json_encode(old('services', $vehicle->services ?? [])) }},
             serviceTypes: {{ json_encode($serviceTypes->pluck('name')) }},
             prices: {{ json_encode($serviceTypes->pluck('base_cost', 'name')) }},
+            
+            // Calendar State
+            showCalendar: false,
+            calendarIndex: null,
+            month: new Date().getMonth(),
+            year: new Date().getFullYear(),
+            daysInMonth: [],
+            blanks: [],
+            restDays: {{ json_encode(array_map('intval', \App\Models\Setting::get('rest_days', [0]))) }},
+            monthName: '',
+
             addService() {
                 this.services.push({ type: '', mode: 'Walk-in', cost: '', status: 'scheduled', notes: '', date: '{{ date('Y-m-d') }}' });
             },
@@ -12,6 +23,72 @@
             },
             get totalCost() {
                 return this.services.reduce((sum, s) => sum + (parseFloat(s.cost) || 0), 0);
+            },
+
+            // Calendar Methods
+            openCalendar(index) {
+                this.calendarIndex = index;
+                this.showCalendar = true;
+                this.renderCalendar();
+            },
+            async renderCalendar() {
+                const firstDay = new Date(this.year, this.month, 1);
+                this.monthName = firstDay.toLocaleString('default', { month: 'long' });
+                this.blanks = Array.from({ length: firstDay.getDay() }, (_, i) => i);
+                const lastDay = new Date(this.year, this.month + 1, 0).getDate();
+                const today = new Date().setHours(0,0,0,0);
+                
+                // Initialize days with default state so they show up immediately
+                this.daysInMonth = Array.from({ length: lastDay }, (_, i) => {
+                    const d = i + 1;
+                    const dateStr = `${this.year}-${String(this.month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                    const tempDate = new Date(this.year, this.month, d);
+                    const isRestDay = this.restDays.includes(tempDate.getDay());
+                    const isPast = tempDate.getTime() < today;
+                    
+                    return {
+                        day: d,
+                        date: dateStr,
+                        available: !isRestDay, // Allow past dates for testing overdue reports
+                        is_rest_day: isRestDay,
+                        percent: 0,
+                        is_past: isPast
+                    };
+                });
+
+                try {
+                    const response = await fetch(`{{ route('customer.vehicles.month-availability') }}?month=${this.month + 1}&year=${this.year}`);
+                    const availability = await response.json();
+                    
+                    // Update availability info
+                    this.daysInMonth = this.daysInMonth.map(day => {
+                        const data = availability[day.date] || {};
+                        return {
+                            ...day,
+                            // If it's in the past, it's available (for testing overdue). 
+                            // If future, respect shop availability.
+                            available: day.is_past ? !day.is_rest_day : (data.available && !day.is_rest_day),
+                            percent: data.slots_percent || 0
+                        };
+                    });
+                } catch (e) {
+                    console.error('Failed to fetch availability', e);
+                }
+            },
+            prevMonth() {
+                if (this.month === 0) { this.month = 11; this.year--; }
+                else { this.month--; }
+                this.renderCalendar();
+            },
+            nextMonth() {
+                if (this.month === 11) { this.month = 0; this.year++; }
+                else { this.month++; }
+                this.renderCalendar();
+            },
+            formatDate(dateStr) {
+                if (!dateStr) return 'Pick Date';
+                const d = new Date(dateStr);
+                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             }
          }" class="relative">
         <!-- Watermark Background -->
@@ -165,8 +242,11 @@
                                         <!-- Service Date -->
                                         <div class="space-y-2">
                                             <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Date</label>
-                                            <input type="date" :name="`services[${index}][date]`" x-model="service.date"
-                                                class="block w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
+                                            <input type="hidden" :name="`services[${index}][date]`" x-model="service.date">
+                                            <button type="button" @click="openCalendar(index)" class="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between group hover:border-autocheck-red transition-all">
+                                                <span class="text-[11px] font-bold text-gray-900" x-text="formatDate(service.date)"></span>
+                                                <svg class="w-4 h-4 text-gray-400 group-hover:text-autocheck-red transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            </button>
                                         </div>
 
                                         <!-- Service Cost -->
@@ -263,7 +343,120 @@
                             <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Maintenance Value</p>
                             <p class="text-3xl font-black text-autocheck-red italic" x-text="'₱' + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})"></p>
                         </div>
-                    </div>
+                                        <!-- Calendar Modal Overlay -->
+                    <div x-show="showCalendar" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm" x-cloak x-transition>
+                        <div class="bg-white w-full max-w-3xl rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden flex flex-col md:flex-row" @click.away="showCalendar = false">
+                            <!-- Left Sidebar: Info & Legend (Compact) -->
+                            <div class="w-full md:w-64 bg-gray-50/80 p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-gray-100">
+                                <div class="space-y-8">
+                                    <div>
+                                        <h3 class="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] mb-2">Service Scheduler</h3>
+                                        <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-relaxed">Select a date. We track real-time shop capacity for you.</p>
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        <h4 class="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em]">Status Guide</h4>
+                                        <div class="space-y-3">
+                                            <div class="flex items-center space-x-3 group">
+                                                <div class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-sm group-hover:scale-110 transition-transform"></div>
+                                                <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Available</span>
+                                            </div>
+                                            <div class="flex items-center space-x-3 group">
+                                                <div class="w-2.5 h-2.5 rounded-full bg-orange-400 shadow-sm group-hover:scale-110 transition-transform"></div>
+                                                <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Filling Up</span>
+                                            </div>
+                                            <div class="flex items-center space-x-3 group">
+                                                <div class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm group-hover:scale-110 transition-transform"></div>
+                                                <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Almost Full</span>
+                                            </div>
+                                            <div class="flex items-center space-x-3 group opacity-50">
+                                                <div class="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
+                                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Closed</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-6 border-t border-gray-200/50">
+                                    <p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest italic">Live capacity tracking active.</p>
+                                </div>
+                            </div>
+
+                            <!-- Right Section: Calendar Grid (Efficient) -->
+                            <div class="flex-1 p-8 bg-white relative">
+                                <!-- Top Nav (Integrated) -->
+                                <div class="flex items-center justify-between mb-8">
+                                    <div class="flex items-center space-x-4">
+                                        <button type="button" @click="prevMonth()" class="p-2 hover:bg-gray-50 rounded-xl text-gray-400 hover:text-autocheck-red transition-all">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                        </button>
+                                        <span class="text-[11px] font-black text-gray-900 uppercase tracking-[0.2em] min-w-[120px] text-center" x-text="monthName + ' ' + year"></span>
+                                        <button type="button" @click="nextMonth()" class="p-2 hover:bg-gray-50 rounded-xl text-gray-400 hover:text-autocheck-red transition-all">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                        </button>
+                                    </div>
+
+                                    <button type="button" @click="showCalendar = false" class="p-2 text-gray-300 hover:text-autocheck-red transition-all">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-7 gap-2">
+                                    <template x-for="dayName in ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']">
+                                        <div class="text-center py-1">
+                                            <span class="text-[8px] font-black text-gray-300 uppercase tracking-widest" x-text="dayName"></span>
+                                        </div>
+                                    </template>
+
+                                    <template x-for="blank in blanks">
+                                        <div class="aspect-square"></div>
+                                    </template>
+
+                                    <template x-for="day in daysInMonth">
+                                        <button type="button" 
+                                            @click="if(day.available) { services[calendarIndex].date = day.date; showCalendar = false; }"
+                                            :disabled="!day.available"
+                                            class="aspect-square flex flex-col items-center justify-between p-3 rounded-[1.5rem] transition-all relative border group"
+                                            :class="{
+                                                'bg-autocheck-red text-white border-autocheck-red shadow-xl shadow-red-500/30 transform scale-105 z-10': services[calendarIndex]?.date === day.date,
+                                                'bg-white border-gray-50 hover:border-autocheck-red hover:shadow-md': services[calendarIndex]?.date !== day.date && day.available,
+                                                'bg-gray-50 border-transparent opacity-40 cursor-not-allowed': !day.available && !day.is_rest_day,
+                                                'bg-gray-100/50 border-transparent text-gray-300': day.is_rest_day,
+                                                'ring-1 ring-autocheck-red ring-offset-2': day.date === new Date().toISOString().split('T')[0] && services[calendarIndex]?.date !== day.date
+                                            }">
+                                            
+                                            <span class="text-[11px] font-black" x-text="day.day"></span>
+
+                                            <div class="w-full space-y-0.5">
+                                                <template x-if="day.is_rest_day">
+                                                    <span class="text-[7px] font-black text-gray-300 uppercase tracking-tighter block text-center">OFF</span>
+                                                </template>
+                                                <template x-if="!day.is_rest_day && day.available">
+                                                    <div class="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
+                                                        <div class="h-full transition-all duration-700" 
+                                                             :class="{
+                                                                'bg-white/60': services[calendarIndex]?.date === day.date,
+                                                                'bg-green-500': services[calendarIndex]?.date !== day.date && day.percent < 50,
+                                                                'bg-orange-400': services[calendarIndex]?.date !== day.date && day.percent >= 50 && day.percent < 80,
+                                                                'bg-red-500': services[calendarIndex]?.date !== day.date && day.percent >= 80
+                                                             }"
+                                                             :style="'width: ' + Math.max(20, day.percent) + '%'"></div>
+                                                    </div>
+                                                </template>
+                                                <template x-if="!day.is_rest_day && !day.available && !day.is_past">
+                                                    <span class="text-[7px] font-black text-red-400 uppercase tracking-tighter block text-center">FULL</span>
+                                                </template>
+                                            </div>
+                                        </button>
+                                    </template>
+                                </div>
+
+                                <div class="mt-6 text-center">
+                                    <p class="text-[9px] font-black text-gray-300 uppercase tracking-[0.2em] italic">Click a date to schedule</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>  </div>
                 </div>
 
                 <div class="pt-8 flex justify-end">

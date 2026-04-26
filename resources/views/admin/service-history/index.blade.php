@@ -114,7 +114,7 @@
                             <tr class="group hover:bg-gray-50/50 transition-colors">
                                 <td class="py-4 px-6">
                                     <div class="flex flex-col">
-                                        <span class="text-[13px] font-black text-gray-900 leading-none mb-0.5">{{ $service->service_date->format('M d, Y') }}</span>
+                                        <span class="text-[13px] font-black text-gray-900 leading-none mb-0.5">{{ $service->service_date->format('F j, Y') }}</span>
                                         <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{{ $service->service_date->diffForHumans() }}</span>
                                     </div>
                                 </td>

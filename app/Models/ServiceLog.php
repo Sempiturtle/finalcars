@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 
 class ServiceLog extends Model
 {
+    use Auditable;
     protected $fillable = [
         'vehicle_id',
         'service_type',

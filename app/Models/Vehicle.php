@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Vehicle extends Model
 {
     /** @use HasFactory<\Database\Factories\VehicleFactory> */
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $fillable = [
         'user_id',
@@ -224,7 +225,14 @@ class Vehicle extends Model
                         'service_mode' => $service['mode'] ?? 'Walk-in',
                         'cost' => $service['cost'] ?? 0,
                         'status' => $targetStatus,
-                        'service_date' => $service['date'] ?? now(),
+                        'service_date' => (function() use ($service) {
+                            $date = isset($service['date']) ? \Carbon\Carbon::parse($service['date']) : \Carbon\Carbon::now();
+                            $restDays = array_map('intval', \App\Models\Setting::get('rest_days', [0]));
+                            while (in_array((int)$date->dayOfWeek, $restDays)) {
+                                $date->addDay();
+                            }
+                            return $date->toDateString();
+                        })(),
                         'mechanic_name' => 'Pending Assignment',
                         'notes' => $service['notes'] ?? null,
                         'completed_by_id' => ($targetStatus === 'completed' && auth()->check()) ? auth()->id() : null,
@@ -245,10 +253,28 @@ class Vehicle extends Model
         $updateData = [];
         $currentDateString = $this->next_service_date ? $this->next_service_date->format('Y-m-d') : null;
         
+        // Ensure any shifted dates in ServiceLogs are reflected back to the JSON if necessary
+        // Actually, let's just make sure the next_service_date we save is the CLEAN one
         if ($earliestDate) {
-            $updateData['next_service_date'] = $earliestDate;
-            // Temporarily update the instance so calculated_status uses the NEW date
-            $this->next_service_date = \Carbon\Carbon::parse($earliestDate);
+            $nextDate = \Carbon\Carbon::parse($earliestDate);
+            $restDays = array_map('intval', \App\Models\Setting::get('rest_days', [0]));
+            
+            while (in_array((int)$nextDate->dayOfWeek, $restDays)) {
+                $nextDate->addDay();
+            }
+            
+            $updateData['next_service_date'] = $nextDate->toDateString();
+            $this->next_service_date = $nextDate;
+
+            // Update the JSON array to match the cleaned date to prevent "disappearing" records
+            $updatedServices = $this->services;
+            foreach ($updatedServices as &$s) {
+                if (($s['date'] ?? null) === $earliestDate) {
+                    $s['date'] = $nextDate->toDateString();
+                }
+            }
+            $updateData['services'] = json_encode($updatedServices);
+            $this->services = $updatedServices;
         }
 
         // 2. Now calculate status based on the updated date

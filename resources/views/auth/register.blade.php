@@ -16,7 +16,7 @@
             .step-container {
                 position: relative;
                 overflow: hidden;
-                min-height: 280px;
+                min-height: 240px;
             }
             .step-panel {
                 position: absolute;
@@ -215,7 +215,11 @@
         </style>
         <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}?v=2">
     </head>
-    <body class="antialiased bg-gray-50 flex items-center justify-center min-h-screen py-12 px-4">
+    <body class="antialiased bg-gray-50 flex items-center justify-center min-h-screen py-4 px-4 overflow-hidden">
+        <!-- Watermark Background -->
+        <div class="fixed inset-0 z-0 pointer-events-none opacity-[0.2] overflow-hidden">
+            <img src="{{ asset('images/background.jfif') }}" alt="" class="w-full h-full object-cover grayscale brightness-90">
+        </div>
 
         {{-- Floating Decorative Particles --}}
         <div class="fixed inset-0 overflow-hidden pointer-events-none">
@@ -376,20 +380,20 @@
              "
         >
             {{-- Header --}}
-            <div class="text-center mb-8">
-                <a href="/" class="inline-flex flex-col items-center space-y-3 mb-4">
-                    <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-14 w-14 rounded-full object-cover border-2 border-blue-500 shadow-xl">
-                    <span class="text-2xl font-black tracking-tight text-gray-900">AutoCheck</span>
+            <div class="text-center mb-4">
+                <a href="/" class="inline-flex flex-col items-center space-y-2 mb-2">
+                    <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-12 w-12 rounded-full object-cover border-2 border-blue-500 shadow-xl">
+                    <span class="text-xl font-black tracking-tight text-gray-900">AutoCheck</span>
                 </a>
-                <h2 class="text-lg font-bold text-gray-600">Join the Fleet</h2>
-                <p class="text-xs text-gray-400 mt-1">Create your customer account to start tracking</p>
+                <h2 class="text-sm font-bold text-gray-600">Join the Fleet</h2>
+                <p class="text-[10px] text-gray-400 mt-0.5">Create your account</p>
             </div>
 
             {{-- Card --}}
-            <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-500/10 border border-gray-100 p-8 md:p-10">
+            <div class="bg-white rounded-[2rem] shadow-2xl shadow-blue-500/10 border border-gray-100 p-6 md:p-8">
 
                 {{-- Step Indicator Dots --}}
-                <div class="flex items-center justify-center gap-0 mb-8 px-4" x-show="!showSuccess">
+                <div class="flex items-center justify-center gap-0 mb-4 px-4" x-show="!showSuccess">
                     <template x-for="step in totalSteps" :key="step">
                         <div class="flex items-center" :class="step < totalSteps ? 'flex-1' : ''">
                             <div class="flex flex-col items-center">
@@ -441,12 +445,12 @@
                              'active': currentStep === 1,
                              'exit-left': currentStep > 1
                          }">
-                        <div class="text-center mb-6">
-                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-50 mb-3">
-                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <div class="text-center mb-4">
+                            <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 mb-2">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                             </div>
-                            <h3 class="text-sm font-black text-gray-800 uppercase tracking-wider">Who are you?</h3>
-                            <p class="text-[10px] text-gray-400 mt-0.5">Let's start with your name</p>
+                            <h3 class="text-xs font-black text-gray-800 uppercase tracking-wider">Who are you?</h3>
+                            <p class="text-[9px] text-gray-400 mt-0.5">Let's start with your name</p>
                         </div>
                         <div class="space-y-4 text-left">
                             <div class="grid grid-cols-2 gap-3 field-enter" :key="'s1-1-' + currentStep">
@@ -481,9 +485,9 @@
                                 @error('username') <p class="mt-1 text-[10px] font-bold text-red-500 px-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
-                        <div class="pt-6">
+                        <div class="pt-4">
                             <button @click="nextStep()" type="button"
-                                    class="btn-next w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-blue-500/20 active:scale-95 transform flex items-center justify-center gap-2">
+                                    class="btn-next w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-blue-500/20 active:scale-95 transform flex items-center justify-center gap-2">
                                 Continue
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </button>
@@ -497,12 +501,12 @@
                              'exit-left': currentStep > 2,
                              'enter-right': currentStep < 2
                          }">
-                        <div class="text-center mb-6">
-                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-indigo-50 mb-3">
-                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        <div class="text-center mb-4">
+                            <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 mb-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                             </div>
-                            <h3 class="text-sm font-black text-gray-800 uppercase tracking-wider">Secure Your Account</h3>
-                            <p class="text-[10px] text-gray-400 mt-0.5">Set up your login credentials</p>
+                            <h3 class="text-xs font-black text-gray-800 uppercase tracking-wider">Secure Your Account</h3>
+                            <p class="text-[9px] text-gray-400 mt-0.5">Set up your login credentials</p>
                         </div>
                         <div class="space-y-4 text-left">
                             <div class="field-enter" :key="'s2-1-' + currentStep">
@@ -549,13 +553,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="pt-6 flex gap-3">
+                        <div class="pt-4 flex gap-3">
                             <button @click="prevStep()" type="button"
-                                    class="px-6 py-4 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-2xl font-black text-xs uppercase tracking-[0.15em] transition-all active:scale-95 transform">
+                                    class="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-2xl font-black text-xs uppercase tracking-[0.15em] transition-all active:scale-95 transform">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                             </button>
                             <button @click="nextStep()" type="button"
-                                    class="btn-next flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-blue-500/20 active:scale-95 transform flex items-center justify-center gap-2">
+                                    class="btn-next flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-blue-500/20 active:scale-95 transform flex items-center justify-center gap-2">
                                 Continue
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </button>
@@ -568,12 +572,12 @@
                              'active': currentStep === 3,
                              'enter-right': currentStep < 3
                          }">
-                        <div class="text-center mb-6">
-                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-emerald-50 mb-3">
-                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                        <div class="text-center mb-4">
+                            <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-50 mb-2">
+                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                             </div>
-                            <h3 class="text-sm font-black text-gray-800 uppercase tracking-wider">Almost Done!</h3>
-                            <p class="text-[10px] text-gray-400 mt-0.5">Add your contact number</p>
+                            <h3 class="text-xs font-black text-gray-800 uppercase tracking-wider">Almost Done!</h3>
+                            <p class="text-[9px] text-gray-400 mt-0.5">Add your contact number</p>
                         </div>
                         <div class="space-y-4 text-left">
                             <div class="field-enter" :key="'s3-1-' + currentStep">
@@ -655,14 +659,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="pt-6 flex gap-3">
+                        <div class="pt-4 flex gap-3">
                             <button @click="prevStep()" type="button"
-                                    class="px-6 py-4 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-2xl font-black text-xs uppercase tracking-[0.15em] transition-all active:scale-95 transform">
+                                    class="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-2xl font-black text-xs uppercase tracking-[0.15em] transition-all active:scale-95 transform">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                             </button>
                             <button @click="submitForm()" type="button"
                                     :disabled="!otpVerified"
-                                    class="btn-next flex-1 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-emerald-500/20 active:scale-95 transform flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale">
+                                    class="btn-next flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-emerald-500/20 active:scale-95 transform flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                 Create Account
                             </button>
@@ -717,8 +721,8 @@
             </div>
 
             {{-- Back to Website --}}
-            <div class="mt-8 text-center" x-show="!showSuccess">
-                <a href="/" class="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors uppercase tracking-widest flex items-center justify-center group">
+            <div class="mt-4 text-center" x-show="!showSuccess">
+                <a href="/" class="text-[11px] font-bold text-gray-400 hover:text-gray-600 transition-colors uppercase tracking-widest flex items-center justify-center group">
                     <svg class="h-4 w-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Back to Website
                 </a>
