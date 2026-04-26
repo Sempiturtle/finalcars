@@ -41,7 +41,8 @@ class Vehicle extends Model
      */
     public function scopeCriticalOverdue($query)
     {
-        return $query->where('next_service_date', '<=', now()->subDays(5));
+        return $query->where('next_service_date', '<=', now()->subDays(5))
+                     ->where('status', '!=', 'in progress');
     }
 
     /**
@@ -84,10 +85,8 @@ class Vehicle extends Model
         });
 
         static::updated(function ($vehicle) {
-            // Trigger sync if services, mechanic, or STATUS changes
-            if ($vehicle->isDirty('services') || $vehicle->isDirty('mechanic_name') || $vehicle->isDirty('status')) {
-                $vehicle->syncServiceLogs();
-            }
+            // Always sync — the status column must always reflect calculated_status
+            $vehicle->syncServiceLogs();
 
             // Notify owner of vehicle reassignment
             if ($vehicle->isDirty('user_id') && $vehicle->owner) {
@@ -118,29 +117,24 @@ class Vehicle extends Model
             return $this->status;
         }
 
-        $completed = 0;
-        $total = count($this->services);
-        $anyInProgress = false;
+        $services = collect(is_array($this->services) ? $this->services : []);
+        $total = $services->count();
+        
+        // Use case-insensitive check for statuses
+        $completedCount = $services->filter(fn($s) => strtolower($s['status'] ?? '') === 'completed')->count();
+        $inProgressCount = $services->filter(fn($s) => strtolower($s['status'] ?? '') === 'in progress')->count();
 
-        foreach ($this->services as $service) {
-            $status = $service['status'] ?? 'scheduled';
-            if ($status === 'completed') {
-                $completed++;
-            }
-            if ($status === 'in progress') {
-                $anyInProgress = true;
-            }
+        // 1. In Progress takes absolute priority.
+        if ($inProgressCount > 0 || ($completedCount > 0 && $completedCount < $total)) {
+            return 'in progress';
         }
 
-        if ($total === 0) return $this->status ?: 'scheduled';
-        if ($completed === $total) return 'completed';
-        
-        // If date has passed and not everything is done, it's overdue
-        if ($this->next_service_date && $this->next_service_date->isPast() && $completed < $total) {
+        // 2. Overdue: Only if NOT in progress and the date has passed.
+        if ($this->next_service_date && $this->next_service_date->isPast() && ($total === 0 || $completedCount < $total)) {
             return 'overdue';
         }
 
-        if ($anyInProgress || ($completed > 0 && $completed < $total)) return 'in progress';
+        if ($total > 0 && $completedCount === $total) return 'completed';
         
         return 'scheduled';
     }
@@ -223,37 +217,28 @@ class Vehicle extends Model
             $this->owner->recalculateLoyaltyPoints();
         }
 
-        // Keep the master status in sync with the actual work progress
-        $newStatus = $this->calculated_status;
-        
-        // Auto-calculate Next Service Date based on earliest pending service
+        // 1. Calculate the new Next Service Date first
         $pendingServices = collect($this->services)->where('status', '!=', 'completed');
         $earliestDate = $pendingServices->pluck('date')->filter(fn($d) => !empty($d))->min();
         
-        $updateData = ['status' => $newStatus];
-        
-        // Ensure we handle date comparison properly (Carbon vs String)
+        $updateData = [];
         $currentDateString = $this->next_service_date ? $this->next_service_date->format('Y-m-d') : null;
         
         if ($earliestDate) {
             $updateData['next_service_date'] = $earliestDate;
+            // Temporarily update the instance so calculated_status uses the NEW date
+            $this->next_service_date = \Carbon\Carbon::parse($earliestDate);
         }
 
-        // Always check if anything changed before updating quietly
-        $hasStatusChanged = ($this->status !== $newStatus);
-        $hasDateChanged = ($earliestDate && $currentDateString !== $earliestDate);
-
-        if ($hasStatusChanged || $hasDateChanged) {
-            // Use DB update to bypass observers and ensure immediate persistence
-            \Illuminate\Support\Facades\DB::table('vehicles')
-                ->where('id', $this->id)
-                ->update($updateData);
-            
-            // Sync the current model instance so the UI sees it immediately
-            $this->status = $newStatus;
-            if ($earliestDate) {
-                $this->next_service_date = \Carbon\Carbon::parse($earliestDate);
-            }
-        }
+        // 2. Now calculate status based on the updated date
+        $newStatus = $this->calculated_status;
+        $updateData['status'] = $newStatus;
+        
+        // 3. ALWAYS apply changes to DB — never skip, to prevent stale status
+        \Illuminate\Support\Facades\DB::table('vehicles')
+            ->where('id', $this->id)
+            ->update($updateData);
+        
+        $this->status = $newStatus;
     }
 }

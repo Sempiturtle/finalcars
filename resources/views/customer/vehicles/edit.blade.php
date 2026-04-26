@@ -192,15 +192,20 @@
                                         </div>
                                     </div>
 
-                                    <!-- Verification Status (Read-only) -->
-                                    <div class="md:col-span-12 flex items-center gap-2 mt-2">
+                                    <div class="md:col-span-12 flex items-center gap-2 mt-2" x-data="{ 
+                                        isOverdue(date, status) {
+                                            if (!date || status === 'completed' || status === 'in progress') return false;
+                                            return new Date(date) < new Date(new Date().setHours(0,0,0,0));
+                                        }
+                                    }">
                                         <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Verification Status:</span>
                                         <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full" 
                                             :class="{
                                                 'bg-green-100 text-green-600': service.status === 'completed',
                                                 'bg-blue-100 text-blue-600': service.status === 'in progress',
-                                                'bg-gray-100 text-gray-600': service.status === 'scheduled' || !service.status
-                                            }" x-text="service.status || 'scheduled'"></span>
+                                                'bg-red-100 text-red-600 border border-red-200': isOverdue(service.date, service.status),
+                                                'bg-gray-100 text-gray-600': service.status === 'scheduled' && !isOverdue(service.date, service.status)
+                                            }" x-text="isOverdue(service.date, service.status) ? 'overdue' : (service.status || 'scheduled')"></span>
                                         <input type="hidden" :name="`services[${index}][status]`" x-model="service.status">
                                     </div>
                                 </div>

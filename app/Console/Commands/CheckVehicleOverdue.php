@@ -46,7 +46,7 @@ class CheckVehicleOverdue extends Command
 
         // Overdue (Today or Past)
         Vehicle::whereDate('next_service_date', '<=', $today)
-            ->where('status', '!=', 'inactive')
+            ->whereNotIn('status', ['inactive', 'in progress', 'completed'])
             ->get()
             ->each(fn($v) => $this->notifyOwner($v, "Service Overdue", "Your vehicle ({$v->plate_number}) is overdue for maintenance. Please schedule a service."));
 

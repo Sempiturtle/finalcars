@@ -68,7 +68,7 @@
                                 <div>
                                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Current Status</p>
                                     <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] {{ 
-                                        match($vehicle->status) {
+                                        match($vehicle->calculated_status) {
                                             'completed' => 'bg-green-50 text-green-600',
                                             'in progress' => 'bg-blue-50 text-blue-600',
                                             'scheduled' => 'bg-yellow-50 text-yellow-600',
@@ -76,7 +76,7 @@
                                             default => 'bg-gray-50 text-gray-600',
                                         }
                                     }}">
-                                        {{ $vehicle->status }}
+                                        {{ $vehicle->calculated_status }}
                                     </span>
                                 </div>
                                 <div class="grid grid-cols-2 gap-6">

@@ -227,18 +227,6 @@
                         <!-- Manage Service Types Removed (Now in Sidebar) -->
                     </div>
 
-                    <!-- Status -->
-                    <div class="space-y-2 md:col-span-2">
-                        <label for="status" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Status</label>
-                        <select name="status" id="status" required
-                            class="block w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
-                            <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                            <option value="in progress" {{ old('status') == 'in progress' ? 'selected' : '' }}>In Progress</option>
-                            <option value="scheduled" {{ old('status') == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
-                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                            <option value="overdue" {{ old('status') == 'overdue' ? 'selected' : '' }}>Overdue</option>
-                        </select>
-                    </div>
                 </div>
 
                 <div class="flex justify-end pt-4">

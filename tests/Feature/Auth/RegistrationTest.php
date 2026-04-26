@@ -18,14 +18,19 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
+        $phone = '09123456789';
+        \Illuminate\Support\Facades\Cache::put('verified_phone_' . $phone, true, 600);
+
         $response = $this->post('/register', [
             'name' => 'Test User',
+            'username' => 'testuser',
+            'phone' => $phone,
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('customer.landing', absolute: false));
     }
 }

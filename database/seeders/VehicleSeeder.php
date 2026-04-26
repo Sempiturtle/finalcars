@@ -13,24 +13,24 @@ class VehicleSeeder extends Seeder
      */
     public function run(): void
     {
-        // Delete existing vehicles to ensure only the requested one remains
-        Vehicle::query()->delete();
-
-        Vehicle::create([
-            'plate_number' => 'LMN-9012',
-            'make' => 'Honda',
-            'model' => 'Civic',
-            'year' => '2023',
-            'color' => 'Black',
-            'owner_name' => 'Nathaniel Amistoso',
-            'next_service_date' => now()->copy()->addDays(2),
-            'registration_date' => now()->subMonths(6),
-            'status' => 'completed',
-            'mechanic_name' => 'Nathaniel Amistoso',
-            'services' => [
-                ['type' => 'Oil Change (Regular oil change and filter replacement)', 'cost' => 1500.00],
-            ],
-            'total_cost' => 1500.00,
-        ]);
+        // Use updateOrCreate to ensure the demo vehicle exists without wiping out user-added data
+        Vehicle::updateOrCreate(
+            ['plate_number' => 'LMN-9012'],
+            [
+                'make' => 'Honda',
+                'model' => 'Civic',
+                'year' => '2023',
+                'color' => 'Black',
+                'owner_name' => 'Nathaniel Amistoso',
+                'next_service_date' => now()->copy()->addDays(2),
+                'registration_date' => now()->subMonths(6),
+                'status' => 'completed',
+                'mechanic_name' => 'Nathaniel Amistoso',
+                'services' => [
+                    ['type' => 'Oil Change (Regular oil change and filter replacement)', 'cost' => 1500.00],
+                ],
+                'total_cost' => 1500.00,
+            ]
+        );
     }
 }

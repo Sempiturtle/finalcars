@@ -1,9 +1,11 @@
 <x-admin-layout>
     <div x-data="{ 
-        showModal: false, 
+        showVerifyModal: false, 
+        showStartModal: false,
         currentVehicleId: null, 
         currentPlate: '', 
         pendingServices: [], 
+        scheduledServices: [],
         selectedServices: [], 
         notes: '',
         openVerify(id, plate, services) {
@@ -12,7 +14,14 @@
             this.pendingServices = services;
             this.selectedServices = services.map(s => String(s.original_index));
             this.notes = '';
-            this.showModal = true;
+            this.showVerifyModal = true;
+        },
+        openStart(id, plate, services) {
+            this.currentVehicleId = id;
+            this.currentPlate = plate;
+            this.scheduledServices = services.filter(s => s.status === 'scheduled' || !s.status);
+            this.selectedServices = this.scheduledServices.map(s => String(s.original_index));
+            this.showStartModal = true;
         }
     }" class="space-y-6">
         <!-- Header -->
@@ -82,7 +91,7 @@
                                         ->where('status', '!=', 'completed')
                                         ->values();
                                     
-                                    $displayStatus = $vehicle->status;
+                                    $displayStatus = $vehicle->calculated_status;
                                     $progress = $vehicle->service_progress;
                                 @endphp
                                 <tr class="group hover:bg-gray-50/30 transition-all duration-300">
@@ -150,8 +159,19 @@
                                     <!-- Actions -->
                                     <td class="px-6 py-4 whitespace-nowrap text-right">
                                         <div class="flex items-center justify-end space-x-2 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 lg:transform lg:translate-x-2 lg:group-hover:translate-x-0">
-                                            <!-- Quick Verify Button -->
-                                            @if($pendingServices->count() > 0)
+                                            <!-- Quick Actions -->
+                                                @if($pendingServices->where('status', 'scheduled')->count() > 0)
+                                                    <button 
+                                                        type="button"
+                                                        @click="openStart({{ $vehicle->id }}, '{{ $vehicle->plate_number }}', {{ collect($vehicle->services ?? [])->map(fn($s, $i) => array_merge($s, ['original_index' => $i]))->toJson() }})"
+                                                        class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100"
+                                                        title="Start Specific Services"
+                                                    >
+                                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                        <span class="hidden sm:inline">Start</span>
+                                                    </button>
+                                                @endif
+
                                                 <button 
                                                     type="button"
                                                     @click="openVerify({{ $vehicle->id }}, '{{ $vehicle->plate_number }}', {{ $pendingServices->toJson() }})"
@@ -161,7 +181,6 @@
                                                     <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                     <span class="hidden sm:inline">Verify</span>
                                                 </button>
-                                            @endif
 
                                             <a href="{{ route('admin.vehicles.edit', $vehicle) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-autocheck-red hover:bg-red-50 rounded-lg transition-all" title="Edit Vehicle">
                                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
@@ -189,14 +208,14 @@
         @endif
 
         <!-- Quick Verify Modal -->
-        <div x-show="showModal" 
+        <div x-show="showVerifyModal" 
              class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"
              x-cloak>
             
-            <div @click.away="showModal = false" 
+            <div @click.away="showVerifyModal = false" 
                  class="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl transform transition-all border border-gray-100"
                  x-transition:enter="transition ease-out duration-300 transform"
                  x-transition:enter-start="scale-95 translate-y-4"
@@ -210,7 +229,7 @@
                                 <h3 class="text-xl font-black text-gray-900 uppercase tracking-tight">Verify <span class="text-autocheck-red italic" x-text="currentPlate"></span></h3>
                                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Select completed services for verification.</p>
                             </div>
-                            <button type="button" @click="showModal = false" class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                            <button type="button" @click="showVerifyModal = false" class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -245,13 +264,76 @@
 
                         <!-- Footer -->
                         <div class="flex items-center gap-3">
-                            <button type="button" @click="showModal = false" 
+                            <button type="button" @click="showVerifyModal = false" 
                                     class="flex-1 px-6 py-4 bg-gray-100 text-gray-600 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all">
                                 Cancel
                             </button>
                             <button type="submit" :disabled="selectedServices.length === 0"
                                     class="flex-1 px-6 py-4 bg-green-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-green-600 transition-all shadow-lg shadow-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed">
                                 Verify Now
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Quick Start Modal -->
+        <div x-show="showStartModal" 
+             class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-cloak>
+            
+            <div @click.away="showStartModal = false" 
+                 class="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl transform transition-all border border-gray-100"
+                 x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="scale-95 translate-y-4"
+                 x-transition:enter-end="scale-100 translate-y-0">
+                
+                <form :action="`/admin/vehicles/${currentVehicleId}/quick-start`" method="POST">
+                    @csrf
+                    <div class="p-8">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-xl font-black text-gray-900 uppercase tracking-tight">Start Work <span class="text-autocheck-red italic" x-text="currentPlate"></span></h3>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Select services to move to 'In Progress'.</p>
+                            </div>
+                            <button type="button" @click="showStartModal = false" class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+
+                        <!-- Services List -->
+                        <div class="space-y-3 max-h-60 overflow-y-auto custom-scrollbar pr-2 mb-8">
+                            <template x-for="service in scheduledServices" :key="service.original_index">
+                                <label class="flex items-center p-4 bg-gray-50 rounded-2xl border-2 border-transparent transition-all cursor-pointer hover:border-blue-100 group"
+                                       :class="{'border-blue-500 bg-blue-50': selectedServices.includes(String(service.original_index))}">
+                                    <input type="checkbox" name="start_indexes[]" :value="String(service.original_index)" x-model="selectedServices" class="hidden">
+                                    <div class="w-6 h-6 rounded-lg border-2 border-gray-200 flex items-center justify-center transition-all group-hover:border-blue-400 shrink-0"
+                                         :class="{'bg-blue-500 border-blue-500': selectedServices.includes(String(service.original_index))}">
+                                        <svg x-show="selectedServices.includes(String(service.original_index))" class="w-4 h-4" fill="none" stroke="white" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-4">
+                                        <p class="text-xs font-black text-gray-900 uppercase" x-text="service.type"></p>
+                                        <p class="text-[9px] font-bold text-gray-400 uppercase mt-0.5" x-text="`${service.date || 'No Date'} • ${service.mode}`"></p>
+                                    </div>
+                                </label>
+                            </template>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="flex items-center gap-3">
+                            <button type="button" @click="showStartModal = false" 
+                                    class="flex-1 px-6 py-4 bg-gray-100 text-gray-600 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all">
+                                Cancel
+                            </button>
+                            <button type="submit" :disabled="selectedServices.length === 0"
+                                    class="flex-1 px-6 py-4 bg-blue-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed">
+                                Start Selected
                             </button>
                         </div>
                     </div>

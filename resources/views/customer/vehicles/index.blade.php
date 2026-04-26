@@ -100,7 +100,9 @@
                                             <span class="text-[11px] font-black {{ ($vehicle->next_service_date && $vehicle->next_service_date->isPast()) ? 'text-autocheck-red' : 'text-gray-900' }} tracking-wider">
                                                 {{ $vehicle->next_service_date ? $vehicle->next_service_date->format('M d, Y') : 'N/A' }}
                                             </span>
-                                            <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-0.5">Scheduled</span>
+                                            <span class="text-[8px] font-black {{ ($vehicle->next_service_date && $vehicle->next_service_date->isPast() && !in_array(strtolower($vehicle->calculated_status), ['in progress', 'completed'])) ? 'text-autocheck-red' : 'text-gray-400' }} uppercase tracking-widest mt-0.5">
+                                                {{ ($vehicle->next_service_date && $vehicle->next_service_date->isPast() && !in_array(strtolower($vehicle->calculated_status), ['in progress', 'completed'])) ? 'Overdue' : (strtolower($vehicle->calculated_status) === 'in progress' ? 'In Progress' : 'Scheduled') }}
+                                            </span>
                                         </div>
                                     </td>
 

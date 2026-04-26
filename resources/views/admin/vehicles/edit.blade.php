@@ -173,16 +173,22 @@
                                         </div>
 
                                         <!-- Service Status -->
-                                        <div class="space-y-2">
+                                        <div class="space-y-2" x-data="{ 
+                                            isLate(date, status) {
+                                                if (!date || status === 'completed') return false;
+                                                return new Date(date) < new Date(new Date().setHours(0,0,0,0));
+                                            }
+                                        }">
                                             <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Status</label>
                                             <select :name="`services[${index}][status]`" x-model="service.status"
                                                 class="block w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-bold focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all uppercase"
                                                 :class="{
                                                     'text-green-600': service.status === 'completed',
                                                     'text-blue-600': service.status === 'in progress',
-                                                    'text-yellow-600': service.status === 'scheduled'
+                                                    'text-autocheck-red': service.status === 'scheduled' && isLate(service.date, service.status),
+                                                    'text-yellow-600': service.status === 'scheduled' && !isLate(service.date, service.status)
                                                 }">
-                                                <option value="scheduled">Scheduled</option>
+                                                <option value="scheduled" :class="isLate(service.date, service.status) ? 'text-autocheck-red font-black' : ''" x-text="isLate(service.date, service.status) ? 'Overdue (Late)' : 'Scheduled'"></option>
                                                 <option value="in progress">In Progress</option>
                                                 <option value="completed">Completed</option>
                                             </select>
@@ -273,18 +279,6 @@
                         <!-- Manage Service Types Removed (Now in Sidebar) -->
                     </div>
 
-                    <!-- Status -->
-                    <div class="space-y-2 md:col-span-2">
-                        <label for="status" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Status</label>
-                        <select name="status" id="status" required
-                            class="block w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
-                            <option value="completed" {{ old('status', $vehicle->status) == 'completed' ? 'selected' : '' }}>Completed</option>
-                            <option value="in progress" {{ old('status', $vehicle->status) == 'in progress' ? 'selected' : '' }}>In Progress</option>
-                            <option value="scheduled" {{ old('status', $vehicle->status) == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
-                            <option value="inactive" {{ old('status', $vehicle->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                            <option value="overdue" {{ old('status', $vehicle->status) == 'overdue' ? 'selected' : '' }}>Overdue</option>
-                        </select>
-                    </div>
                 </div>
 
                 <div class="flex justify-end pt-4">

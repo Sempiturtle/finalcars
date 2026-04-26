@@ -41,7 +41,7 @@
                         <div class="mt-8 grid grid-cols-2 gap-2">
                             <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                 <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Status</p>
-                                <span class="text-[10px] font-black uppercase tracking-widest text-blue-600">{{ $vehicle->status }}</span>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-blue-600">{{ $vehicle->calculated_status }}</span>
                             </div>
                             <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                 <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Next Service</p>

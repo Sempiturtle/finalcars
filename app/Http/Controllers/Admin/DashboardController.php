@@ -18,6 +18,19 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $nextWeek = Carbon::today()->addDays(7);
 
+        // Corrective pass: fix any stale status values in the DB
+        // This catches vehicles whose status got stuck (e.g., 'overdue' when services are 'in progress')
+        Vehicle::where('next_service_date', '<', $today)->chunk(50, function ($vehicles) {
+            foreach ($vehicles as $vehicle) {
+                $calc = $vehicle->calculated_status;
+                if ($vehicle->getRawOriginal('status') !== $calc) {
+                    \Illuminate\Support\Facades\DB::table('vehicles')
+                        ->where('id', $vehicle->id)
+                        ->update(['status' => $calc]);
+                }
+            }
+        });
+
         // Basic Statistics
         $stats = [
             'total_customers' => User::where('role', 'customer')->count(),
@@ -32,12 +45,15 @@ class DashboardController extends Controller
         $maintenanceOverview = [
             'upcoming' => Vehicle::where('next_service_date', '>', $nextWeek)->count(),
             'due_soon' => Vehicle::whereBetween('next_service_date', [$today, $nextWeek])->count(),
-            'overdue' => Vehicle::where('next_service_date', '<', $today)->count(),
+            'overdue' => Vehicle::where('next_service_date', '<', $today)
+                                ->whereNotIn('status', ['in progress', 'completed'])
+                                ->count(),
             'critical_overdue' => Vehicle::criticalOverdue()->count(),
         ];
 
         // Vehicles Requiring Attention (Overdue)
         $attentionRequired = Vehicle::where('next_service_date', '<', $today)
+            ->whereNotIn('status', ['in progress', 'completed'])
             ->orderBy('next_service_date', 'asc')
             ->take(5)
             ->get()

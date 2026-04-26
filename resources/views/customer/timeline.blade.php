@@ -22,12 +22,18 @@
             <div class="md:col-span-1 space-y-6">
                 <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest px-2">Due Today & Soon</h3>
                 <div class="space-y-4">
-                    @forelse($timeline['today']->merge($timeline['this_week']) as $vehicle)
-                        <div class="bg-white p-6 rounded-[2rem] border-2 border-orange-100 shadow-xl shadow-orange-500/10 group">
+                    @forelse($timeline['in_progress']->merge($timeline['today'])->merge($timeline['this_week']) as $vehicle)
+                        <div class="bg-white p-6 rounded-[2rem] border-2 {{ strtolower($vehicle->calculated_status) === 'in progress' ? 'border-blue-100 shadow-blue-500/10' : 'border-orange-100 shadow-orange-500/10' }} shadow-xl group">
                             <div class="flex items-center justify-between mb-4">
-                                <span class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-[10px] font-black uppercase tracking-wider">
-                                    {{ $vehicle->next_service_date->isToday() ? 'Today' : 'Within 7 Days' }}
-                                </span>
+                                @if(strtolower($vehicle->calculated_status) === 'in progress')
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-wider">
+                                        In Progress
+                                    </span>
+                                @else
+                                    <span class="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-[10px] font-black uppercase tracking-wider">
+                                        {{ ($vehicle->next_service_date && $vehicle->next_service_date->isToday()) ? 'Today' : 'Within 7 Days' }}
+                                    </span>
+                                @endif
                                 <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ $vehicle->plate_number }}</span>
                             </div>
                             <h4 class="text-lg font-black text-gray-900 group-hover:text-autocheck-red transition-colors">{{ $vehicle->make }} {{ $vehicle->model }}</h4>

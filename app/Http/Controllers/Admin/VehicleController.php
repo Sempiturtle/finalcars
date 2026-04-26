@@ -60,7 +60,7 @@ class VehicleController extends Controller
             'user_id' => 'required|exists:users,id',
             'next_service_date' => 'nullable|date',
             'registration_date' => 'nullable|date',
-            'status' => 'required|in:completed,in progress,scheduled,inactive,overdue',
+            'status' => 'nullable|in:completed,in progress,scheduled,inactive,overdue',
             'services' => 'nullable|array',
             'services.*.type' => 'required_with:services|string',
             'services.*.cost' => 'required_with:services|numeric|min:0',
@@ -130,7 +130,7 @@ class VehicleController extends Controller
             'user_id' => 'required|exists:users,id',
             'next_service_date' => 'nullable|date',
             'registration_date' => 'nullable|date',
-            'status' => 'required|in:completed,in progress,scheduled,inactive,overdue',
+            'status' => 'nullable|in:completed,in progress,scheduled,inactive,overdue',
             'services' => 'nullable|array',
             'services.*.type' => 'required_with:services|string',
             'services.*.cost' => 'required_with:services|numeric|min:0',
@@ -199,5 +199,38 @@ class VehicleController extends Controller
         $vehicle->update(['services' => $services]);
 
         return redirect()->back()->with('success', 'Services verified and moved to maintenance history.');
+    }
+
+    public function quickStart(Request $request, Vehicle $vehicle)
+    {
+        $validated = $request->validate([
+            'start_indexes' => 'required|array',
+            'start_indexes.*' => 'integer',
+        ]);
+
+        $services = $vehicle->services ?? [];
+        $anyStarted = false;
+
+        foreach ($validated['start_indexes'] as $index) {
+            if (isset($services[$index]) && ($services[$index]['status'] ?? 'scheduled') === 'scheduled') {
+                $services[$index]['status'] = 'in progress';
+                $anyStarted = true;
+            }
+        }
+
+        if ($anyStarted) {
+            $vehicle->update([
+                'services' => $services,
+                'status' => 'in progress'
+            ]);
+            
+            // Force refresh and status sync
+            $vehicle->refresh();
+            $vehicle->syncServiceLogs();
+            
+            return redirect()->back()->with('success', 'Selected services started! Vehicle status updated to In Progress.');
+        }
+
+        return redirect()->back()->with('info', 'No valid services were selected to start.');
     }
 }

@@ -67,8 +67,8 @@
                                 </div>
                             </div>
                             <div class="text-right">
-                                <span class="px-4 py-1.5 bg-red-50 text-autocheck-red rounded-full text-[9px] font-black uppercase tracking-widest border border-red-100 italic">
-                                    {{ $selectedVehicle->status }}
+                                <span class="px-4 py-1.5 {{ strtolower($selectedVehicle->calculated_status) === 'in progress' ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-red-50 text-autocheck-red border-red-100' }} rounded-full text-[9px] font-black uppercase tracking-widest border italic">
+                                    {{ $selectedVehicle->calculated_status }}
                                 </span>
                             </div>
                         </div>
@@ -88,7 +88,7 @@
                             </div>
                             <div>
                                 <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Next Maintenance</p>
-                                <p class="text-[13px] font-black {{ ($selectedVehicle->next_service_date && $selectedVehicle->next_service_date->isPast()) ? 'text-autocheck-red' : 'text-green-600' }}">
+                                <p class="text-[13px] font-black {{ ($selectedVehicle->next_service_date && $selectedVehicle->next_service_date->isPast() && strtolower($selectedVehicle->calculated_status) !== 'in progress') ? 'text-autocheck-red' : 'text-green-600' }}">
                                     {{ $selectedVehicle->next_service_date ? $selectedVehicle->next_service_date->format('M d, Y') : 'Not Scheduled' }}
                                 </p>
                             </div>

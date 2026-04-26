@@ -31,7 +31,7 @@ class EmailNotificationController extends Controller
 
         // Vehicles Requiring Notifications (Overdue or Due Soon)
         $vehiclesRequiringAttention = Vehicle::where('next_service_date', '<', $nextWeek)
-            ->where('status', '!=', 'inactive')
+            ->whereNotIn('status', ['inactive', 'in progress', 'completed'])
             ->orderBy('next_service_date', 'asc')
             ->get()
             ->map(function ($vehicle) use ($today) {
@@ -108,7 +108,7 @@ class EmailNotificationController extends Controller
         $today = Carbon::today();
         
         $attentionRequired = Vehicle::where('next_service_date', '<', $today)
-            ->where('status', '!=', 'inactive')
+            ->whereNotIn('status', ['inactive', 'in progress', 'completed'])
             ->orderBy('next_service_date', 'asc')
             ->get()
             ->map(function ($vehicle) use ($today) {
@@ -137,7 +137,7 @@ class EmailNotificationController extends Controller
     {
         $today = Carbon::today();
         $overdueVehicles = Vehicle::where('next_service_date', '<', $today)
-            ->where('status', '!=', 'inactive')
+            ->whereNotIn('status', ['inactive', 'in progress', 'completed'])
             ->get();
 
         if ($overdueVehicles->isEmpty()) {
