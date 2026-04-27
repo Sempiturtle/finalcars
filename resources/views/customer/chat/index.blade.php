@@ -1,5 +1,5 @@
 <x-customer-layout>
-    <div class="h-[calc(100vh-10rem)] bg-[#0F172A] -mt-10 -mx-6 px-6 py-10 flex flex-col space-y-6 overflow-hidden">
+    <div class="h-[calc(100vh-8rem)] md:h-[calc(100vh-10rem)] bg-[#0F172A] mt-0 md:-mt-10 mx-0 md:-mx-6 px-4 md:px-6 py-4 md:py-10 flex flex-col space-y-4 md:space-y-6 overflow-hidden">
         
         <!-- Premium Chat Container -->
         <div class="flex-1 flex flex-col glass rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl relative" 
@@ -7,17 +7,17 @@
              x-init="init()">
             
             <!-- Chat Header -->
-            <div class="h-24 px-10 border-b border-white/5 flex items-center justify-between bg-white/5 backdrop-blur-xl shrink-0 z-10">
-                <div class="flex items-center space-x-5">
+            <div class="h-20 md:h-24 px-6 md:px-10 border-b border-white/5 flex items-center justify-between bg-white/5 backdrop-blur-xl shrink-0 z-10">
+                <div class="flex items-center space-x-4 md:space-x-5">
                     <div class="relative">
-                        <div class="h-12 w-12 rounded-2xl bg-autocheck-red flex items-center justify-center text-white font-black text-xl shadow-lg shadow-red-500/20 animate-pulse-slow">A</div>
-                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-4 border-[#0F172A] rounded-full"></div>
+                        <div class="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-autocheck-red flex items-center justify-center text-white font-black text-lg md:text-xl shadow-lg shadow-red-500/20 animate-pulse-slow">A</div>
+                        <div class="absolute -bottom-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-green-500 border-2 md:border-4 border-[#0F172A] rounded-full"></div>
                     </div>
                     <div>
-                        <h3 class="font-black text-white text-lg tracking-tight leading-none uppercase">AutoCheck Support</h3>
-                        <div class="flex items-center mt-2">
+                        <h3 class="font-black text-white text-base md:text-lg tracking-tight leading-none uppercase">AutoCheck Support</h3>
+                        <div class="flex items-center mt-1.5 md:mt-2">
                             <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-2 animate-ping"></span>
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Live Agent Online</span>
+                            <span class="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Live Agent Online</span>
                         </div>
                     </div>
                 </div>
@@ -51,13 +51,13 @@
                                 <div :class="msg.sender_id === {{ Auth::id() }} 
                                      ? 'bg-gradient-to-br from-autocheck-red to-red-700 text-white rounded-2xl rounded-tr-none shadow-xl shadow-red-500/10' 
                                      : 'bg-white/5 backdrop-blur-xl text-gray-200 rounded-2xl rounded-tl-none border border-white/10 shadow-lg'"
-                                     class="w-fit max-w-[85%] sm:max-w-[70%] px-5 py-3 text-sm font-medium leading-relaxed group relative transition-all hover:scale-[1.01]">
+                                     class="w-fit max-w-[90%] md:max-w-[70%] px-4 md:px-5 py-2.5 md:py-3 text-sm font-medium leading-relaxed group relative transition-all hover:scale-[1.01]">
                                     <p x-text="msg.message" class="relative z-10 break-words whitespace-pre-wrap text-left"></p>
                                     <div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
                                 </div>
                             </div>
                             <!-- Timestamp -->
-                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest mt-2 px-1 italic opacity-60" x-text="formatTime(msg.created_at)"></span>
+                            <span class="text-[8px] md:text-[9px] font-black text-gray-500 uppercase tracking-widest mt-1.5 md:mt-2 px-1 italic opacity-60" x-text="formatTime(msg.created_at)"></span>
                         </div>
                     </div>
                 </template>
@@ -72,12 +72,12 @@
             </div>
 
             <!-- Chat Input -->
-            <div class="p-6 md:p-8 bg-white/5 border-t border-white/5 backdrop-blur-2xl">
-                <form @submit.prevent="sendMessage" class="flex space-x-4 max-w-6xl mx-auto">
+            <div class="p-4 md:p-8 bg-white/5 border-t border-white/5 backdrop-blur-2xl">
+                <form @submit.prevent="sendMessage" class="flex space-x-3 md:space-x-4 max-w-6xl mx-auto">
                     <div class="flex-1 relative group">
-                        <input type="text" x-model="newMessage" placeholder="Type your message to support..." 
-                               class="w-full bg-white/5 border border-white/10 rounded-[2rem] px-8 py-5 focus:ring-4 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all font-medium text-sm text-white placeholder-gray-500 group-hover:bg-white/10">
-                        <div class="absolute right-6 top-1/2 -translate-y-1/2 flex items-center space-x-3 text-gray-500">
+                        <input type="text" x-model="newMessage" placeholder="Type your message..." 
+                               class="w-full bg-white/5 border border-white/10 rounded-[1.5rem] md:rounded-[2rem] px-5 md:px-8 py-4 md:py-5 focus:ring-4 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all font-medium text-sm text-white placeholder-gray-500 group-hover:bg-white/10">
+                        <div class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 flex items-center space-x-3 text-gray-500">
                             <button type="button" class="hover:text-white transition-colors" title="Attach Files">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.414a4 4 0 00-5.656-5.656l-6.415 6.415a6 6 0 108.486 8.486L20.5 13"></path></svg>
                             </button>
@@ -85,8 +85,8 @@
                     </div>
                     <button type="submit" 
                             :disabled="!newMessage.trim() || sending"
-                            class="bg-autocheck-red text-white px-10 rounded-[2rem] shadow-2xl shadow-red-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:scale-100 flex items-center justify-center group">
-                        <span class="mr-3 text-xs font-black uppercase tracking-widest hidden sm:block">Send Message</span>
+                            class="bg-autocheck-red text-white px-6 md:px-10 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl shadow-red-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:scale-100 flex items-center justify-center group">
+                        <span class="mr-3 text-xs font-black uppercase tracking-widest hidden md:block">Send Message</span>
                         <svg class="h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                     </button>
                 </form>

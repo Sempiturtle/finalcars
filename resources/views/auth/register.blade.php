@@ -409,9 +409,12 @@
                                         <span x-text="step"></span>
                                     </template>
                                 </div>
-                                <span class="text-[8px] font-bold uppercase tracking-[0.15em] mt-1 transition-colors duration-300"
+                                <span class="hidden sm:block text-[8px] font-bold uppercase tracking-[0.15em] mt-1 transition-colors duration-300"
                                       :class="currentStep >= step ? 'text-blue-600' : 'text-gray-300'"
                                       x-text="stepLabel(step)"></span>
+                                <span class="sm:hidden text-[7px] font-black mt-1"
+                                      :class="currentStep >= step ? 'text-blue-600' : 'text-gray-300'"
+                                      x-text="step"></span>
                             </div>
                             <template x-if="step < totalSteps">
                                 <div class="step-connector mx-1 mt-[-10px]" :class="currentStep > step ? 'completed' : ''"></div>
@@ -600,7 +603,7 @@
                                             type="button"
                                             x-show="!otpSent"
                                             :disabled="isSendingOtp"
-                                            class="w-full md:w-auto md:self-end px-6 py-3 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95 transform disabled:opacity-50">
+                                            class="w-full px-6 py-3.5 bg-blue-600 text-white rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95 transform disabled:opacity-50">
                                         <span x-show="!isSendingOtp">Send Verification Code</span>
                                         <span x-show="isSendingOtp" class="flex items-center justify-center gap-2">
                                             <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>

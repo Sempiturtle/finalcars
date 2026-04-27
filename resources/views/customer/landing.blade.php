@@ -22,23 +22,23 @@
                     Authenticated Premium Access
                 </div>
                 
-                <h1 class="reveal text-6xl md:text-9xl font-black text-white tracking-tighter leading-none mb-10 uppercase transition-all duration-700 hover:tracking-normal cursor-default select-none">
+                <h1 class="reveal text-5xl md:text-9xl font-black text-white tracking-tighter leading-none mb-10 uppercase transition-all duration-700 hover:tracking-normal cursor-default select-none">
                     COMMAND <br><span class="text-autocheck-red italic">CENTRAL.</span>
                 </h1>
                 
-                <p class="reveal text-lg md:text-xl text-gray-400 font-medium max-w-2xl mb-14 leading-relaxed italic" style="transition-delay: 100ms">
+                <p class="reveal text-base md:text-xl text-gray-400 font-medium max-w-2xl mb-14 leading-relaxed italic" style="transition-delay: 100ms">
                     Welcome back, <span class="text-white">{{ $user->name }}</span>. Your fleet is primed and your performance metrics are ready for review.
                 </p>
                 
-                <div class="reveal flex flex-col md:flex-row gap-6" style="transition-delay: 200ms">
+                <div class="reveal flex flex-col md:flex-row gap-4 md:gap-6 w-full md:w-auto px-6 md:px-0" style="transition-delay: 200ms">
                     <a href="{{ route('customer.vehicles.index') }}" 
-                       class="group relative px-14 py-6 bg-autocheck-red text-white text-xs font-black rounded-3xl overflow-hidden shadow-2xl shadow-red-500/30 uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                       class="group relative px-10 md:px-14 py-5 md:py-6 bg-autocheck-red text-white text-xs font-black rounded-3xl overflow-hidden shadow-2xl shadow-red-500/30 uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 focus:ring-2 focus:ring-red-500 focus:outline-none text-center"
                        aria-label="Enter your vehicle garage">
                         <span class="relative z-10">Enter Garage</span>
                         <div class="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 opacity-20" aria-hidden="true"></div>
                     </a>
                     <a href="{{ route('customer.vehicles.create') }}" 
-                       class="px-14 py-6 bg-white/5 backdrop-blur-xl text-white text-xs font-black rounded-3xl border border-white/10 hover:bg-white/10 transition-all uppercase tracking-[0.3em] shadow-xl focus:ring-2 focus:ring-white/20 focus:outline-none"
+                       class="px-10 md:px-14 py-5 md:py-6 bg-white/5 backdrop-blur-xl text-white text-xs font-black rounded-3xl border border-white/10 hover:bg-white/10 transition-all uppercase tracking-[0.3em] shadow-xl focus:ring-2 focus:ring-white/20 focus:outline-none text-center"
                        aria-label="Add a new vehicle to your fleet">
                         Add Vehicle
                     </a>
@@ -98,50 +98,50 @@
                 </a>
             </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[300px]">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:auto-rows-[300px]">
                 <!-- Main Service Card -->
-                <article class="reveal md:col-span-8 md:row-span-2 rounded-[3.5rem] overflow-hidden group relative">
+                <article class="reveal md:col-span-8 md:row-span-2 rounded-[2rem] md:rounded-[3.5rem] overflow-hidden group relative min-h-[400px] md:min-h-0">
                     <img src="{{ asset('images/pciture3.jfif') }}" 
                          alt="{{ $featuredServices[0]->name ?? 'Featured Service' }}"
                          class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-60"
                          loading="lazy"
                          decoding="async">
                     <div class="absolute inset-0 bg-gradient-to-t from-midnight via-midnight/40 to-transparent" aria-hidden="true"></div>
-                    <div class="absolute bottom-0 left-0 p-8">
-                        <div class="flex items-center space-x-4 mb-6">
+                    <div class="absolute bottom-0 left-0 p-6 md:p-8">
+                        <div class="flex items-center space-x-4 mb-4 md:mb-6">
                             <span class="px-4 py-1 rounded-full bg-autocheck-red text-white text-[10px] font-black uppercase tracking-widest">Featured Service</span>
                             <span class="text-white/60 text-xs font-bold">₱{{ number_format($featuredServices[0]->base_cost ?? 2500) }}</span>
                         </div>
-                        <h4 class="text-4xl md:text-5xl font-black text-white mb-6 uppercase tracking-tighter">{{ $featuredServices[0]->name ?? 'Full Diagnostics' }}</h4>
-                        <p class="text-gray-300 max-w-md font-medium leading-relaxed">
+                        <h4 class="text-3xl md:text-5xl font-black text-white mb-4 md:mb-6 uppercase tracking-tighter leading-none">{{ $featuredServices[0]->name ?? 'Full Diagnostics' }}</h4>
+                        <p class="text-gray-300 max-w-md font-medium leading-relaxed text-sm">
                             {{ $featuredServices[0]->description ?? 'Complete vehicle systems analysis using advanced digital diagnostic equipment.' }}
                         </p>
-                        <button class="mt-10 px-8 py-4 glass rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-white hover:text-black transition-all focus:outline-none focus:ring-2 focus:ring-white/50">Schedule Now</button>
+                        <button class="mt-8 md:mt-10 px-8 py-4 glass rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-white hover:text-black transition-all focus:outline-none focus:ring-2 focus:ring-white/50">Schedule Now</button>
                     </div>
                 </article>
 
                 <!-- Secondary Cards -->
-                <article class="reveal md:col-span-4 rounded-[3rem] overflow-hidden group relative" style="transition-delay: 100ms">
+                <article class="reveal md:col-span-4 rounded-[2rem] md:rounded-[3rem] overflow-hidden group relative h-[250px] md:h-auto" style="transition-delay: 100ms">
                     <img src="{{ asset('images/pic3.png') }}" 
                          alt="Digital Pulse Service"
                          class="absolute inset-0 w-full h-full object-cover opacity-40 transition-transform duration-1000 group-hover:scale-110"
                          loading="lazy"
                          decoding="async">
                     <div class="absolute inset-0 bg-midnight/60" aria-hidden="true"></div>
-                    <div class="absolute inset-0 p-10 flex flex-col justify-end">
+                    <div class="absolute inset-0 p-8 md:p-10 flex flex-col justify-end">
                         <h4 class="text-2xl font-black text-white mb-2 uppercase tracking-tighter">Digital Pulse</h4>
                         <p class="text-xs text-gray-400 font-medium italic">Real-time health monitoring.</p>
                     </div>
                 </article>
 
-                <article class="reveal md:col-span-4 rounded-[3rem] overflow-hidden group relative" style="transition-delay: 200ms">
+                <article class="reveal md:col-span-4 rounded-[2rem] md:rounded-[3rem] overflow-hidden group relative h-[250px] md:h-auto" style="transition-delay: 200ms">
                     <img src="{{ asset('images/pic4.png') }}" 
                          alt="Certified Parts"
                          class="absolute inset-0 w-full h-full object-cover opacity-40 transition-transform duration-1000 group-hover:scale-110"
                          loading="lazy"
                          decoding="async">
                     <div class="absolute inset-0 bg-autocheck-red/20" aria-hidden="true"></div>
-                    <div class="absolute inset-0 p-10 flex flex-col justify-end">
+                    <div class="absolute inset-0 p-8 md:p-10 flex flex-col justify-end">
                         <h4 class="text-2xl font-black text-white mb-2 uppercase tracking-tighter">Certified Parts</h4>
                         <p class="text-xs text-white/60 font-medium italic">Genuine OEM Guaranteed.</p>
                     </div>
@@ -182,10 +182,10 @@
                      style="--scroll-offset: 0px;">
             </div>
             
-            <div class="max-w-7xl mx-auto px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            <div class="max-w-7xl mx-auto px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
                 <div>
-                    <span class="reveal text-autocheck-red font-black text-[10px] uppercase tracking-[0.5em] mb-8 block italic">Operational Architecture</span>
-                    <h3 class="reveal text-5xl md:text-7xl font-black text-white tracking-tighter uppercase mb-10 leading-none" style="transition-delay: 100ms">BUILT FOR <br><span class="italic">SPEED.</span></h3>
+                    <span class="reveal text-autocheck-red font-black text-[10px] uppercase tracking-[0.5em] mb-6 block italic">Operational Architecture</span>
+                    <h3 class="reveal text-4xl md:text-7xl font-black text-white tracking-tighter uppercase mb-10 leading-none" style="transition-delay: 100ms">BUILT FOR <br><span class="italic">SPEED.</span></h3>
                     <p class="reveal text-gray-400 text-lg font-medium leading-relaxed mb-12" style="transition-delay: 200ms">
                         Our facility is a clinical ecosystem designed for maximum efficiency. Every technician is tracked, every part is logged, and every second is optimized for your vehicle's peak performance.
                     </p>
@@ -247,7 +247,7 @@
                 </div>
 
                 <div class="relative z-10 max-w-3xl mx-auto px-6">
-                    <h3 class="reveal text-5xl md:text-8xl font-black text-white tracking-tighter uppercase mb-10 leading-none">THE ROAD <br><span class="text-autocheck-red">AWAITS.</span></h3>
+                    <h3 class="reveal text-4xl md:text-8xl font-black text-white tracking-tighter uppercase mb-10 leading-none">THE ROAD <br><span class="text-autocheck-red">AWAITS.</span></h3>
                     <p class="reveal text-gray-400 text-xl font-medium mb-12 italic" style="transition-delay: 100ms">Take the next step in professional vehicle management. Your garage is ready.</p>
                     <nav class="reveal flex flex-col sm:flex-row items-center justify-center gap-6" style="transition-delay: 200ms" aria-label="CTA Navigation">
                         <a href="{{ route('customer.vehicles.index') }}" 
