@@ -266,7 +266,7 @@
             </header>
 
             <!-- Page Content -->
-            <div class="p-6">
+            <div class="p-0 sm:p-4 md:p-6">
                 {{ $slot }}
             </div>
         </main>

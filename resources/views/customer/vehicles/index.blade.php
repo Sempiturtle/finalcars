@@ -1,5 +1,5 @@
 <x-customer-layout>
-    <div class="max-w-7xl mx-auto space-y-6 pb-20">
+    <div class="p-4 sm:p-0 max-w-7xl mx-auto space-y-6 pb-20">
         <!-- Compact Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>

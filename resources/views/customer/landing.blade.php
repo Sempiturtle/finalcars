@@ -1,7 +1,7 @@
 <x-customer-layout>
     <div class="bg-[#0F172A] min-h-screen text-white space-y-20 pb-20 overflow-x-hidden">
         <!-- Hero Section with Advanced Parallax -->
-        <section class="relative h-[75vh] -mt-10 -mx-6 rounded-b-[4rem] overflow-hidden group select-none" aria-label="Customer Hero">
+        <section class="relative h-[80vh] sm:h-[75vh] sm:-mt-10 sm:-mx-6 rounded-none sm:rounded-b-[4rem] overflow-hidden group select-none" aria-label="Customer Hero">
             <div class="absolute inset-0 z-0">
                 <img src="{{ asset('images/pic6.png') }}" 
                      alt="Premium Automotive Performance"
@@ -22,7 +22,7 @@
                     Authenticated Premium Access
                 </div>
                 
-                <h1 class="reveal text-5xl md:text-9xl font-black text-white tracking-tighter leading-none mb-10 uppercase transition-all duration-700 hover:tracking-normal cursor-default select-none">
+                <h1 class="reveal text-4xl sm:text-7xl md:text-9xl font-black text-white tracking-tighter leading-tight sm:leading-none mb-8 sm:mb-10 uppercase transition-all duration-700 hover:tracking-normal cursor-default select-none">
                     COMMAND <br><span class="text-autocheck-red italic">CENTRAL.</span>
                 </h1>
                 
@@ -30,7 +30,7 @@
                     Welcome back, <span class="text-white">{{ $user->name }}</span>. Your fleet is primed and your performance metrics are ready for review.
                 </p>
                 
-                <div class="reveal flex flex-col md:flex-row gap-4 md:gap-6 w-full md:w-auto px-6 md:px-0" style="transition-delay: 200ms">
+                <div class="reveal flex flex-col md:flex-row gap-4 md:gap-6 w-full md:w-auto px-4 md:px-0" style="transition-delay: 200ms">
                     <a href="{{ route('customer.vehicles.index') }}" 
                        class="group relative px-10 md:px-14 py-5 md:py-6 bg-autocheck-red text-white text-xs font-black rounded-3xl overflow-hidden shadow-2xl shadow-red-500/30 uppercase tracking-[0.3em] transition-all hover:scale-105 active:scale-95 focus:ring-2 focus:ring-red-500 focus:outline-none text-center"
                        aria-label="Enter your vehicle garage">
@@ -53,7 +53,7 @@
         </section>
 
         <!-- Dynamic Metrics Grid (Bento Style) -->
-        <section class="max-w-7xl mx-auto px-6" aria-label="Quick Metrics">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6" aria-label="Quick Metrics">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <article class="reveal glass p-6 rounded-[1.5rem] relative overflow-hidden group">
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-autocheck-red/10 rounded-full blur-3xl group-hover:bg-autocheck-red/20 transition-colors" aria-hidden="true"></div>
@@ -87,7 +87,7 @@
         </section>
 
         <!-- Intelligent Service Bento Grid -->
-        <section class="max-w-7xl mx-auto px-6 space-y-16" id="services" aria-label="Featured Services">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 space-y-16" id="services" aria-label="Featured Services">
             <header class="flex flex-col md:flex-row md:items-end justify-between px-4">
                 <div class="max-w-xl">
                     <h2 class="reveal text-xs font-black text-autocheck-red uppercase tracking-[0.5em] mb-6 block italic">The Service Catalog</h2>
@@ -182,7 +182,7 @@
                      style="--scroll-offset: 0px;">
             </div>
             
-            <div class="max-w-7xl mx-auto px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
                 <div>
                     <span class="reveal text-autocheck-red font-black text-[10px] uppercase tracking-[0.5em] mb-6 block italic">Operational Architecture</span>
                     <h3 class="reveal text-4xl md:text-7xl font-black text-white tracking-tighter uppercase mb-10 leading-none" style="transition-delay: 100ms">BUILT FOR <br><span class="italic">SPEED.</span></h3>
@@ -234,8 +234,8 @@
         </section>
 
         <!-- Final CTA with Background Image -->
-        <section class="max-w-7xl mx-auto px-6">
-            <div class="relative rounded-[4rem] overflow-hidden group py-24 text-center border border-white/5">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="relative rounded-3xl sm:rounded-[4rem] overflow-hidden group py-16 sm:py-24 text-center border border-white/5">
                 <div class="absolute inset-0 z-0">
                     <img src="{{ asset('images/picture8.jfif') }}" 
                          alt="Facility Exterior Dusk"
@@ -247,7 +247,7 @@
                 </div>
 
                 <div class="relative z-10 max-w-3xl mx-auto px-6">
-                    <h3 class="reveal text-4xl md:text-8xl font-black text-white tracking-tighter uppercase mb-10 leading-none">THE ROAD <br><span class="text-autocheck-red">AWAITS.</span></h3>
+                    <h3 class="reveal text-4xl sm:text-6xl md:text-8xl font-black text-white tracking-tighter uppercase mb-8 sm:mb-10 leading-tight sm:leading-none">THE ROAD <br><span class="text-autocheck-red">AWAITS.</span></h3>
                     <p class="reveal text-gray-400 text-xl font-medium mb-12 italic" style="transition-delay: 100ms">Take the next step in professional vehicle management. Your garage is ready.</p>
                     <nav class="reveal flex flex-col sm:flex-row items-center justify-center gap-6" style="transition-delay: 200ms" aria-label="CTA Navigation">
                         <a href="{{ route('customer.vehicles.index') }}" 
