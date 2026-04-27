@@ -13,7 +13,7 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-[#0F172A]/40 to-transparent"></div>
             </div>
             
-            <div class="relative h-full flex flex-col items-center justify-center text-center px-6 max-w-5xl mx-auto z-10">
+            <div class="relative h-full flex flex-col items-center justify-center text-center px-6 max-w-7xl mx-auto z-10">
                 <div class="reveal inline-flex items-center px-5 py-2 bg-white/5 backdrop-blur-xl rounded-full border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.4em] mb-10 shadow-2xl">
                     <span class="relative flex h-2 w-2 mr-3" aria-hidden="true">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -53,7 +53,7 @@
         </section>
 
         <!-- Dynamic Metrics Grid (Bento Style) -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6" aria-label="Quick Metrics">
+        <section class="max-w-[90rem] mx-auto px-4 sm:px-6" aria-label="Quick Metrics">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <article class="reveal glass p-6 rounded-[1.5rem] relative overflow-hidden group">
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-autocheck-red/10 rounded-full blur-3xl group-hover:bg-autocheck-red/20 transition-colors" aria-hidden="true"></div>
@@ -87,7 +87,7 @@
         </section>
 
         <!-- Intelligent Service Bento Grid -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 space-y-16" id="services" aria-label="Featured Services">
+        <section class="max-w-[90rem] mx-auto px-4 sm:px-6 space-y-16" id="services" aria-label="Featured Services">
             <header class="flex flex-col md:flex-row md:items-end justify-between px-4">
                 <div class="max-w-xl">
                     <h2 class="reveal text-xs font-black text-autocheck-red uppercase tracking-[0.5em] mb-6 block italic">The Service Catalog</h2>
@@ -101,7 +101,7 @@
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:auto-rows-[300px]">
                 <!-- Main Service Card -->
                 <article class="reveal md:col-span-8 md:row-span-2 rounded-[2rem] md:rounded-[3.5rem] overflow-hidden group relative min-h-[400px] md:min-h-0">
-                    <img src="{{ asset('images/pciture3.jfif') }}" 
+                    <img src="{{ asset('images/picture1.jfif') }}" 
                          alt="{{ $featuredServices[0]->name ?? 'Featured Service' }}"
                          class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-60"
                          loading="lazy"
@@ -182,7 +182,7 @@
                      style="--scroll-offset: 0px;">
             </div>
             
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+            <div class="max-w-[90rem] mx-auto px-4 sm:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
                 <div>
                     <span class="reveal text-autocheck-red font-black text-[10px] uppercase tracking-[0.5em] mb-6 block italic">Operational Architecture</span>
                     <h3 class="reveal text-4xl md:text-7xl font-black text-white tracking-tighter uppercase mb-10 leading-none" style="transition-delay: 100ms">BUILT FOR <br><span class="italic">SPEED.</span></h3>
@@ -234,7 +234,7 @@
         </section>
 
         <!-- Final CTA with Background Image -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6">
+        <section class="max-w-[90rem] mx-auto px-4 sm:px-6">
             <div class="relative rounded-3xl sm:rounded-[4rem] overflow-hidden group py-16 sm:py-24 text-center border border-white/5">
                 <div class="absolute inset-0 z-0">
                     <img src="{{ asset('images/picture8.jfif') }}" 

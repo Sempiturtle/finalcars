@@ -1,5 +1,5 @@
 <x-customer-layout>
-    <div class="h-[calc(100vh-8rem)] md:h-[calc(100vh-10rem)] bg-[#0F172A] mt-0 md:-mt-10 mx-0 md:-mx-6 px-4 md:px-6 py-4 md:py-10 flex flex-col space-y-4 md:space-y-6 overflow-hidden">
+    <div class="h-[calc(100vh-8rem)] md:h-[calc(100vh-10rem)] bg-[#0F172A] mt-0 md:-mt-10 mx-0 md:-mx-6 px-4 md:px-6 py-4 md:py-8 flex flex-col space-y-4 md:space-y-6 overflow-hidden">
         
         <!-- Premium Chat Container -->
         <div class="flex-1 flex flex-col glass rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl relative" 
@@ -35,7 +35,7 @@
             </div>
 
             <!-- Chat History -->
-            <div class="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 custom-scrollbar scroll-smooth" id="chat-history">
+            <div class="flex-1 overflow-y-auto p-6 md:p-12 space-y-12 custom-scrollbar scroll-smooth" id="chat-history">
                 <template x-for="(msg, index) in messages" :key="msg.id">
                     <div class="reveal-message">
                         <!-- Date Separator -->
@@ -49,15 +49,15 @@
                             <div class="flex items-end space-x-3" :class="msg.sender_id === {{ Auth::id() }} ? 'flex-row-reverse space-x-reverse' : ''">
                                 <!-- Message Bubble -->
                                 <div :class="msg.sender_id === {{ Auth::id() }} 
-                                     ? 'bg-gradient-to-br from-autocheck-red to-red-700 text-white rounded-2xl rounded-tr-none shadow-xl shadow-red-500/10' 
-                                     : 'bg-white/5 backdrop-blur-xl text-gray-200 rounded-2xl rounded-tl-none border border-white/10 shadow-lg'"
-                                     class="w-fit max-w-[90%] md:max-w-[70%] px-4 md:px-5 py-2.5 md:py-3 text-sm font-medium leading-relaxed group relative transition-all hover:scale-[1.01]">
+                                     ? 'bg-gradient-to-br from-autocheck-red to-red-700 text-white rounded-[1.5rem] rounded-tr-none shadow-2xl shadow-red-500/20' 
+                                     : 'bg-white/5 backdrop-blur-2xl text-gray-200 rounded-[1.5rem] rounded-tl-none border border-white/10 shadow-xl'"
+                                     class="w-fit min-w-[140px] max-w-[85%] md:max-w-[75%] px-6 md:px-8 py-4 md:py-5 text-[13px] md:text-sm font-medium leading-relaxed group relative transition-all hover:scale-[1.01]">
                                     <p x-text="msg.message" class="relative z-10 break-words whitespace-pre-wrap text-left"></p>
                                     <div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
                                 </div>
                             </div>
                             <!-- Timestamp -->
-                            <span class="text-[8px] md:text-[9px] font-black text-gray-500 uppercase tracking-widest mt-1.5 md:mt-2 px-1 italic opacity-60" x-text="formatTime(msg.created_at)"></span>
+                            <span class="text-[8px] md:text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mt-3 px-2 italic opacity-50" x-text="formatTime(msg.created_at)"></span>
                         </div>
                     </div>
                 </template>
