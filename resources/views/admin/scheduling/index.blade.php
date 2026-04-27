@@ -156,16 +156,21 @@
                                             <div class="px-1.5 py-0.5 bg-gray-50 rounded text-center">
                                                 <span class="text-[7px] font-black text-gray-300 uppercase tracking-tighter">OFF</span>
                                             </div>
-                                        @elseif($used > 0)
+                                        @else
                                             <div class="space-y-0.5">
                                                 <div class="flex justify-between items-center text-[7px] font-black uppercase tracking-tighter">
                                                     <span class="{{ $percent >= 100 ? 'text-red-600' : 'text-gray-500' }}">
-                                                        {{ $used }}/{{ $maxSlots }}
+                                                        {{ $maxSlots - $used }} left
                                                     </span>
+                                                    @if($used > 0)
+                                                        <span class="text-gray-300">
+                                                            {{ $used }}/{{ $maxSlots }}
+                                                        </span>
+                                                    @endif
                                                 </div>
                                                 <div class="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
                                                     <div class="h-full transition-all duration-500 {{ $percent >= 100 ? 'bg-red-500' : ($percent >= 70 ? 'bg-orange-400' : 'bg-green-500') }}" 
-                                                         style="width: {{ $percent }}%"></div>
+                                                         style="width: {{ max(5, $percent) }}%"></div>
                                                 </div>
                                             </div>
                                         @endif

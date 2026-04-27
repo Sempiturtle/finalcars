@@ -68,7 +68,9 @@
                             // If it's in the past, it's available (for testing overdue). 
                             // If future, respect shop availability.
                             available: day.is_past ? !day.is_rest_day : (data.available && !day.is_rest_day),
-                            percent: data.slots_percent || 0
+                            percent: data.slots_percent || 0,
+                            remaining: data.remaining || 0,
+                            used: data.used || 0
                         };
                     });
                 } catch (e) {
@@ -385,7 +387,7 @@
                             <!-- Right Section: Calendar Grid (Efficient) -->
                             <div class="flex-1 p-8 bg-white relative">
                                 <!-- Top Nav (Integrated) -->
-                                <div class="flex items-center justify-between mb-8">
+                                <div class="flex items-center justify-between mb-6">
                                     <div class="flex items-center space-x-4">
                                         <button type="button" @click="prevMonth()" class="p-2 hover:bg-gray-50 rounded-xl text-gray-400 hover:text-autocheck-red transition-all">
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -444,7 +446,9 @@
                                                     </div>
                                                 </template>
                                                 <template x-if="!day.is_rest_day && !day.available && !day.is_past">
-                                                    <span class="text-[7px] font-black text-red-400 uppercase tracking-tighter block text-center">FULL</span>
+                                                    <div class="w-full">
+                                                        <span class="text-[7px] font-black text-red-400 uppercase tracking-tighter block text-center bg-red-50 py-0.5 rounded-md">FULL</span>
+                                                    </div>
                                                 </template>
                                             </div>
                                         </button>

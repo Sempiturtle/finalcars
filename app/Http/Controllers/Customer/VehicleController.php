@@ -202,7 +202,7 @@ class VehicleController extends Controller
         $maxSlots = \App\Models\Setting::get('max_slots_per_day', 10);
         $restDays = \App\Models\Setting::get('rest_days', [0]);
 
-        $logs = ServiceLog::whereBetween('service_date', [$startDate->toDateString(), $endDate->toDateString()])->get();
+        $logs = \App\Models\ServiceLog::whereBetween('service_date', [$startDate->toDateString(), $endDate->toDateString()])->get();
         
         $dailyUsage = [];
         foreach ($logs as $log) {
@@ -217,9 +217,14 @@ class VehicleController extends Controller
         while ($tempDate <= $endDate) {
             $d = $tempDate->toDateString();
             $used = $dailyUsage[$d] ?? 0;
+            $remaining = max(0, $maxSlots - $used);
+            $percent = ($used / $maxSlots) * 100;
+
             $days[$d] = [
                 'used' => $used,
                 'total' => $maxSlots,
+                'remaining' => $remaining,
+                'slots_percent' => $percent,
                 'available' => !in_array($tempDate->dayOfWeek, $restDays) && $used < $maxSlots && ($tempDate->isFuture() || $tempDate->isToday()),
                 'is_rest_day' => in_array($tempDate->dayOfWeek, $restDays)
             ];

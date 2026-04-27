@@ -24,24 +24,24 @@
 
         @php $loginType = request('type', 'customer'); @endphp
         <div class="max-w-[400px] w-full relative z-10">
-            <div class="text-center mb-4">
-                <a href="/" class="inline-flex flex-col items-center space-y-2 mb-2">
-                    <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-12 w-12 rounded-full object-cover border-2 {{ $loginType === 'admin' ? 'border-autocheck-red' : 'border-blue-500' }} shadow-xl">
-                    <span class="text-xl font-black tracking-tight text-gray-900">AutoCheck</span>
+            <div class="text-center mb-3">
+                <a href="/" class="inline-flex flex-col items-center space-y-1 mb-1">
+                    <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-10 w-10 rounded-full object-cover border-2 {{ $loginType === 'admin' ? 'border-autocheck-red' : 'border-blue-500' }} shadow-xl">
+                    <span class="text-lg font-black tracking-tight text-gray-900 leading-none">AutoCheck</span>
                 </a>
-                <h2 class="text-sm font-bold text-gray-600">
+                <h2 class="text-[11px] font-bold text-gray-600 uppercase tracking-widest leading-none">
                     {{ $loginType === 'admin' ? 'Admin Portal' : 'Customer Portal' }}
                 </h2>
-                <p class="text-[9px] text-gray-400 mt-1 uppercase tracking-widest">Sign in to access your account</p>
+                <p class="text-[8px] text-gray-400 mt-0.5 uppercase tracking-widest">Sign in to access account</p>
             </div>
 
-            <div class="bg-white rounded-[2rem] shadow-2xl {{ $loginType === 'admin' ? 'shadow-red-500/10' : 'shadow-blue-500/10' }} border border-gray-100 p-6 md:p-8">
+            <div class="bg-white rounded-[1.5rem] shadow-2xl {{ $loginType === 'admin' ? 'shadow-red-500/10' : 'shadow-blue-500/10' }} border border-gray-100 p-5 md:p-7">
                 <!-- Session Status -->
                 <x-auth-session-status class="mb-4" :status="session('status')" />
 
                 <!-- Portal Badge -->
-                <div class="flex justify-center mb-6">
-                    <div class="inline-flex items-center px-4 py-2 rounded-xl {{ $loginType === 'admin' ? 'bg-red-50 text-autocheck-red' : 'bg-blue-50 text-blue-600' }} text-[10px] font-black uppercase tracking-[0.2em]">
+                <div class="flex justify-center mb-5">
+                    <div class="inline-flex items-center px-3 py-1.5 rounded-xl {{ $loginType === 'admin' ? 'bg-red-50 text-autocheck-red' : 'bg-blue-50 text-blue-600' }} text-[9px] font-black uppercase tracking-[0.2em]">
                         @if($loginType === 'admin')
                             <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                             Administrator
@@ -57,22 +57,22 @@
 
                     <!-- Email Address -->
                     <div>
-                        <label for="email" class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 px-1">Email Address</label>
-                        <input id="email" class="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-red-500/10 focus:border-autocheck-red transition-all outline-none font-bold text-xs" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                        <label for="email" class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1 px-1">Email Address</label>
+                        <input id="email" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:ring-4 focus:ring-red-500/10 focus:border-autocheck-red transition-all outline-none font-bold text-[11px]" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
                         <x-input-error :messages="$errors->get('email')" class="mt-2 text-[10px]" />
                     </div>
 
                     <!-- Password -->
                     <div>
-                        <div class="flex justify-between px-1 mb-1.5">
-                            <label for="password" class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Password</label>
+                        <div class="flex justify-between px-1 mb-1">
+                            <label for="password" class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Password</label>
                             @if (Route::has('password.request'))
-                                <a class="text-[10px] font-bold text-autocheck-red hover:underline" href="{{ route('password.request') }}">
+                                <a class="text-[8px] font-bold text-autocheck-red hover:underline" href="{{ route('password.request') }}">
                                     Forgot?
                                 </a>
                             @endif
                         </div>
-                        <input id="password" class="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-red-500/10 focus:border-autocheck-red transition-all outline-none font-bold text-xs"
+                        <input id="password" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl focus:ring-4 focus:ring-red-500/10 focus:border-autocheck-red transition-all outline-none font-bold text-[11px]"
                                         type="password"
                                         name="password"
                                         required autocomplete="current-password" />
@@ -88,7 +88,7 @@
                     </div>
 
                     <div class="pt-2">
-                        <button type="submit" class="w-full py-3 {{ $loginType === 'admin' ? 'bg-autocheck-red shadow-red-500/20 hover:bg-red-700' : 'bg-blue-600 shadow-blue-500/20 hover:bg-blue-700' }} text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 transform">
+                        <button type="submit" class="w-full py-2.5 {{ $loginType === 'admin' ? 'bg-autocheck-red shadow-red-500/20 hover:bg-red-700' : 'bg-blue-600 shadow-blue-500/20 hover:bg-blue-700' }} text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 transform">
                             Secure Log In
                         </button>
                     </div>

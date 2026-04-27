@@ -61,39 +61,143 @@
                                         View Data
                                     </button>
 
-                                    <!-- Data Modal -->
+                                     <!-- Data Modal -->
                                     <template x-if="open">
                                         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" @click.self="open = false">
                                             <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl border border-gray-100 overflow-hidden animate-fade-in-up">
-                                                <div class="p-6 border-b border-gray-50 flex items-center justify-between">
-                                                    <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest">Audit Payload Details</h3>
-                                                    <button @click="open = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-                                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+
+                                                {{-- Modal Header --}}
+                                                <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                                                    <div class="flex items-center space-x-3">
+                                                        <span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest
+                                                            @if($log->action === 'created') bg-green-50 text-green-600
+                                                            @elseif($log->action === 'updated') bg-blue-50 text-blue-600
+                                                            @elseif($log->action === 'deleted') bg-red-50 text-red-600
+                                                            @else bg-gray-50 text-gray-500 @endif">
+                                                            {{ $log->action }}
+                                                        </span>
+                                                        <div>
+                                                            <h3 class="text-sm font-black text-gray-900 tracking-tight">{{ class_basename($log->model_type) }} <span class="text-gray-300">#{{ $log->model_id }}</span></h3>
+                                                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{{ $log->created_at->format('F j, Y — h:i A') }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <button @click="open = false" class="text-gray-300 hover:text-gray-600 transition-colors p-1">
+                                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                                     </button>
                                                 </div>
-                                                <div class="p-6 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                                                    <div class="grid grid-cols-2 gap-6">
-                                                        <div>
-                                                            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Before Change</h4>
-                                                            <div class="bg-gray-50 rounded-xl p-4 overflow-x-auto">
-                                                                <pre class="text-[10px] font-mono text-gray-600">@json($log->old_values, JSON_PRETTY_PRINT)</pre>
-                                                            </div>
+
+                                                {{-- Modal Body --}}
+                                                <div class="max-h-[55vh] overflow-y-auto custom-scrollbar">
+                                                    @php
+                                                        // Helper: humanize snake_case keys
+                                                        $label = fn($key) => ucwords(str_replace('_', ' ', $key));
+
+                                                        // Helper: format a raw value for display
+                                                        $fmt = function($val) {
+                                                            if (is_null($val))    return '—';
+                                                            if (is_bool($val))    return $val ? 'Yes' : 'No';
+                                                            if (is_array($val))   return '[ ' . count($val) . ' item' . (count($val) !== 1 ? 's' : '') . ' ]';
+                                                            if (is_numeric($val) && strlen((string)$val) > 4)
+                                                                return $val; // keep IDs / costs as-is
+                                                            // Detect ISO date strings
+                                                            if (preg_match('/^\d{4}-\d{2}-\d{2}/', $val)) {
+                                                                try { return \Carbon\Carbon::parse($val)->format('F j, Y'); } catch(\Exception $e) {}
+                                                            }
+                                                            // Humanize known slugs
+                                                            return ucwords(str_replace(['_', '-'], ' ', $val));
+                                                        };
+                                                    @endphp
+
+                                                    {{-- UPDATED: side-by-side diff --}}
+                                                    @if($log->action === 'updated' && ($log->old_values || $log->new_values))
+                                                        <table class="w-full text-left">
+                                                            <thead>
+                                                                <tr class="bg-gray-50/70 border-b border-gray-100">
+                                                                    <th class="px-5 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest w-1/3">Field</th>
+                                                                    <th class="px-5 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest w-1/3">Before</th>
+                                                                    <th class="px-5 py-3 text-[9px] font-black text-blue-400 uppercase tracking-widest w-1/3">After</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="divide-y divide-gray-50">
+                                                                @foreach(array_keys((array)$log->new_values) as $key)
+                                                                    <tr class="hover:bg-blue-50/20">
+                                                                        <td class="px-5 py-3 text-[10px] font-black text-gray-500 uppercase tracking-wider">{{ $label($key) }}</td>
+                                                                        <td class="px-5 py-3 text-[11px] font-bold text-gray-400 line-through italic">
+                                                                            {{ $fmt(($log->old_values)[$key] ?? null) }}
+                                                                        </td>
+                                                                        <td class="px-5 py-3 text-[11px] font-black text-blue-700">
+                                                                            {{ $fmt(($log->new_values)[$key] ?? null) }}
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+
+                                                    {{-- CREATED: new values card --}}
+                                                    @elseif($log->action === 'created' && $log->new_values)
+                                                        <table class="w-full text-left">
+                                                            <thead>
+                                                                <tr class="bg-green-50/50 border-b border-gray-100">
+                                                                    <th class="px-5 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest w-1/3">Field</th>
+                                                                    <th class="px-5 py-3 text-[9px] font-black text-green-500 uppercase tracking-widest">Value</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="divide-y divide-gray-50">
+                                                                @foreach((array)$log->new_values as $key => $val)
+                                                                    <tr class="hover:bg-green-50/20">
+                                                                        <td class="px-5 py-3 text-[10px] font-black text-gray-500 uppercase tracking-wider">{{ $label($key) }}</td>
+                                                                        <td class="px-5 py-3 text-[11px] font-black text-green-700">
+                                                                            @if(is_array($val))
+                                                                                <span class="text-gray-400 italic text-[10px]">{{ count($val) }} item{{ count($val) !== 1 ? 's' : '' }}</span>
+                                                                            @else
+                                                                                {{ $fmt($val) }}
+                                                                            @endif
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+
+                                                    {{-- DELETED: snapshot card --}}
+                                                    @elseif($log->action === 'deleted' && $log->old_values)
+                                                        <table class="w-full text-left">
+                                                            <thead>
+                                                                <tr class="bg-red-50/40 border-b border-gray-100">
+                                                                    <th class="px-5 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest w-1/3">Field</th>
+                                                                    <th class="px-5 py-3 text-[9px] font-black text-red-400 uppercase tracking-widest">Removed Value</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="divide-y divide-gray-50">
+                                                                @foreach((array)$log->old_values as $key => $val)
+                                                                    <tr class="hover:bg-red-50/20">
+                                                                        <td class="px-5 py-3 text-[10px] font-black text-gray-500 uppercase tracking-wider">{{ $label($key) }}</td>
+                                                                        <td class="px-5 py-3 text-[11px] font-bold text-red-500 line-through italic">
+                                                                            @if(is_array($val))
+                                                                                <span class="no-underline not-italic text-gray-400 text-[10px]">{{ count($val) }} item{{ count($val) !== 1 ? 's' : '' }}</span>
+                                                                            @else
+                                                                                {{ $fmt($val) }}
+                                                                            @endif
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+
+                                                    @else
+                                                        <div class="p-10 text-center">
+                                                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">No payload data recorded</p>
                                                         </div>
-                                                        <div>
-                                                            <h4 class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-3">After Change</h4>
-                                                            <div class="bg-blue-50/30 rounded-xl p-4 overflow-x-auto">
-                                                                <pre class="text-[10px] font-mono text-blue-600">@json($log->new_values, JSON_PRETTY_PRINT)</pre>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="pt-4 border-t border-gray-50">
-                                                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">User Agent</p>
-                                                        <p class="text-[10px] text-gray-500 italic">{{ $log->user_agent }}</p>
-                                                    </div>
+                                                    @endif
                                                 </div>
-                                                <div class="p-4 bg-gray-50 text-right">
-                                                    <button @click="open = false" class="px-6 py-2 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all">Close</button>
+
+                                                {{-- Footer: user agent --}}
+                                                <div class="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                                                    <p class="text-[9px] font-bold text-gray-300 truncate max-w-xs italic" title="{{ $log->user_agent }}">
+                                                        {{ $log->user_agent ? Str::limit($log->user_agent, 60) : 'N/A' }}
+                                                    </p>
+                                                    <button @click="open = false" class="px-5 py-2 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gray-700 transition-all">Close</button>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </template>

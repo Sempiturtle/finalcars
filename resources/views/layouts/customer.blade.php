@@ -40,6 +40,30 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #d1d5db;
         }
+
+        /* ── Custom Confirm Modal ── */
+        @keyframes modal-pop {
+            0%   { opacity: 0; transform: scale(0.85) translateY(20px); }
+            70%  { transform: scale(1.03) translateY(-3px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes modal-icon-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245,48,3,0.35); }
+            50%       { box-shadow: 0 0 0 14px rgba(245,48,3,0); }
+        }
+        @keyframes backdrop-in {
+            from { opacity: 0; backdrop-filter: blur(0px); }
+            to   { opacity: 1; backdrop-filter: blur(6px); }
+        }
+        .confirm-modal-backdrop {
+            animation: backdrop-in 0.25s ease forwards;
+        }
+        .confirm-modal-card {
+            animation: modal-pop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+        .confirm-icon-pulse {
+            animation: modal-icon-pulse 1.6s ease-in-out infinite;
+        }
     </style>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}?v=2">
 </head>
@@ -138,41 +162,41 @@
         <main class="flex-1 h-screen overflow-y-auto">
             <!-- Topbar -->
             <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-40">
-                <div class="flex items-center space-x-6">
-                    <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:outline-none transition-colors">
+                <div class="flex items-center space-x-6 flex-1 min-w-0">
+                    <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:outline-none transition-colors shrink-0">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                     </button>
-                    <h2 class="text-sm font-black text-gray-400 uppercase tracking-[0.3em] hidden md:block italic">Dashboard <span class="text-autocheck-red">/</span> {{ request()->route()->getName() }}</h2>
+                    <h2 class="text-sm font-black text-gray-400 uppercase tracking-[0.2em] hidden md:block italic truncate">Dashboard <span class="text-autocheck-red">/</span> {{ request()->route()->getName() }}</h2>
                 </div>
 
-                <div class="flex items-center space-x-6" x-data="{ 
-                    notifOpen: false, 
-                    notifications: [], 
-                    unreadCount: 0,
-                    fetchNotifications() {
-                        fetch('{{ route('customer.notifications.index') }}')
-                            .then(res => res.json())
-                            .then(data => {
-                                this.notifications = data.notifications;
-                                this.unreadCount = data.unreadCount;
-                            });
-                    },
-                    markAsRead(id) {
-                        fetch(`/customer/notifications/${id}/read`, {
-                            method: 'POST',
-                            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-                        }).then(() => this.fetchNotifications());
-                    },
-                    markAllRead() {
-                        fetch('{{ route('customer.notifications.read-all') }}', {
-                            method: 'POST',
-                            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-                        }).then(() => this.fetchNotifications());
-                    }
-                }" x-init="fetchNotifications(); setInterval(() => fetchNotifications(), 30000)">
-                    
-                    <!-- Notification Bell Dropdown -->
-                    <div class="relative">
+                <div class="flex items-center space-x-3 md:space-x-6 shrink-0">
+                    <div x-data="{ 
+                        notifOpen: false, 
+                        notifications: [], 
+                        unreadCount: 0,
+                        fetchNotifications() {
+                            fetch('{{ route('customer.notifications.index') }}')
+                                .then(res => res.json())
+                                .then(data => {
+                                    this.notifications = data.notifications;
+                                    this.unreadCount = data.unreadCount;
+                                });
+                        },
+                        markAsRead(id) {
+                            fetch(`/customer/notifications/${id}/read`, {
+                                method: 'POST',
+                                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                            }).then(() => this.fetchNotifications());
+                        },
+                        markAllRead() {
+                            fetch('{{ route('customer.notifications.read-all') }}', {
+                                method: 'POST',
+                                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                            }).then(() => this.fetchNotifications());
+                        }
+                    }" x-init="fetchNotifications(); setInterval(() => fetchNotifications(), 30000)" class="relative">
+                        
+                        <!-- Notification Bell Dropdown -->
                         <button @click="notifOpen = !notifOpen" class="relative p-2.5 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-autocheck-red transition-all duration-300 focus:outline-none group">
                             <svg class="h-6 w-6 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
@@ -229,7 +253,7 @@
 
                     <div class="h-8 w-px bg-gray-100 hidden md:block"></div>
 
-                    <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-4 md:space-x-6">
                         <div class="flex flex-col items-end hidden md:flex">
                             <span class="text-sm font-bold text-gray-900 leading-none">{{ Auth::user()->name }}</span>
                             <span class="text-[8px] font-black text-autocheck-red uppercase tracking-widest italic mt-1">Registered Legacy</span>
@@ -247,5 +271,108 @@
             </div>
         </main>
     </div>
+
+    {{-- ═══════════════════════════════════════════
+         GLOBAL DELETE CONFIRMATION MODAL
+         Usage: call window.confirmDelete(formEl, message)
+    ═══════════════════════════════════════════ --}}
+    <div
+        id="global-confirm-modal"
+        x-data="globalConfirmModal()"
+        x-show="open"
+        x-cloak
+        @keydown.escape.window="cancel()"
+        class="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+        style="display:none;"
+    >
+        {{-- Backdrop --}}
+        <div
+            class="confirm-modal-backdrop absolute inset-0 bg-gray-900/60"
+            @click="cancel()"
+        ></div>
+
+        {{-- Card --}}
+        <div
+            class="confirm-modal-card relative w-full max-w-sm bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-gray-100"
+            @click.stop
+        >
+            {{-- Top accent bar --}}
+            <div class="h-1 w-full bg-gradient-to-r from-autocheck-red via-red-400 to-orange-400"></div>
+
+            <div class="p-8">
+                {{-- Icon --}}
+                <div class="flex justify-center mb-6">
+                    <div class="confirm-icon-pulse relative w-20 h-20 bg-red-50 rounded-full flex items-center justify-center border-2 border-red-100">
+                        <div class="absolute inset-2 rounded-full border border-red-200/60"></div>
+                        <svg class="w-9 h-9 text-autocheck-red relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </div>
+                </div>
+
+                {{-- Text --}}
+                <div class="text-center mb-8">
+                    <h3 class="text-lg font-black text-gray-900 tracking-tight uppercase mb-2" x-text="title"></h3>
+                    <p class="text-sm text-gray-500 font-medium leading-relaxed" x-text="message"></p>
+                </div>
+
+                {{-- Actions --}}
+                <div class="flex gap-3">
+                    <button
+                        @click="cancel()"
+                        class="flex-1 py-3 px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-200 border border-gray-200 hover:border-gray-300 active:scale-95"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        @click="confirm()"
+                        class="flex-1 py-3 px-4 bg-autocheck-red hover:bg-red-700 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-200 shadow-lg shadow-red-500/30 hover:shadow-red-600/40 active:scale-95"
+                        x-text="confirmText"
+                    ></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function globalConfirmModal() {
+            return {
+                open: false,
+                title: 'Confirm Action',
+                message: 'Are you sure you want to proceed?',
+                confirmText: 'Confirm',
+                _resolveForm: null,
+
+                show(formEl, message, title, confirmText) {
+                    this.message     = message     || 'Are you sure you want to proceed?';
+                    this.title       = title       || 'Confirm Action';
+                    this.confirmText = confirmText || 'Confirm';
+                    this._resolveForm = formEl;
+                    this.open = true;
+                    this.$nextTick(() => document.getElementById('global-confirm-modal').querySelector('button:last-child')?.focus());
+                },
+
+                confirm() {
+                    this.open = false;
+                    if (this._resolveForm) {
+                        this._resolveForm.submit();
+                        this._resolveForm = null;
+                    }
+                },
+
+                cancel() {
+                    this.open = false;
+                    this._resolveForm = null;
+                }
+            };
+        }
+
+        // Global helper — call from any inline handler
+        window.confirmDelete = function(formEl, message, title, confirmText) {
+            const modal = Alpine.$data(document.getElementById('global-confirm-modal'));
+            modal.show(formEl, message, title, confirmText);
+        };
+    </script>
 </body>
 </html>
