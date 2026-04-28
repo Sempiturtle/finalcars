@@ -6,10 +6,10 @@
         
         <div class="flex-1 flex overflow-hidden relative">
             <!-- Sidebar: User List -->
-            <div class="w-full md:w-96 border-r flex flex-col z-20 transition-colors duration-500"
+            <div class="w-full md:w-96 border-r flex-col z-20 transition-colors duration-500"
                  :class="[
                     darkMode ? 'border-white/5 bg-[#242526]' : 'border-gray-200 bg-white',
-                    { 'hidden md:flex': !showList && selectedUser }
+                    (!showList && selectedUser) ? 'hidden md:flex' : 'flex'
                  ]">
                 <div class="p-4 md:p-6 border-b" :class="darkMode ? 'border-white/5' : 'border-gray-100'">
                     <div class="flex items-center justify-between mb-4">
@@ -18,6 +18,15 @@
                             Chats
                         </h2>
                         <div class="flex items-center space-x-2">
+                            <template x-if="selectedUser">
+                                <button @click="showList = false" 
+                                        class="md:hidden p-2 rounded-full transition-all"
+                                        :class="darkMode ? 'text-blue-400 hover:bg-white/10' : 'text-blue-600 hover:bg-gray-100'">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                            </template>
                             <a href="{{ route('admin.dashboard') }}" class="p-2 rounded-full transition-colors" :class="darkMode ? 'text-gray-400 hover:bg-white/10' : 'text-gray-600 hover:bg-gray-100'">
                                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                             </a>
@@ -73,10 +82,10 @@
             </div>
 
             <!-- Main Chat Area -->
-            <div class="flex-1 flex flex-col transition-colors duration-500"
+            <div class="flex-1 flex-col transition-colors duration-500"
                  :class="[
                     darkMode ? 'bg-[#18191A]' : 'bg-white',
-                    { 'hidden md:flex': showList && selectedUser, 'flex': !showList && selectedUser }
+                    (!selectedUser || showList) ? 'hidden md:flex' : 'flex'
                  ]">
                 <template x-if="!selectedUser">
                     <div class="flex-1 flex flex-col items-center justify-center p-12 text-center">
