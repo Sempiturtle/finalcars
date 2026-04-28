@@ -106,6 +106,7 @@
                             <th class="py-4 px-6 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Vehicle & Owner</th>
                             <th class="py-4 px-6 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Service Type</th>
                             <th class="py-4 px-6 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Cost</th>
+                            <th class="py-4 px-6 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Customer Rating</th>
                             <th class="py-4 px-6 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Status</th>
                         </tr>
                     </thead>
@@ -133,6 +134,25 @@
                                 </td>
                                 <td class="py-4 px-6">
                                     <span class="text-[13px] font-black text-gray-900">₱{{ number_format($service->cost, 2) }}</span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    @if($service->review)
+                                        <div class="flex flex-col items-center">
+                                            <div class="flex items-center space-x-0.5 mb-1">
+                                                @for($i=1; $i<=5; $i++)
+                                                    <svg class="h-3 w-3 {{ $i <= $service->review->rating ? 'text-yellow-400' : 'text-gray-200' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                                @endfor
+                                            </div>
+                                            @if($service->review->comment)
+                                                <button @click="$dispatch('view-comment', { comment: '{{ addslashes($service->review->comment) }}', name: '{{ $service->vehicle->owner_name }}' })" 
+                                                        class="text-[9px] font-bold text-blue-600 hover:underline uppercase tracking-widest">
+                                                    View Comment
+                                                </button>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-[10px] font-bold text-gray-300 italic uppercase tracking-widest">No review</span>
+                                    @endif
                                 </td>
                                 <td class="py-4 px-6 text-right">
                                     <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] {{ 
@@ -168,6 +188,36 @@
                     {{ $services->appends(request()->query())->links() }}
                 </div>
             @endif
+        </div>
+    </div>
+
+    <!-- View Comment Modal -->
+    <div x-data="{ isOpen: false, comment: '', name: '' }"
+         x-show="isOpen"
+         @view-comment.window="isOpen = true; comment = $event.detail.comment; name = $event.detail.name"
+         class="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-0"
+         x-cloak>
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" @click="isOpen = false"></div>
+        <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden transform transition-all p-8"
+             x-show="isOpen"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100">
+            
+            <div class="flex items-center justify-between mb-6">
+                <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                </div>
+                <button @click="isOpen = false" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <h3 class="text-2xl font-black text-gray-900 tracking-tight" x-text="'Feedback from ' + name"></h3>
+            
+            <div class="mt-6 bg-gray-50 rounded-3xl p-6 border border-gray-100 italic text-gray-700 font-medium" x-text="comment"></div>
+            
+            <button @click="isOpen = false" class="mt-8 w-full bg-gray-900 text-white font-black py-4 rounded-full shadow-lg transition-all hover:bg-black uppercase tracking-widest text-xs">Close Feedback</button>
         </div>
     </div>
 </x-admin-layout>

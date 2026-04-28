@@ -1,93 +1,90 @@
 <x-customer-layout>
-    <div class="h-[calc(100vh-8rem)] md:h-[calc(100vh-10rem)] bg-[#0F172A] mt-0 md:-mt-10 mx-0 md:-mx-6 px-4 md:px-6 py-4 md:py-8 flex flex-col space-y-4 md:space-y-6 overflow-hidden">
+    <div class="fixed inset-0 z-[100] flex flex-col transition-colors duration-500 overflow-hidden"
+         :class="darkMode ? 'bg-[#18191A]' : 'bg-[#F0F2F5]'"
+         x-data="customerChat()" 
+         x-init="init()">
         
-        <!-- Premium Chat Container -->
-        <div class="flex-1 flex flex-col glass rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl relative" 
-             x-data="customerChat()" 
-             x-init="init()">
+        <div class="flex-1 flex flex-col overflow-hidden relative">
             
             <!-- Chat Header -->
-            <div class="h-20 md:h-24 px-6 md:px-10 border-b border-white/5 flex items-center justify-between bg-white/5 backdrop-blur-xl shrink-0 z-10">
+            <div class="h-20 md:h-24 px-6 md:px-10 border-b flex items-center justify-between backdrop-blur-xl shrink-0 z-10 transition-colors duration-500"
+                 :class="darkMode ? 'border-white/5 bg-[#18191A]/80' : 'border-black/5 bg-white/80'">
                 <div class="flex items-center space-x-4 md:space-x-5">
+                    <div class="flex items-center space-x-2 mr-2">
+                        <a href="{{ route('customer.dashboard') }}" class="p-2 rounded-full hover:bg-gray-100 transition-colors" :class="darkMode ? 'text-gray-400 hover:bg-white/10' : 'text-gray-600'">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </a>
+                    </div>
                     <div class="relative">
-                        <div class="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-autocheck-red flex items-center justify-center text-white font-black text-lg md:text-xl shadow-lg shadow-red-500/20 animate-pulse-slow">A</div>
-                        <div class="absolute -bottom-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-green-500 border-2 md:border-4 border-[#0F172A] rounded-full"></div>
+                        <div class="h-10 w-10 md:h-12 md:w-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-black text-sm md:text-base shadow-lg shadow-blue-500/20 animate-pulse-slow">AS</div>
+                        <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 md:w-4 md:h-4 bg-green-500 border-2 rounded-full transition-colors duration-500"
+                             :class="darkMode ? 'border-[#18191A]' : 'border-white'"></div>
                     </div>
                     <div>
-                        <h3 class="font-black text-white text-base md:text-lg tracking-tight leading-none uppercase">AutoCheck Support</h3>
-                        <div class="flex items-center mt-1.5 md:mt-2">
-                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-2 animate-ping"></span>
-                            <span class="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Live Agent Online</span>
-                        </div>
+                        <h3 class="font-bold text-base md:text-lg tracking-tight leading-none"
+                            :class="darkMode ? 'text-white' : 'text-gray-900'">AutoCheck Support</h3>
+                        <p class="text-[11px] font-medium text-gray-500 mt-1">Active now</p>
                     </div>
                 </div>
                 
-                <div class="hidden md:flex items-center space-x-6 text-right">
-                    <div class="flex flex-col">
-                        <span class="text-[9px] font-black text-gray-500 uppercase tracking-[0.3em] mb-1">Response Time</span>
-                        <span class="text-xs font-black text-white uppercase italic">Typically Instant</span>
-                    </div>
-                    <div class="h-10 w-[1px] bg-white/10"></div>
-                    <button class="p-3 bg-white/5 rounded-2xl text-gray-400 hover:text-white hover:bg-white/10 transition-all">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
+                <div class="flex items-center space-x-2 md:space-x-6 text-right">
+                    <!-- Theme Toggle -->
+                    <button @click="darkMode = !darkMode" 
+                            class="p-2.5 rounded-full transition-all duration-300"
+                            :class="darkMode ? 'bg-white/5 text-yellow-400 hover:bg-white/10' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                        <svg x-show="!darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        <svg x-show="darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364-6.364l-.707.707M6.364 17.636l-.707.707M6.364 6.364l.707-.707m11.272 11.272l.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     </button>
+                    <div class="h-10 w-[1px] hidden md:block" :class="darkMode ? 'bg-white/10' : 'bg-black/5'"></div>
                 </div>
             </div>
 
             <!-- Chat History -->
-            <div class="flex-1 overflow-y-auto p-6 md:p-12 space-y-12 custom-scrollbar scroll-smooth" id="chat-history">
+            <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-1 bg-transparent custom-scrollbar scroll-smooth" id="chat-history">
                 <template x-for="(msg, index) in messages" :key="msg.id">
                     <div class="reveal-message">
                         <!-- Date Separator -->
                         <template x-if="shouldShowDate(msg, index)">
-                            <div class="flex justify-center my-12">
-                                <span class="px-6 py-2 bg-white/5 border border-white/10 text-gray-400 text-[9px] font-black uppercase tracking-[0.4em] rounded-full backdrop-blur-md" x-text="formatDate(msg.created_at)"></span>
+                            <div class="flex justify-center my-8">
+                                <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wide" x-text="formatDate(msg.created_at)"></span>
                             </div>
                         </template>
 
-                        <div class="flex flex-col" :class="msg.sender_id === {{ Auth::id() }} ? 'items-end' : 'items-start'">
-                            <div class="flex items-end space-x-3" :class="msg.sender_id === {{ Auth::id() }} ? 'flex-row-reverse space-x-reverse' : ''">
-                                <!-- Message Bubble -->
+                        <div class="flex flex-col group/msg" :class="msg.sender_id === {{ Auth::id() }} ? 'items-end' : 'items-start'">
+                            <div class="flex items-end space-x-2" :class="msg.sender_id === {{ Auth::id() }} ? 'flex-row-reverse space-x-reverse' : ''">
+                                <!-- Avatar for received messages -->
+                                <template x-if="msg.sender_id !== {{ Auth::id() }}">
+                                    <div class="h-7 w-7 rounded-full bg-blue-600 flex-shrink-0 mb-1 overflow-hidden flex items-center justify-center text-[8px] text-white font-bold">AS</div>
+                                </template>
+
                                 <div :class="msg.sender_id === {{ Auth::id() }} 
-                                     ? 'bg-gradient-to-br from-autocheck-red to-red-700 text-white rounded-[1.5rem] rounded-tr-none shadow-2xl shadow-red-500/20' 
-                                     : 'bg-white/5 backdrop-blur-2xl text-gray-200 rounded-[1.5rem] rounded-tl-none border border-white/10 shadow-xl'"
-                                     class="w-fit min-w-[140px] max-w-[85%] md:max-w-[75%] px-6 md:px-8 py-4 md:py-5 text-[13px] md:text-sm font-medium leading-relaxed group relative transition-all hover:scale-[1.01]">
-                                    <p x-text="msg.message" class="relative z-10 break-words whitespace-pre-wrap text-left"></p>
-                                    <div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+                                     ? 'bg-[#0084FF] text-white rounded-[1.25rem] rounded-tr-[0.25rem] rounded-br-[0.25rem]' 
+                                     : (darkMode ? 'bg-[#3E4042] text-white' : 'bg-[#E4E6EB] text-gray-900') + ' rounded-[1.25rem] rounded-tl-[0.25rem] rounded-bl-[0.25rem]'"
+                                     class="w-fit min-w-[50px] max-w-[85%] md:max-w-[70%] px-4 py-2 text-[14px] md:text-[15px] font-normal leading-snug transition-all">
+                                    <p x-text="msg.message" class="break-words whitespace-pre-wrap text-left"></p>
                                 </div>
                             </div>
-                            <!-- Timestamp -->
-                            <span class="text-[8px] md:text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mt-3 px-2 italic opacity-50" x-text="formatTime(msg.created_at)"></span>
+                            <span class="text-[10px] mt-1 px-10 opacity-0 group-hover/msg:opacity-100 transition-all" 
+                                  :class="darkMode ? 'text-gray-500' : 'text-gray-400'"
+                                  x-text="formatTime(msg.created_at)"></span>
                         </div>
                     </div>
                 </template>
-                
-                <!-- Typing Indicator (Simulated/Placeholder) -->
-                <div x-show="false" class="flex items-center space-x-2 text-gray-500 text-[10px] font-black uppercase tracking-widest px-4">
-                    <span class="animate-bounce">●</span>
-                    <span class="animate-bounce [animation-delay:0.2s]">●</span>
-                    <span class="animate-bounce [animation-delay:0.4s]">●</span>
-                    <span class="ml-2">Agent is typing</span>
-                </div>
             </div>
 
             <!-- Chat Input -->
-            <div class="p-4 md:p-8 bg-white/5 border-t border-white/5 backdrop-blur-2xl">
-                <form @submit.prevent="sendMessage" class="flex space-x-3 md:space-x-4 max-w-6xl mx-auto">
-                    <div class="flex-1 relative group">
-                        <input type="text" x-model="newMessage" placeholder="Type your message..." 
-                               class="w-full bg-white/5 border border-white/10 rounded-[1.5rem] md:rounded-[2rem] px-5 md:px-8 py-4 md:py-5 focus:ring-4 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all font-medium text-sm text-white placeholder-gray-500 group-hover:bg-white/10">
-                        <div class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 flex items-center space-x-3 text-gray-500">
-                            <button type="button" class="hover:text-white transition-colors" title="Attach Files">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.414a4 4 0 00-5.656-5.656l-6.415 6.415a6 6 0 108.486 8.486L20.5 13"></path></svg>
-                            </button>
-                        </div>
+            <div class="p-4 md:p-6 transition-colors duration-500"
+                 :class="darkMode ? 'bg-[#18191A] border-t border-white/5' : 'bg-white border-t border-black/5'">
+                <form @submit.prevent="sendMessage" class="flex items-center space-x-3 max-w-5xl mx-auto">
+                    <div class="flex-1 relative">
+                        <input type="text" x-model="newMessage" placeholder="Aa" 
+                               :class="darkMode ? 'bg-[#3E4042] text-white' : 'bg-gray-100 text-gray-900'"
+                               class="w-full border-none rounded-full px-5 py-2.5 focus:ring-0 text-sm font-normal">
                     </div>
                     <button type="submit" 
                             :disabled="!newMessage.trim() || sending"
-                            class="bg-autocheck-red text-white px-6 md:px-10 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl shadow-red-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:scale-100 flex items-center justify-center group">
-                        <span class="mr-3 text-xs font-black uppercase tracking-widest hidden md:block">Send Message</span>
-                        <svg class="h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                            class="text-blue-500 disabled:opacity-30 p-2 hover:bg-gray-100 rounded-full transition-all">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                     </button>
                 </form>
             </div>
@@ -136,6 +133,7 @@
                 newMessage: '',
                 sending: false,
                 pollingTimer: null,
+                darkMode: true,
 
                 init() {
                     this.fetchMessages();
@@ -210,6 +208,13 @@
                     const currDate = new Date(msg.created_at).toDateString();
                     const prevDate = new Date(prevMsg.created_at).toDateString();
                     return currDate !== prevDate;
+                },
+
+                getInitials(name) {
+                    if (!name) return '';
+                    const parts = name.split(' ');
+                    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+                    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
                 }
             }
         }

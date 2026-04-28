@@ -36,6 +36,11 @@ class ServiceLog extends Model
         return $this->belongsTo(Vehicle::class);
     }
 
+    public function review()
+    {
+        return $this->hasOne(Review::class);
+    }
+
     public function getPointsEarnedAttribute()
     {
         if ($this->status !== 'completed') {

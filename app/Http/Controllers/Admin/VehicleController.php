@@ -233,6 +233,17 @@ class VehicleController extends Controller
 
         $vehicle->update(['services' => $services]);
 
+        // Notify User in Bell
+        if ($vehicle->owner) {
+            $icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />';
+            $vehicle->owner->notify(new SystemNotification(
+                "Service Completed!",
+                "Maintenance for your {$vehicle->make} {$vehicle->model} is finished. Check your history for points earned!",
+                $icon,
+                route('customer.history.index')
+            ));
+        }
+
         return redirect()->back()->with('success', 'Services verified and moved to maintenance history.');
     }
 
@@ -262,6 +273,17 @@ class VehicleController extends Controller
             // Force refresh and status sync
             $vehicle->refresh();
             $vehicle->syncServiceLogs();
+
+            // Notify User in Bell
+            if ($vehicle->owner) {
+                $icon = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />';
+                $vehicle->owner->notify(new SystemNotification(
+                    "Service In Progress",
+                    "We have started working on your {$vehicle->make} {$vehicle->model}. We will notify you once it's ready!",
+                    $icon,
+                    route('customer.maintenance.timeline')
+                ));
+            }
             
             return redirect()->back()->with('success', 'Selected services started! Vehicle status updated to In Progress.');
         }

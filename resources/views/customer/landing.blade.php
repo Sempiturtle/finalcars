@@ -1,7 +1,7 @@
 <x-customer-layout>
     <div class="bg-[#0F172A] min-h-screen text-white space-y-20 pb-20 overflow-x-hidden">
         <!-- Hero Section with Advanced Parallax -->
-        <section class="relative h-[80vh] sm:h-[75vh] sm:-mt-10 sm:-mx-6 rounded-none sm:rounded-b-[4rem] overflow-hidden group select-none" aria-label="Customer Hero">
+        <section class="relative h-[80vh] sm:h-[85vh] overflow-hidden group select-none" aria-label="Customer Hero">
             <div class="absolute inset-0 z-0">
                 <img src="{{ asset('images/pic6.png') }}" 
                      alt="Premium Automotive Performance"
@@ -52,8 +52,115 @@
             </div>
         </section>
 
+        <!-- Onboarding Guide for New Users -->
+        @if(Auth::user()->vehicles()->count() === 0)
+        <section class="w-full -mt-10 md:-mt-20 relative z-30 reveal px-4 sm:px-12">
+            <div class="glass p-6 md:p-12 rounded-[2.5rem] md:rounded-[3rem] border-white/10 shadow-2xl overflow-hidden relative group">
+                <div class="absolute inset-0 bg-gradient-to-r from-autocheck-red/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="text-autocheck-red font-black text-[10px] uppercase tracking-[0.5em] mb-6 block italic">New Arrival Protocol</span>
+                        <h2 class="text-4xl md:text-6xl font-black text-white tracking-tighter uppercase mb-8 leading-none">START YOUR <br><span class="text-autocheck-red italic">LEGACY.</span></h2>
+                        <p class="text-gray-400 text-sm font-bold max-w-md leading-relaxed mb-10">Your garage is currently empty. Follow the sequence below to unlock the full potential of AutoCheck performance tracking.</p>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-6 group/step">
+                                <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white font-black text-lg group-hover/step:bg-autocheck-red group-hover/step:border-autocheck-red transition-all">1</div>
+                                <div>
+                                    <h4 class="text-white font-black text-sm uppercase tracking-tight {{ Auth::user()->hasCompleteProfile() ? 'line-through opacity-40' : '' }}">Verify Identity</h4>
+                                    <p class="text-[10px] text-gray-500 font-bold italic">Complete your profile information.</p>
+                                </div>
+                                @if(Auth::user()->hasCompleteProfile())
+                                    <svg class="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                @endif
+                            </div>
+                            
+                            <div class="flex items-center space-x-6 group/step">
+                                <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white font-black text-lg group-hover/step:bg-autocheck-red group-hover/step:border-autocheck-red transition-all">2</div>
+                                <div>
+                                    <h4 class="text-white font-black text-sm uppercase tracking-tight">Deploy Asset</h4>
+                                    <p class="text-[10px] text-gray-400 font-bold italic">Add your first vehicle to the fleet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col space-y-4">
+                        @if(!Auth::user()->hasCompleteProfile())
+                            <a href="{{ route('customer.profile.index') }}" class="group relative px-10 py-6 bg-white text-gray-900 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-autocheck-red hover:text-white transition-all overflow-hidden text-center">
+                                <span class="relative z-10">Complete Profile Now</span>
+                            </a>
+                        @else
+                            <a href="{{ route('customer.vehicles.create') }}" class="group relative px-10 py-6 bg-autocheck-red text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white hover:text-gray-900 transition-all overflow-hidden text-center shadow-[0_0_50px_-12px_rgba(239,68,68,0.5)]">
+                                <span class="relative z-10">Add Your First Vehicle</span>
+                            </a>
+                        @endif
+                        <p class="text-[9px] text-gray-500 font-black text-center uppercase tracking-widest italic">Verification status: {{ Auth::user()->member_status }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        @endif
+
+        <!-- Profile Completion Tracker (Gamified) -->
+        @if(Auth::user()->profile_strength < 100 && Auth::user()->vehicles()->exists())
+        <section class="w-full -mt-5 md:-mt-10 relative z-20 reveal">
+            <div class="glass p-6 md:p-8 rounded-[2.5rem] border-autocheck-red/30 shadow-2xl overflow-hidden group">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="flex items-center space-x-6">
+                        <!-- Circular Progress -->
+                        <div class="relative w-20 h-20 md:w-24 md:h-24 flex items-center justify-center shrink-0">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" class="text-white/5" />
+                                <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" 
+                                        stroke-dasharray="251.2" 
+                                        stroke-dashoffset="{{ 251.2 * (1 - Auth::user()->profile_strength / 100) }}" 
+                                        class="text-autocheck-red transition-all duration-1000" />
+                            </svg>
+                            <span class="absolute text-xl font-black">{{ Auth::user()->profile_strength }}%</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-black text-white tracking-tight uppercase">Profile <span class="text-autocheck-red">Strength</span></h3>
+                            <p class="text-[10px] text-gray-400 font-bold mt-1">Complete your profile to unlock <span class="text-white italic">Verified Member</span> status.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+                        <div class="flex items-center space-x-3 {{ Auth::user()->phone ? 'opacity-100' : 'opacity-20' }}">
+                            <div class="w-5 h-5 rounded-full {{ Auth::user()->phone ? 'bg-green-500 shadow-lg shadow-green-500/20' : 'bg-gray-700' }} flex items-center justify-center">
+                                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="text-[9px] font-black uppercase tracking-widest">Phone</span>
+                        </div>
+                        <div class="flex items-center space-x-3 {{ Auth::user()->address ? 'opacity-100' : 'opacity-20' }}">
+                            <div class="w-5 h-5 rounded-full {{ Auth::user()->address ? 'bg-green-500 shadow-lg shadow-green-500/20' : 'bg-gray-700' }} flex items-center justify-center">
+                                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="text-[9px] font-black uppercase tracking-widest">Address</span>
+                        </div>
+                        <div class="flex items-center space-x-3 {{ Auth::user()->username ? 'opacity-100' : 'opacity-20' }}">
+                            <div class="w-5 h-5 rounded-full {{ Auth::user()->username ? 'bg-green-500 shadow-lg shadow-green-500/20' : 'bg-gray-700' }} flex items-center justify-center">
+                                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="text-[9px] font-black uppercase tracking-widest">Username</span>
+                        </div>
+                        <div class="flex items-center space-x-3 {{ Auth::user()->vehicles()->exists() ? 'opacity-100' : 'opacity-20' }}">
+                            <div class="w-5 h-5 rounded-full {{ Auth::user()->vehicles()->exists() ? 'bg-green-500 shadow-lg shadow-green-500/20' : 'bg-gray-700' }} flex items-center justify-center">
+                                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <span class="text-[9px] font-black uppercase tracking-widest">Garage</span>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('customer.profile.index') }}" class="w-full md:w-auto px-8 py-4 bg-white text-black text-[10px] font-black rounded-2xl uppercase tracking-widest hover:bg-autocheck-red hover:text-white transition-all shadow-xl text-center">Complete Now</a>
+                </div>
+            </div>
+        </section>
+        @endif
+
         <!-- Dynamic Metrics Grid (Bento Style) -->
-        <section class="max-w-[90rem] mx-auto px-4 sm:px-6" aria-label="Quick Metrics">
+        <section class="w-full" aria-label="Quick Metrics">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <article class="reveal glass p-6 rounded-[1.5rem] relative overflow-hidden group">
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-autocheck-red/10 rounded-full blur-3xl group-hover:bg-autocheck-red/20 transition-colors" aria-hidden="true"></div>
@@ -87,7 +194,7 @@
         </section>
 
         <!-- Intelligent Service Bento Grid -->
-        <section class="max-w-[90rem] mx-auto px-4 sm:px-6 space-y-16" id="services" aria-label="Featured Services">
+        <section class="w-full space-y-16" id="services" aria-label="Featured Services">
             <header class="flex flex-col md:flex-row md:items-end justify-between px-4">
                 <div class="max-w-xl">
                     <h2 class="reveal text-xs font-black text-autocheck-red uppercase tracking-[0.5em] mb-6 block italic">The Service Catalog</h2>
@@ -112,9 +219,9 @@
                             <span class="px-4 py-1 rounded-full bg-autocheck-red text-white text-[10px] font-black uppercase tracking-widest">Featured Service</span>
                             <span class="text-white/60 text-xs font-bold">₱{{ number_format($featuredServices[0]->base_cost ?? 2500) }}</span>
                         </div>
-                        <h4 class="text-3xl md:text-5xl font-black text-white mb-4 md:mb-6 uppercase tracking-tighter leading-none">{{ $featuredServices[0]->name ?? 'Full Diagnostics' }}</h4>
+                        <h4 class="text-3xl md:text-5xl font-black text-white mb-4 md:mb-6 uppercase tracking-tighter leading-none">Elite PMS <span class="text-autocheck-red">Package</span></h4>
                         <p class="text-gray-300 max-w-md font-medium leading-relaxed text-sm">
-                            {{ $featuredServices[0]->description ?? 'Complete vehicle systems analysis using advanced digital diagnostic equipment.' }}
+                            Comprehensive multi-point inspection, fluid optimization, and engine health scan to ensure your vehicle remains in showroom condition.
                         </p>
                         <button class="mt-8 md:mt-10 px-8 py-4 glass rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-white hover:text-black transition-all focus:outline-none focus:ring-2 focus:ring-white/50">Schedule Now</button>
                     </div>
@@ -129,8 +236,8 @@
                          decoding="async">
                     <div class="absolute inset-0 bg-midnight/60" aria-hidden="true"></div>
                     <div class="absolute inset-0 p-8 md:p-10 flex flex-col justify-end">
-                        <h4 class="text-2xl font-black text-white mb-2 uppercase tracking-tighter">Digital Pulse</h4>
-                        <p class="text-xs text-gray-400 font-medium italic">Real-time health monitoring.</p>
+                        <h4 class="text-2xl font-black text-white mb-2 uppercase tracking-tighter">Smart Support</h4>
+                        <p class="text-xs text-gray-400 font-medium italic">Instant chat with our experts.</p>
                     </div>
                 </article>
 
@@ -142,8 +249,8 @@
                          decoding="async">
                     <div class="absolute inset-0 bg-autocheck-red/20" aria-hidden="true"></div>
                     <div class="absolute inset-0 p-8 md:p-10 flex flex-col justify-end">
-                        <h4 class="text-2xl font-black text-white mb-2 uppercase tracking-tighter">Certified Parts</h4>
-                        <p class="text-xs text-white/60 font-medium italic">Genuine OEM Guaranteed.</p>
+                        <h4 class="text-2xl font-black text-white mb-2 uppercase tracking-tighter">Elite Rewards</h4>
+                        <p class="text-xs text-white/60 font-medium italic">Earn points for every service.</p>
                     </div>
                 </article>
             </div>
@@ -182,7 +289,7 @@
                      style="--scroll-offset: 0px;">
             </div>
             
-            <div class="max-w-[90rem] mx-auto px-4 sm:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+            <div class="w-full relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
                 <div>
                     <span class="reveal text-autocheck-red font-black text-[10px] uppercase tracking-[0.5em] mb-6 block italic">Operational Architecture</span>
                     <h3 class="reveal text-4xl md:text-7xl font-black text-white tracking-tighter uppercase mb-10 leading-none" style="transition-delay: 100ms">BUILT FOR <br><span class="italic">SPEED.</span></h3>
@@ -234,7 +341,7 @@
         </section>
 
         <!-- Final CTA with Background Image -->
-        <section class="max-w-[90rem] mx-auto px-4 sm:px-6">
+        <section class="w-full">
             <div class="relative rounded-3xl sm:rounded-[4rem] overflow-hidden group py-16 sm:py-24 text-center border border-white/5">
                 <div class="absolute inset-0 z-0">
                     <img src="{{ asset('images/picture8.jfif') }}" 

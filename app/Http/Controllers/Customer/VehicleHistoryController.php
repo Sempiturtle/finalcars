@@ -13,7 +13,7 @@ class VehicleHistoryController extends Controller
         $user = Auth::user();
         $vehicles = $user->vehicles()->with(['serviceLogs' => function($query) {
             $query->orderBy('service_date', 'desc');
-        }])->get();
+        }, 'serviceLogs.review'])->get();
 
         return view('customer.history.index', compact('vehicles'));
     }

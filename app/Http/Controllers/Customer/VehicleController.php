@@ -24,6 +24,10 @@ class VehicleController extends Controller
      */
     public function create()
     {
+        if (!Auth::user()->hasCompleteProfile()) {
+            return redirect()->route('customer.profile.index')
+                ->with('error', 'Please complete your profile information (Phone, Address, and Username) before adding vehicles to your garage.');
+        }
         $serviceTypes = \App\Models\ServiceType::orderBy('name')->get();
         return view('customer.vehicles.create', compact('serviceTypes'));
     }
@@ -33,6 +37,10 @@ class VehicleController extends Controller
      */
     public function store(Request $request)
     {
+        if (!Auth::user()->hasCompleteProfile()) {
+            return redirect()->route('customer.profile.index')
+                ->with('error', 'Profile completion required.');
+        }
         $validated = $request->validate([
             'plate_number' => 'required|string|unique:vehicles,plate_number',
             'make' => 'required|string',
@@ -136,6 +144,10 @@ class VehicleController extends Controller
         if ($vehicle->user_id !== Auth::id()) {
             abort(403);
         }
+        if (!Auth::user()->hasCompleteProfile()) {
+            return redirect()->route('customer.profile.index')
+                ->with('error', 'Please complete your profile information before managing your fleet.');
+        }
         $serviceTypes = \App\Models\ServiceType::orderBy('name')->get();
         return view('customer.vehicles.edit', compact('vehicle', 'serviceTypes'));
     }
@@ -147,6 +159,10 @@ class VehicleController extends Controller
     {
         if ($vehicle->user_id !== Auth::id()) {
             abort(403);
+        }
+        if (!Auth::user()->hasCompleteProfile()) {
+            return redirect()->route('customer.profile.index')
+                ->with('error', 'Profile completion required.');
         }
 
         $validated = $request->validate([
@@ -180,6 +196,10 @@ class VehicleController extends Controller
     {
         if ($vehicle->user_id !== Auth::id()) {
             abort(403);
+        }
+        if (!Auth::user()->hasCompleteProfile()) {
+            return redirect()->route('customer.profile.index')
+                ->with('error', 'Profile completion required.');
         }
 
         $vehicle->delete();

@@ -107,6 +107,28 @@ class User extends Authenticatable
         return $this->role === 'customer';
     }
 
+    public function getProfileStrengthAttribute(): int
+    {
+        $points = 0;
+        if ($this->phone) $points += 33;
+        if ($this->address) $points += 33;
+        if ($this->username) $points += 34;
+        return $points;
+    }
+
+    public function hasCompleteProfile(): bool
+    {
+        return $this->phone && $this->address && $this->username;
+    }
+
+    public function getMemberStatusAttribute(): string
+    {
+        if ($this->hasCompleteProfile()) {
+            return 'Verified Member';
+        }
+        return 'Registered Legacy';
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

@@ -256,7 +256,10 @@
                     <div class="flex items-center space-x-4 md:space-x-6">
                         <div class="flex flex-col items-end hidden md:flex">
                             <span class="text-sm font-bold text-gray-900 leading-none">{{ Auth::user()->name }}</span>
-                            <span class="text-[8px] font-black text-autocheck-red uppercase tracking-widest italic mt-1">Registered Legacy</span>
+                            <span class="text-[8px] font-black uppercase tracking-widest italic mt-1"
+                                  :class="Auth::user()->profile_strength === 100 ? 'text-green-600' : 'text-autocheck-red'">
+                                {{ Auth::user()->member_status }}
+                            </span>
                         </div>
                         <div class="h-10 w-10 bg-gradient-to-br from-autocheck-red to-red-800 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-red-500/20 border-2 border-white transform hover:rotate-6 transition-transform">
                             {{ substr(Auth::user()->name, 0, 1) }}
@@ -266,7 +269,7 @@
             </header>
 
             <!-- Page Content -->
-            <div class="p-0 sm:p-4 md:p-6">
+            <div class="p-0">
                 {{ $slot }}
             </div>
         </main>

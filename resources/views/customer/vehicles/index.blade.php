@@ -6,11 +6,35 @@
                 <h1 class="text-2xl font-black text-gray-900 tracking-tighter uppercase">Garage <span class="text-autocheck-red">Fleet</span></h1>
                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest italic mt-1">Manage your active automotive assets and maintenance timelines.</p>
             </div>
-            <a href="{{ route('customer.vehicles.create') }}" class="inline-flex items-center px-6 py-2.5 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-autocheck-red transition-all shadow-lg italic">
-                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
-                Add Asset
-            </a>
+            @if(Auth::user()->hasCompleteProfile())
+                <a href="{{ route('customer.vehicles.create') }}" class="inline-flex items-center px-6 py-2.5 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-autocheck-red transition-all shadow-lg italic">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                    Add Asset
+                </a>
+            @else
+                <button disabled class="inline-flex items-center px-6 py-2.5 bg-gray-200 text-gray-400 text-[10px] font-black uppercase tracking-widest rounded-lg cursor-not-allowed italic">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                    Add Asset (Locked)
+                </button>
+            @endif
         </div>
+
+        @if(!Auth::user()->hasCompleteProfile())
+            <div class="bg-amber-50 p-6 rounded-[2rem] border border-amber-200 flex flex-col md:flex-row items-center justify-between gap-6 animate-pulse">
+                <div class="flex items-center space-x-4 text-amber-800">
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black uppercase tracking-tight">Fleet Access Locked</h4>
+                        <p class="text-[10px] font-bold italic opacity-75">You must complete your profile information (Phone, Address, and Username) to unlock garage management features.</p>
+                    </div>
+                </div>
+                <a href="{{ route('customer.profile.index') }}" class="px-6 py-3 bg-amber-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-amber-700 transition-all">
+                    Complete Profile Now
+                </a>
+            </div>
+        @endif
 
         @if(session('success'))
             <div class="bg-white p-4 rounded-xl border-l-4 border-green-500 shadow-sm flex items-center animate-fade-in">
@@ -122,25 +146,31 @@
 
                                     <!-- Actions -->
                                     <td class="px-6 py-4 whitespace-nowrap text-right">
-                                        <div class="flex items-center justify-end space-x-1.5 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 lg:transform lg:translate-x-2 lg:group-hover:translate-x-0">
+                                        <div class="flex items-center justify-end space-x-1.5 {{ Auth::user()->hasCompleteProfile() ? 'lg:opacity-0 lg:group-hover:opacity-100' : '' }} transition-all duration-300 lg:transform {{ Auth::user()->hasCompleteProfile() ? 'lg:translate-x-2 lg:group-hover:translate-x-0' : '' }}">
                                             <a href="{{ route('customer.dashboard', ['vehicle_id' => $vehicle->id]) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-autocheck-red hover:bg-red-50 rounded-lg transition-all" title="View History">
                                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
                                             </a>
-                                            <a href="{{ route('customer.vehicles.edit', $vehicle) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-autocheck-red hover:bg-red-50 rounded-lg transition-all" title="Edit Vehicle">
-                                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                            </a>
-                                            <form action="{{ route('customer.vehicles.destroy', $vehicle) }}" method="POST" class="inline" id="del-vehicle-{{ $vehicle->id }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button
-                                                    type="button"
-                                                    onclick="confirmDelete(this.closest('form'), 'This will permanently remove the vehicle and all associated service records. This action cannot be undone.', 'Remove Vehicle', 'Yes, Remove It')"
-                                                    class="p-2 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                                    title="Delete Vehicle"
-                                                >
-                                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                </button>
-                                            </form>
+                                            @if(Auth::user()->hasCompleteProfile())
+                                                <a href="{{ route('customer.vehicles.edit', $vehicle) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-autocheck-red hover:bg-red-50 rounded-lg transition-all" title="Edit Vehicle">
+                                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                </a>
+                                                <form action="{{ route('customer.vehicles.destroy', $vehicle) }}" method="POST" class="inline" id="del-vehicle-{{ $vehicle->id }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button
+                                                        type="button"
+                                                        onclick="confirmDelete(this.closest('form'), 'This will permanently remove the vehicle and all associated service records. This action cannot be undone.', 'Remove Vehicle', 'Yes, Remove It')"
+                                                        class="p-2 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                        title="Delete Vehicle"
+                                                    >
+                                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <span class="p-2 bg-gray-50 text-gray-300 rounded-lg cursor-not-allowed" title="Profile Incomplete">
+                                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                                </span>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

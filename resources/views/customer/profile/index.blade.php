@@ -80,6 +80,11 @@
                         </div>
 
                         <div class="space-y-1.5 min-w-0">
+                            <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1 italic">Username</label>
+                            <input type="text" name="username" value="{{ old('username', $user->username) }}" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-lg text-xs font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all">
+                        </div>
+
+                        <div class="space-y-1.5 min-w-0">
                             <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1 italic">Email Address</label>
                             <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-lg text-xs font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/10 focus:border-autocheck-red transition-all">
                         </div>

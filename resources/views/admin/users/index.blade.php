@@ -99,13 +99,31 @@
                                     <div class="flex items-center space-x-3">
                                         <div class="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center text-white font-black text-base group-hover:bg-autocheck-red transition-colors">{{ substr($user->name, 0, 1) }}</div>
                                         <div>
-                                            <p class="text-[13px] font-black text-gray-900 tracking-tight">{{ $user->name }}</p>
+                                            <div class="flex items-center space-x-2">
+                                                <p class="text-[13px] font-black text-gray-900 tracking-tight">{{ $user->name }}</p>
+                                                @if($user->isCustomer() && $user->profile_strength === 100)
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 text-[8px] font-black uppercase">
+                                                        <svg class="w-2 h-2 mr-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                                        Verified
+                                                    </span>
+                                                @endif
+                                            </div>
                                             <p class="text-[9px] font-bold text-gray-400 lowercase">{{ $user->email }}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }}">@ {{ $user->role }}</span>
+                                    <div class="flex flex-col">
+                                        <span class="px-3 py-1 w-fit rounded-full text-[9px] font-black uppercase tracking-widest {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }}">@ {{ $user->role }}</span>
+                                        @if($user->isCustomer())
+                                            <div class="mt-1.5 flex items-center space-x-2">
+                                                <div class="w-16 h-1 bg-gray-100 rounded-full overflow-hidden">
+                                                    <div class="h-full bg-autocheck-red" style="width: {{ $user->profile_strength }}%"></div>
+                                                </div>
+                                                <span class="text-[8px] font-black text-gray-400">{{ $user->profile_strength }}%</span>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 text-[13px] font-bold text-gray-500">{{ $user->phone ?? 'N/A' }}</td>
                                 <td class="px-6 py-4 text-right">

@@ -161,6 +161,11 @@
                         Audit Logs
                     </a>
 
+                    <a href="{{ route('admin.reviews.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.reviews.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
+                        <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                        Customer Feedback
+                    </a>
+
                     <a href="{{ route('admin.users.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.users.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         User Management

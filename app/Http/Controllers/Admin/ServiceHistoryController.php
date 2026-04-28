@@ -13,7 +13,7 @@ class ServiceHistoryController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ServiceLog::with('vehicle');
+        $query = ServiceLog::with(['vehicle', 'review']);
 
         // Search Filter (Plate, Owner, Service Type)
         if ($request->filled('search')) {
