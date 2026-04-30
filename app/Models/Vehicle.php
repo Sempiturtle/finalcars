@@ -165,6 +165,90 @@ class Vehicle extends Model
     }
 
     /**
+     * Calculate a "Performance Reliability" index for the vehicle.
+     * Incorporates "Predictive Drift" - decaying health as the maintenance window approaches.
+     */
+    public function getReliabilityIndexAttribute(): int
+    {
+        $score = 100;
+        $status = strtolower($this->calculated_status);
+        $predictiveDate = $this->predictive_service_date;
+
+        // Base Status Deductions
+        if ($status === 'overdue') $score -= 25;
+        if ($status === 'inactive') $score -= 50;
+        if (!$this->next_service_date) $score -= 10;
+
+        // Predictive Drift: Decay health as we approach the predicted window
+        if ($predictiveDate && $predictiveDate->isPast()) {
+            $daysPast = now()->diffInDays($predictiveDate);
+            $score -= min(20, $daysPast * 2); // Cap at -20 for predictive lag
+        }
+
+        // Completion Bonuses
+        if ($status === 'completed') $score += 10;
+        
+        // Metadata completeness
+        if (!$this->year || !$this->color) $score -= 5;
+
+        return max(0, min(100, $score));
+    }
+
+    /**
+     * Calculate the average interval (in days) between completed services.
+     */
+    public function getAverageServiceIntervalAttribute(): int
+    {
+        $completions = $this->serviceLogs()
+            ->where('status', 'completed')
+            ->orderBy('service_date', 'asc')
+            ->get();
+
+        if ($completions->count() < 2) {
+            return 180; // Default to 6 months (180 days) if not enough history
+        }
+
+        $intervals = [];
+        for ($i = 1; $i < $completions->count(); $i++) {
+            $intervals[] = $completions[$i-1]->service_date->diffInDays($completions[$i]->service_date);
+        }
+
+        return (int) round(collect($intervals)->avg());
+    }
+
+    /**
+     * Predict the next service date based on historical frequency.
+     */
+    public function getPredictiveServiceDateAttribute()
+    {
+        $lastService = $this->serviceLogs()
+            ->where('status', 'completed')
+            ->latest('service_date')
+            ->first();
+
+        if (!$lastService) return null;
+
+        return $lastService->service_date->addDays($this->average_service_interval);
+    }
+
+    /**
+     * Determine the health trajectory of the vehicle.
+     */
+    public function getHealthTrendAttribute(): string
+    {
+        $status = $this->calculated_status;
+        if ($status === 'in progress') return 'improving';
+        if ($status === 'overdue') return 'declining';
+        
+        $predictiveDate = $this->predictive_service_date;
+        if ($predictiveDate && $predictiveDate->subDays(7)->isPast()) {
+            return 'declining';
+        }
+
+        return 'stable';
+    }
+
+    /**
      * Synchronize the services JSON array with the ServiceLog table.
      */
     public function syncServiceLogs()

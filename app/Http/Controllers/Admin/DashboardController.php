@@ -18,35 +18,35 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $nextWeek = Carbon::today()->addDays(7);
 
-        // Corrective pass: fix any stale status values in the DB
-        // This catches vehicles whose status got stuck (e.g., 'overdue' when services are 'in progress')
-        Vehicle::where('next_service_date', '<=', $today)->chunk(50, function ($vehicles) {
-            foreach ($vehicles as $vehicle) {
-                $calc = $vehicle->calculated_status;
-                
-                // CRITICAL: 'due today' is a UI-only status and NOT part of the database ENUM.
-                // We should only persist core database statuses.
-                if ($calc === 'due today') {
-                    $calc = 'scheduled'; // Map back to DB-safe value
-                }
-
-                if ($vehicle->getRawOriginal('status') !== $calc) {
-                    \Illuminate\Support\Facades\DB::table('vehicles')
-                        ->where('id', $vehicle->id)
-                        ->update(['status' => $calc]);
-                }
-            }
-        });
-
         // Basic Statistics
         $stats = [
             'total_customers' => User::where('role', 'customer')->count(),
             'total_vehicles' => Vehicle::count(),
-            'total_services' => Vehicle::all()->sum(function ($vehicle) {
-                return is_array($vehicle->services) ? count($vehicle->services) : 0;
-            }),
-            'emails_sent' => 1250, // Placeholder
+            'total_services' => \App\Models\ServiceLog::count(),
+            'points_liability' => User::where('role', 'customer')->sum('loyalty_points'),
         ];
+
+        // Operational Pulse (Queue Depth)
+        $queuePulse = [
+            'pending' => \App\Models\ServiceLog::where('status', 'scheduled')->count(),
+            'active' => \App\Models\ServiceLog::where('status', 'in progress')->count(),
+            'completed_today' => \App\Models\ServiceLog::where('status', 'completed')
+                ->whereDate('updated_at', $today)
+                ->count(),
+        ];
+
+        // Platform Velocity: Average turnaround (Created -> Completed) in hours
+        $completedServices = \App\Models\ServiceLog::where('status', 'completed')
+            ->whereNotNull('updated_at')
+            ->whereNotNull('created_at')
+            ->take(50)
+            ->get();
+        
+        $avgVelocity = $completedServices->count() > 0 
+            ? round($completedServices->avg(function($log) {
+                return $log->created_at->diffInHours($log->updated_at);
+            }), 1)
+            : 0;
 
         // Maintenance Status Overview
         $maintenanceOverview = [
@@ -66,38 +66,21 @@ class DashboardController extends Controller
             ->get()
             ->map(function ($vehicle) use ($today) {
                 $nextService = Carbon::parse($vehicle->next_service_date);
-                $user = $vehicle->owner ?? User::where('name', $vehicle->owner_name)->first();
                 return [
                     'id' => $vehicle->id,
                     'plate_number' => $vehicle->plate_number,
                     'make_model' => "{$vehicle->make} {$vehicle->model}",
                     'days_overdue' => $today->diffInDays($nextService),
-                    'phone' => $user ? $user->phone : null,
+                    'phone' => $vehicle->owner ? $vehicle->owner->phone : null,
                 ];
             });
 
-        // Recent Services
-        // We'll simulate recent services by getting vehicles with services and sorting by updated_at
-        $recentServices = Vehicle::whereNotNull('services')
+        // Recent Activity Feed
+        $recentActivity = \App\Models\ServiceLog::with('vehicle.owner')
             ->latest('updated_at')
-            ->take(5)
-            ->get()
-            ->flatMap(function ($vehicle) {
-                return collect($vehicle->services)->map(function ($service) use ($vehicle) {
-                    return [
-                        'vehicle' => "{$vehicle->make} {$vehicle->model}",
-                        'plate_number' => $vehicle->plate_number,
-                        'customer' => $vehicle->owner_name,
-                        'service_type' => $service['type'] ?? 'N/A',
-                        'date' => $vehicle->updated_at->format('M d, Y'),
-                        'status' => 'Completed',
-                    ];
-                });
-            })
-            ->sortByDesc('date')
-            ->take(5);
+            ->take(8)
+            ->get();
 
-        // For the Chart
         $chartData = [
             'labels' => ['Upcoming', 'Due Soon', 'Overdue'],
             'series' => [
@@ -109,9 +92,11 @@ class DashboardController extends Controller
 
         return view('admin.dashboard', compact(
             'stats', 
+            'queuePulse',
+            'avgVelocity',
             'maintenanceOverview', 
             'attentionRequired', 
-            'recentServices',
+            'recentActivity',
             'chartData'
         ));
     }

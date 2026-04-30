@@ -166,10 +166,14 @@
                     <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:outline-none transition-colors shrink-0">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                     </button>
-                    <h2 class="text-sm font-black text-gray-400 uppercase tracking-[0.2em] hidden md:block italic truncate">Dashboard <span class="text-autocheck-red">/</span> {{ request()->route()->getName() }}</h2>
+                    <div class="flex items-center space-x-2 text-[11px] font-black tracking-[0.2em] uppercase italic text-gray-400 truncate">
+                        <span>DASHBOARD</span>
+                        <span class="text-autocheck-red font-black">/</span>
+                        <span class="text-gray-400">{{ str_replace('.', '.', strtoupper(request()->route()->getName())) }}</span>
+                    </div>
                 </div>
 
-                <div class="flex items-center space-x-3 md:space-x-6 shrink-0">
+                <div class="flex items-center space-x-6 shrink-0 h-full">
                     <div x-data="{ 
                         notifOpen: false, 
                         notifications: [], 
@@ -194,15 +198,15 @@
                                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
                             }).then(() => this.fetchNotifications());
                         }
-                    }" x-init="fetchNotifications(); setInterval(() => fetchNotifications(), 30000)" class="relative">
+                    }" x-init="fetchNotifications(); setInterval(() => fetchNotifications(), 30000)" class="relative h-full flex items-center">
                         
                         <!-- Notification Bell Dropdown -->
-                        <button @click="notifOpen = !notifOpen" class="relative p-2.5 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-autocheck-red transition-all duration-300 focus:outline-none group">
+                        <button @click="notifOpen = !notifOpen" class="relative p-2 rounded-xl text-gray-400 hover:text-autocheck-red transition-all duration-300 focus:outline-none group">
                             <svg class="h-6 w-6 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
                             <template x-if="unreadCount > 0">
-                                <span class="absolute top-1.5 right-1.5 h-4 w-4 bg-autocheck-red text-white text-[8px] font-black flex items-center justify-center rounded-full border-2 border-white shadow-lg shadow-red-500/40 animate-bounce" x-text="unreadCount"></span>
+                                <span class="absolute top-1 right-1 h-4 w-4 bg-autocheck-red text-white text-[8px] font-black flex items-center justify-center rounded-full border-2 border-white shadow-lg shadow-red-500/40 animate-bounce" x-text="unreadCount"></span>
                             </template>
                         </button>
 
@@ -251,17 +255,17 @@
                         </div>
                     </div>
 
-                    <div class="h-8 w-px bg-gray-100 hidden md:block"></div>
+                    <div class="h-8 w-px bg-gray-100 hidden md:block shrink-0"></div>
 
-                    <div class="flex items-center space-x-4 md:space-x-6">
+                    <div class="flex items-center space-x-4 md:space-x-6 h-full">
                         <div class="flex flex-col items-end hidden md:flex">
-                            <span class="text-sm font-bold text-gray-900 leading-none">{{ Auth::user()->name }}</span>
-                            <span class="text-[8px] font-black uppercase tracking-widest italic mt-1"
-                                  :class="Auth::user()->profile_strength === 100 ? 'text-green-600' : 'text-autocheck-red'">
-                                {{ Auth::user()->member_status }}
+                            <span class="text-sm font-black text-gray-900 leading-none tracking-tight">{{ Auth::user()->name }}</span>
+                            <span class="text-[9px] font-black uppercase tracking-widest italic mt-1.5 text-gray-400">
+                                {{ strtoupper(Auth::user()->member_status) }}
                             </span>
                         </div>
-                        <div class="h-10 w-10 bg-gradient-to-br from-autocheck-red to-red-800 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-red-500/20 border-2 border-white transform hover:rotate-6 transition-transform">
+                        <div class="h-10 w-10 bg-white rounded-xl flex items-center justify-center text-gray-900 font-black shadow-lg shadow-gray-200/50 border-2 border-gray-50 transform hover:rotate-6 transition-transform overflow-hidden relative group">
+                            <div class="absolute inset-0 bg-autocheck-red opacity-0 group-hover:opacity-10 transition-opacity"></div>
                             {{ substr(Auth::user()->name, 0, 1) }}
                         </div>
                     </div>
@@ -377,5 +381,49 @@
             modal.show(formEl, message, title, confirmText);
         };
     </script>
+    <!-- Floating Support Bridge -->
+    <div x-data="{ 
+            unreadCount: 0, 
+            hovered: false,
+            poll() { 
+                fetch('{{ route('chat.unread-count') }}')
+                    .then(r => r.json())
+                    .then(d => this.unreadCount = d.total) 
+            } 
+         }" 
+         x-init="poll(); setInterval(() => poll(), 8000)"
+         class="fixed bottom-8 right-8 z-[60] flex items-center group">
+        
+        <!-- Hover Message -->
+        <div x-show="hovered" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 -translate-x-4"
+             x-transition:enter-end="opacity-100 translate-x-0"
+             class="mr-4 px-4 py-2 bg-gray-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest italic shadow-2xl pointer-events-none whitespace-nowrap">
+            Launch <span class="text-autocheck-red">Support Bridge</span>
+        </div>
+
+        <!-- Main Launcher -->
+        <a href="{{ route('customer.chat.index') }}" 
+           @mouseenter="hovered = true" 
+           @mouseleave="hovered = false"
+           class="relative w-16 h-16 bg-gray-900 rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl hover:bg-autocheck-red transition-all duration-500 hover:rotate-6 active:scale-90 group/btn">
+            
+            <svg class="w-7 h-7 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+
+            <!-- Active Notification Badge -->
+            <template x-if="unreadCount > 0">
+                <div class="absolute -top-1 -right-1 flex h-6 w-6">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-autocheck-red opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-6 w-6 bg-autocheck-red border-2 border-white text-[9px] font-black items-center justify-center shadow-lg" x-text="unreadCount"></span>
+                </div>
+            </template>
+
+            <!-- Decorative Pulse -->
+            <div class="absolute inset-0 bg-autocheck-red/20 rounded-[1.5rem] animate-pulse -z-10 group-hover:scale-125 transition-transform duration-500"></div>
+        </a>
+    </div>
 </body>
 </html>

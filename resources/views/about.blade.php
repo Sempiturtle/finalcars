@@ -20,7 +20,7 @@
     <body class="antialiased bg-gray-50 text-gray-900 border-t-4 border-autocheck-red">
         <!-- Header -->
         <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-gray-100" x-data="{ open: false }">
-            <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
                 <div class="flex justify-between h-20">
                         <a href="/" class="flex-shrink-0 flex items-center space-x-3">
                             <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-12 w-12 rounded-full object-cover border-2 border-autocheck-red shadow-sm">
@@ -69,7 +69,7 @@
         <main>
             <!-- Page Header -->
             <section class="bg-white py-20 border-b border-gray-100">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 text-center">
                     <h1 class="text-4xl sm:text-6xl font-black text-gray-900 mb-6 tracking-tight">
                         About <span class="text-autocheck-red">AutoCheck Enterprises</span>
                     </h1>
@@ -80,8 +80,8 @@
             </section>
 
             <!-- Content Section -->
-            <section class="py-24 bg-gray-50">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section class="py-32 md:py-48 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
                     <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                         <!-- Text Content -->
                         <div class="lg:w-1/2 space-y-8 order-2 lg:order-1">
@@ -137,8 +137,8 @@
             </section>
 
             <!-- Mission/Vision Cards -->
-            <section class="py-24 bg-white">
-                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section class="py-32 md:py-48 bg-white">
+                 <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                         <div class="p-10 lg:p-12 rounded-[3.5rem] bg-gray-50 border-2 border-gray-200 flex flex-col justify-center space-y-6 hover:shadow-xl transition-shadow duration-300">
                             <div class="w-20 h-20 bg-white shadow-xl rounded-2xl flex items-center justify-center text-autocheck-red border border-gray-100">
@@ -165,7 +165,7 @@
 
         <!-- Footer -->
         <footer class="bg-gray-950 text-white pt-20 pb-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     <div class="lg:col-span-2">
                         <div class="flex items-center space-x-3 mb-8">

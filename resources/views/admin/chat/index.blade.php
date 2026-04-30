@@ -1,167 +1,145 @@
 <x-admin-layout>
-    <div class="fixed inset-0 z-[100] flex flex-col transition-colors duration-500 overflow-hidden"
-         :class="darkMode ? 'bg-[#18191A]' : 'bg-[#F0F2F5]'"
+    <div class="flex flex-col transition-all duration-500 overflow-hidden bg-white rounded-[2rem] shadow-xl border border-gray-100 h-[calc(100vh-6.5rem)]"
          x-data="chatSystem()" 
          x-init="init()">
         
         <div class="flex-1 flex overflow-hidden relative">
             <!-- Sidebar: User List -->
-            <div class="w-full md:w-96 border-r flex-col z-20 transition-colors duration-500"
-                 :class="[
-                    darkMode ? 'border-white/5 bg-[#242526]' : 'border-gray-200 bg-white',
-                    (!showList && selectedUser) ? 'hidden md:flex' : 'flex'
-                 ]">
-                <div class="p-4 md:p-6 border-b" :class="darkMode ? 'border-white/5' : 'border-gray-100'">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-2xl font-black transition-colors"
-                            :class="darkMode ? 'text-white' : 'text-gray-900'">
-                            Chats
+            <div class="w-full md:w-80 border-r flex flex-col z-20 transition-all duration-500 border-gray-100 bg-gray-50/50"
+                 :class="{ 'hidden md:flex': !showList && selectedUser }">
+                <div class="p-6 border-b border-gray-100 bg-white">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-black text-gray-900 tracking-tight uppercase">
+                            Messages
                         </h2>
                         <div class="flex items-center space-x-2">
                             <template x-if="selectedUser">
                                 <button @click="showList = false" 
-                                        class="md:hidden p-2 rounded-full transition-all"
-                                        :class="darkMode ? 'text-blue-400 hover:bg-white/10' : 'text-blue-600 hover:bg-gray-100'">
-                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        class="md:hidden p-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                     </svg>
                                 </button>
                             </template>
-                            <a href="{{ route('admin.dashboard') }}" class="p-2 rounded-full transition-colors" :class="darkMode ? 'text-gray-400 hover:bg-white/10' : 'text-gray-600 hover:bg-gray-100'">
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                            </a>
                         </div>
                     </div>
                     <div class="relative group">
-                        <input type="text" x-model="search" placeholder="Search Chat Center" 
-                               :class="darkMode ? 'bg-white/5 border-white/10 text-white placeholder-gray-500 group-hover:bg-white/10' : 'bg-gray-100 border-transparent text-gray-900 placeholder-gray-400 group-hover:bg-gray-200'"
-                               class="w-full pl-10 md:pl-12 pr-4 py-3 md:py-4 border rounded-full text-sm focus:ring-4 focus:ring-blue-500 transition-all">
-                        <svg class="h-4 w-4 md:h-5 md:w-5 absolute left-4 top-3.5 md:top-4 text-gray-500 group-hover:text-gray-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" x-model="search" placeholder="Search contacts..." 
+                               class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-2xl text-xs font-bold focus:ring-4 focus:ring-[#F53003]/10 focus:border-[#F53003] focus:bg-white transition-all placeholder-gray-400 outline-none">
+                        <svg class="h-4 w-4 absolute left-4 top-3.5 text-gray-400 group-focus-within:text-autocheck-red transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                 </div>
 
-                <div class="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-                    <template x-for="user in filteredCustomers" :key="user.id">
+                <div class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar">
+                    <!-- Active Conversations Header -->
+                    <template x-if="!search">
+                        <div class="px-3 py-2">
+                            <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Active Conversations</span>
+                        </div>
+                    </template>
+
+                    <!-- Search Section Header -->
+                    <template x-if="search">
+                        <div class="px-3 py-2 flex items-center justify-between">
+                            <span class="text-[9px] font-black text-autocheck-red uppercase tracking-widest">Global Search</span>
+                            <template x-if="isLoadingSearch">
+                                <div class="w-3 h-3 border-2 border-autocheck-red border-t-transparent rounded-full animate-spin"></div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template x-for="user in displayUsers" :key="user.id">
                         <button @click="selectUser(user)" 
-                                :class="[
-                                    selectedUser && selectedUser.id === user.id 
-                                        ? (darkMode ? 'bg-white/10 border-white/20' : 'bg-gray-100 border-transparent shadow-sm') 
-                                        : (darkMode ? 'hover:bg-white/5 border-transparent opacity-80' : 'hover:bg-gray-50 border-transparent')
-                                ]"
-                                class="w-full p-4 rounded-2xl border transition-all duration-200 text-left group relative overflow-hidden">
-                            <div class="flex items-center space-x-4 relative z-10">
-                                <div class="relative">
-                                    <div class="h-14 w-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-black text-xl shadow-lg group-hover:scale-105 transition-transform"
+                                :class="selectedUser && selectedUser.id === user.id ? 'bg-white shadow-sm ring-1 ring-black/5' : 'hover:bg-white/60'"
+                                class="w-full p-3 rounded-2xl transition-all duration-200 text-left group relative">
+                            <div class="flex items-center space-x-3">
+                                <div class="relative flex-shrink-0">
+                                    <div class="h-12 w-12 rounded-xl bg-autocheck-red flex items-center justify-center text-white font-black text-sm shadow-lg shadow-red-500/20 group-hover:scale-105 transition-transform"
                                          x-text="getInitials(user.name)">
                                     </div>
-                                    <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 border-4 rounded-full transition-colors duration-500"
-                                         :class="darkMode ? 'border-[#242526]' : 'border-white'"></div>
+                                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-4 border-gray-50 rounded-full"></div>
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center justify-between mb-0.5">
-                                        <h3 class="font-bold truncate text-sm tracking-tight transition-colors" 
-                                            :class="darkMode ? 'text-white' : 'text-gray-900'"
-                                            x-text="user.name"></h3>
-                                        <span class="text-[10px] font-medium transition-colors" 
-                                              :class="darkMode ? 'text-gray-400' : 'text-gray-500'"
-                                              x-text="formatTime(new Date())"></span>
+                                        <h3 class="font-bold truncate text-xs text-gray-900 tracking-tight" x-text="user.name"></h3>
+                                        <span class="text-[9px] font-black text-gray-400 uppercase" x-text="user.last_message_time || formatTime(new Date())"></span>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <p class="text-xs transition-colors truncate" 
-                                           :class="darkMode ? 'text-gray-500' : 'text-gray-600'"
-                                           x-text="user.email"></p>
+                                        <p class="text-[10px] text-gray-500 truncate font-medium" x-text="user.email"></p>
                                         <template x-if="user.unread_count > 0">
-                                            <span class="bg-blue-600 text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full" x-text="user.unread_count"></span>
+                                            <span class="bg-autocheck-red text-white text-[9px] font-black px-1.5 py-0.5 rounded-lg" x-text="user.unread_count"></span>
                                         </template>
                                     </div>
                                 </div>
                             </div>
                         </button>
                     </template>
+
+                    <template x-if="search && displayUsers.length === 0 && !isLoadingSearch">
+                        <div class="p-8 text-center">
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-relaxed">No customers found matching "<span x-text="search"></span>"</p>
+                        </div>
+                    </template>
                 </div>
             </div>
 
             <!-- Main Chat Area -->
-            <div class="flex-1 flex-col transition-colors duration-500"
-                 :class="[
-                    darkMode ? 'bg-[#18191A]' : 'bg-white',
-                    (!selectedUser || showList) ? 'hidden md:flex' : 'flex'
-                 ]">
+            <div class="flex-1 flex flex-col bg-white"
+                 :class="(!selectedUser || showList) ? 'hidden md:flex' : 'flex'">
                 <template x-if="!selectedUser">
-                    <div class="flex-1 flex flex-col items-center justify-center p-12 text-center">
-                        <div class="w-32 h-32 rounded-full flex items-center justify-center mb-8 relative"
-                             :class="darkMode ? 'bg-white/5' : 'bg-gray-100'">
-                            <div class="absolute inset-0 bg-autocheck-red rounded-full blur-[50px] opacity-20"></div>
-                            <img src="{{ asset('images/logo.png') }}" class="h-16 w-16 relative z-10 object-cover rounded-full" alt="AutoCheck Logo">
+                    <div class="flex-1 flex flex-col items-center justify-center p-12 text-center bg-gray-50/30">
+                        <div class="w-24 h-24 rounded-3xl bg-white shadow-2xl flex items-center justify-center mb-8 relative border border-gray-100">
+                            <div class="absolute inset-0 bg-autocheck-red rounded-3xl blur-[30px] opacity-10"></div>
+                            <img src="{{ asset('images/logo.png') }}" class="h-12 w-12 relative z-10 object-cover rounded-full border-2 border-autocheck-red" alt="AutoCheck Logo">
                         </div>
-                        <h3 class="text-3xl font-black uppercase tracking-tighter"
-                            :class="darkMode ? 'text-white' : 'text-gray-900'">Autocheck Chat Center</h3>
-                        <p class="mt-4 max-w-sm font-medium leading-relaxed uppercase text-[10px] tracking-[0.3em]"
-                           :class="darkMode ? 'text-gray-500' : 'text-gray-400'">Select a conversation to start messaging</p>
+                        <h3 class="text-xl font-black text-gray-900 uppercase tracking-tighter">Chat Center</h3>
+                        <p class="mt-3 max-w-xs font-black text-[10px] text-gray-400 uppercase tracking-[0.2em] leading-relaxed">Select a conversation to start messaging with your customers</p>
                     </div>
                 </template>
 
                 <template x-if="selectedUser">
                     <div class="flex flex-col h-full">
                         <!-- Chat Header -->
-                        <div class="h-20 md:h-24 px-6 md:px-10 border-b flex items-center justify-between backdrop-blur-xl shrink-0 z-10 transition-colors duration-500"
-                             :class="darkMode ? 'border-white/5 bg-[#18191A]/80' : 'border-black/5 bg-white/80'">
-                            <div class="flex items-center space-x-4 md:space-x-4">
-                                <button @click="showList = true" class="md:hidden p-2 -ml-2 text-blue-500 hover:bg-gray-100 rounded-full transition-all">
-                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        <div class="h-20 px-8 border-b border-gray-100 flex items-center justify-between bg-white/80 backdrop-blur-xl z-10">
+                            <div class="flex items-center space-x-4">
+                                <button @click="showList = true" class="md:hidden p-2 -ml-2 text-autocheck-red hover:bg-red-50 rounded-xl transition-all">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                                 </button>
                                 <div class="relative">
-                                    <div class="h-10 w-10 md:h-12 md:w-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-black text-sm md:text-base shadow-lg" x-text="getInitials(selectedUser.name)"></div>
-                                    <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 md:w-4 md:h-4 bg-green-500 border-2 rounded-full transition-colors duration-500"
-                                         :class="darkMode ? 'border-[#242526]' : 'border-white'"></div>
+                                    <div class="h-10 w-10 rounded-xl bg-autocheck-red flex items-center justify-center text-white font-black text-xs shadow-lg shadow-red-500/20" x-text="getInitials(selectedUser.name)"></div>
+                                    <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
                                 </div>
                                 <div class="min-w-0">
-                                    <h3 class="font-bold text-base md:text-lg tracking-tight leading-none truncate" 
-                                        :class="darkMode ? 'text-white' : 'text-gray-900'"
-                                        x-text="selectedUser.name"></h3>
-                                    <p class="text-[11px] font-medium text-gray-500 mt-1">Active now</p>
+                                    <h3 class="font-black text-sm text-gray-900 tracking-tight leading-none truncate uppercase" x-text="selectedUser.name"></h3>
+                                    <div class="flex items-center mt-1.5">
+                                        <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Now</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex items-center space-x-2 md:space-x-4">
-                                <!-- Theme Toggle -->
-                                <button @click="darkMode = !darkMode" 
-                                        class="p-2.5 rounded-full transition-all duration-300"
-                                        :class="darkMode ? 'bg-white/5 text-yellow-400 hover:bg-white/10' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
-                                    <svg x-show="!darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                                    <svg x-show="darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9h-1m15.364-6.364l-.707.707M6.364 17.636l-.707.707M6.364 6.364l.707-.707m11.272 11.272l.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                </button>
                             </div>
                         </div>
 
                         <!-- Chat History -->
-                        <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-1 bg-transparent custom-scrollbar scroll-smooth" id="chat-history">
+                        <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/30 custom-scrollbar scroll-smooth" id="chat-history">
                             <template x-for="(msg, index) in messages" :key="msg.id">
                                 <div class="reveal-message">
                                     <!-- Date Separator -->
                                     <template x-if="shouldShowDate(msg, index)">
                                         <div class="flex justify-center my-8">
-                                            <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wide" x-text="formatDate(msg.created_at)"></span>
+                                            <span class="px-4 py-1 bg-white rounded-full shadow-sm border border-gray-100 text-[9px] font-black text-gray-400 uppercase tracking-widest" x-text="formatDate(msg.created_at)"></span>
                                         </div>
                                     </template>
 
                                     <div class="flex flex-col group/msg" :class="msg.sender_id === {{ Auth::id() }} ? 'items-end' : 'items-start'">
                                         <div class="flex items-end space-x-2" :class="msg.sender_id === {{ Auth::id() }} ? 'flex-row-reverse space-x-reverse' : ''">
-                                            <!-- Avatar for received messages -->
-                                            <template x-if="msg.sender_id !== {{ Auth::id() }}">
-                                                <div class="h-7 w-7 rounded-full bg-gray-300 flex-shrink-0 mb-1 overflow-hidden">
-                                                    <div class="w-full h-full bg-blue-600 flex items-center justify-center text-[8px] text-white font-bold" x-text="getInitials(selectedUser.name)"></div>
-                                                </div>
-                                            </template>
-
                                             <div :class="msg.sender_id === {{ Auth::id() }} 
-                                                 ? 'bg-[#0084FF] text-white rounded-[1.25rem] rounded-tr-[0.25rem] rounded-br-[0.25rem]' 
-                                                 : (darkMode ? 'bg-[#3E4042] text-white' : 'bg-[#E4E6EB] text-gray-900') + ' rounded-[1.25rem] rounded-tl-[0.25rem] rounded-bl-[0.25rem]'"
-                                                 class="w-fit max-w-[85%] md:max-w-[65%] px-4 py-2 text-[14px] md:text-[15px] font-normal leading-snug transition-all">
+                                                 ? 'bg-autocheck-red text-white rounded-2xl rounded-tr-sm shadow-lg shadow-red-500/20' 
+                                                 : 'bg-white text-gray-800 rounded-2xl rounded-tl-sm border border-gray-100 shadow-sm'"
+                                                 class="w-fit max-w-[85%] md:max-w-[70%] px-4 py-3 text-xs font-bold leading-relaxed transition-all">
                                                 <p x-text="msg.message" class="break-words whitespace-pre-wrap"></p>
                                             </div>
                                         </div>
-                                        <span class="text-[10px] mt-1 px-10 opacity-0 group-hover/msg:opacity-100 transition-all" 
-                                              :class="darkMode ? 'text-gray-500' : 'text-gray-400'"
+                                        <span class="text-[9px] font-black text-gray-400 uppercase mt-1 px-1 opacity-0 group-hover/msg:opacity-100 transition-all tracking-tighter" 
                                               x-text="formatTime(msg.created_at)"></span>
                                     </div>
                                 </div>
@@ -169,18 +147,16 @@
                         </div>
 
                         <!-- Chat Input -->
-                        <div class="p-4 md:p-6 transition-colors duration-500"
-                             :class="darkMode ? 'bg-[#18191A] border-t border-white/5' : 'bg-white border-t border-black/5'">
-                            <form @submit.prevent="sendMessage" class="flex items-center space-x-3 max-w-5xl mx-auto">
+                        <div class="p-6 bg-white border-t border-gray-100">
+                            <form @submit.prevent="sendMessage" class="flex items-center space-x-3 max-w-4xl mx-auto">
                                 <div class="flex-1 relative">
-                                    <input type="text" x-model="newMessage" placeholder="Aa" 
-                                           :class="darkMode ? 'bg-[#3E4042] text-white' : 'bg-gray-100 text-gray-900'"
-                                           class="w-full border-none rounded-full px-5 py-2.5 focus:ring-0 text-sm font-normal">
+                                    <input type="text" x-model="newMessage" placeholder="Type your message here..." 
+                                           class="w-full bg-gray-50 border-transparent rounded-2xl px-6 py-4 focus:ring-4 focus:ring-autocheck-red/10 focus:border-autocheck-red focus:bg-white text-xs font-bold transition-all placeholder-gray-400 shadow-inner">
                                 </div>
                                 <button type="submit" 
                                         :disabled="!newMessage.trim()"
-                                        class="text-blue-500 disabled:opacity-30 p-2 hover:bg-gray-100 rounded-full transition-all">
-                                    <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                                        class="h-12 w-12 flex items-center justify-center bg-autocheck-red text-white rounded-2xl shadow-lg shadow-red-500/30 hover:bg-red-700 transition-all active:scale-95 disabled:opacity-20 disabled:grayscale">
+                                    <svg class="h-5 w-5 rotate-90" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                                 </button>
                             </form>
                         </div>
@@ -192,14 +168,14 @@
 
     <style>
         .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            background: #e5e7eb;
+            border-radius: 20px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #F53003;
@@ -218,33 +194,77 @@
             return {
                 customers: @json($customers),
                 search: '',
+                searchResults: [],
+                isLoadingSearch: false,
                 selectedUser: null,
                 showList: true,
                 messages: [],
                 newMessage: '',
                 pollingTimer: null,
-                darkMode: true,
 
                 init() {
-                    // Initial setup if needed
+                    this.$watch('search', (value) => {
+                        this.performSearch();
+                    });
+
+                    // Smart Polling: Only poll when tab is active and user is selected
+                    document.addEventListener('visibilitychange', () => {
+                        if (document.hidden) {
+                            this.stopPolling();
+                        } else {
+                            if (this.selectedUser) {
+                                this.fetchMessages(); // Immediate catch-up
+                                this.startPolling();
+                            }
+                        }
+                    });
                 },
 
-                get filteredCustomers() {
+                startPolling() {
+                    if (this.pollingTimer) clearInterval(this.pollingTimer);
+                    this.pollingTimer = setInterval(() => this.fetchMessages(true), 4000);
+                },
+
+                stopPolling() {
+                    if (this.pollingTimer) {
+                        clearInterval(this.pollingTimer);
+                        this.pollingTimer = null;
+                    }
+                },
+
+                async performSearch() {
+                    if (!this.search || this.search.length < 1) {
+                        this.searchResults = [];
+                        return;
+                    }
+                    this.isLoadingSearch = true;
+                    try {
+                        const res = await fetch(`/admin/chat/search?q=${encodeURIComponent(this.search)}`);
+                        this.searchResults = await res.json();
+                    } catch (e) {
+                        console.error('Search error:', e);
+                    } finally {
+                        this.isLoadingSearch = false;
+                    }
+                },
+
+                get displayUsers() {
                     if (!this.search) return this.customers;
-                    return this.customers.filter(c => 
-                        c.name.toLowerCase().includes(this.search.toLowerCase()) || 
-                        c.email.toLowerCase().includes(this.search.toLowerCase())
-                    );
+                    return this.searchResults;
                 },
 
                 selectUser(user) {
+                    // Add to customers list if not already there (so it stays in the sidebar after selection)
+                    if (!this.customers.find(c => c.id === user.id)) {
+                        this.customers.unshift(user);
+                    }
+                    
                     this.selectedUser = user;
                     this.showList = false;
                     user.unread_count = 0;
+                    this.search = ''; // Clear search after selection
                     this.fetchMessages();
-                    
-                    if (this.pollingTimer) clearInterval(this.pollingTimer);
-                    this.pollingTimer = setInterval(() => this.fetchMessages(true), 3000);
+                    this.startPolling();
                 },
 
                 fetchMessages(silent = false) {
@@ -264,10 +284,26 @@
                 },
 
                 sendMessage() {
-                    if (!this.newMessage.trim() || !this.selectedUser) return;
+                    const text = this.newMessage.trim();
+                    if (!text || !this.selectedUser) return;
+
+                    // Clear input immediately so user can type the next one
+                    this.newMessage = '';
+
+                    // Optimistic update: show message in UI immediately
+                    const tempId = 'temp-' + Date.now();
+                    const tempMsg = {
+                        id: tempId,
+                        message: text,
+                        sender_id: {{ Auth::id() }},
+                        created_at: new Date().toISOString(),
+                        is_pending: true
+                    };
+                    this.messages.push(tempMsg);
+                    this.scrollToBottom();
 
                     const body = {
-                        message: this.newMessage,
+                        message: text,
                         receiver_id: this.selectedUser.id
                     };
 
@@ -281,11 +317,16 @@
                     })
                     .then(res => res.json())
                     .then(msg => {
-                        this.messages.push(msg);
-                        this.newMessage = '';
-                        this.scrollToBottom();
+                        // Replace the pending message with the confirmed one from server
+                        const index = this.messages.findIndex(m => m.id === tempId);
+                        if (index !== -1) {
+                            this.messages[index] = msg;
+                        }
                     })
-                    .catch(err => console.error(err));
+                    .catch(err => {
+                        console.error('Failed to send:', err);
+                        // Mark as failed in UI if desired
+                    });
                 },
 
                 scrollToBottom() {

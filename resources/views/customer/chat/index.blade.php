@@ -16,7 +16,7 @@
                         </a>
                     </div>
                     <div class="relative">
-                        <div class="h-10 w-10 md:h-12 md:w-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-black text-sm md:text-base shadow-lg shadow-blue-500/20 animate-pulse-slow">AS</div>
+                        <div class="h-10 w-10 md:h-12 md:w-12 rounded-full bg-autocheck-red flex items-center justify-center text-white font-black text-sm md:text-base shadow-lg shadow-red-500/20 animate-pulse-slow">AS</div>
                         <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 md:w-4 md:h-4 bg-green-500 border-2 rounded-full transition-colors duration-500"
                              :class="darkMode ? 'border-[#18191A]' : 'border-white'"></div>
                     </div>
@@ -54,11 +54,11 @@
                             <div class="flex items-end space-x-2" :class="msg.sender_id === {{ Auth::id() }} ? 'flex-row-reverse space-x-reverse' : ''">
                                 <!-- Avatar for received messages -->
                                 <template x-if="msg.sender_id !== {{ Auth::id() }}">
-                                    <div class="h-7 w-7 rounded-full bg-blue-600 flex-shrink-0 mb-1 overflow-hidden flex items-center justify-center text-[8px] text-white font-bold">AS</div>
+                                    <div class="h-7 w-7 rounded-full bg-autocheck-red flex-shrink-0 mb-1 overflow-hidden flex items-center justify-center text-[8px] text-white font-bold">AS</div>
                                 </template>
 
                                 <div :class="msg.sender_id === {{ Auth::id() }} 
-                                     ? 'bg-[#0084FF] text-white rounded-[1.25rem] rounded-tr-[0.25rem] rounded-br-[0.25rem]' 
+                                     ? 'bg-autocheck-red text-white rounded-[1.25rem] rounded-tr-[0.25rem] rounded-br-[0.25rem]' 
                                      : (darkMode ? 'bg-[#3E4042] text-white' : 'bg-[#E4E6EB] text-gray-900') + ' rounded-[1.25rem] rounded-tl-[0.25rem] rounded-bl-[0.25rem]'"
                                      class="w-fit min-w-[50px] max-w-[85%] md:max-w-[70%] px-4 py-2 text-[14px] md:text-[15px] font-normal leading-snug transition-all">
                                     <p x-text="msg.message" class="break-words whitespace-pre-wrap text-left"></p>
@@ -83,7 +83,7 @@
                     </div>
                     <button type="submit" 
                             :disabled="!newMessage.trim() || sending"
-                            class="text-blue-500 disabled:opacity-30 p-2 hover:bg-gray-100 rounded-full transition-all">
+                            class="text-autocheck-red disabled:opacity-30 p-2 hover:bg-gray-100 rounded-full transition-all">
                         <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                     </button>
                 </form>
@@ -137,7 +137,30 @@
 
                 init() {
                     this.fetchMessages();
-                    this.pollingTimer = setInterval(() => this.fetchMessages(true), 3000);
+                    
+                    // Smart Polling: Only poll when tab is active
+                    this.startPolling();
+                    
+                    document.addEventListener('visibilitychange', () => {
+                        if (document.hidden) {
+                            this.stopPolling();
+                        } else {
+                            this.fetchMessages(); // Immediate catch-up
+                            this.startPolling();
+                        }
+                    });
+                },
+
+                startPolling() {
+                    if (this.pollingTimer) clearInterval(this.pollingTimer);
+                    this.pollingTimer = setInterval(() => this.fetchMessages(true), 4000);
+                },
+
+                stopPolling() {
+                    if (this.pollingTimer) {
+                        clearInterval(this.pollingTimer);
+                        this.pollingTimer = null;
+                    }
                 },
 
                 fetchMessages(silent = false) {

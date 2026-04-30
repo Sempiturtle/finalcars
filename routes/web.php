@@ -3,9 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [\App\Http\Controllers\LandingController::class, 'index'])->name('welcome');
 
 Route::get('/about', function () {
     return view('about');
@@ -81,6 +79,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Chat System
     Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'adminIndex'])->name('chat.index');
+    Route::get('/chat/search', [\App\Http\Controllers\ChatController::class, 'searchCustomers'])->name('chat.search');
     Route::get('/chat/{user}', [\App\Http\Controllers\ChatController::class, 'adminShow'])->name('chat.show');
     Route::post('/chat/send', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
     Route::get('/chat/fetch/{other_user_id}', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.fetch');

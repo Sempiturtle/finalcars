@@ -11,7 +11,11 @@
                     <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ $vehicle->plate_number }} • Maintenance Profile</p>
                 </div>
             </div>
-            <div class="flex space-x-2">
+            <div class="flex flex-wrap gap-2">
+                <button onclick="generateLogbook(event)" class="px-6 py-2.5 bg-gray-900 text-white text-[10px] font-black rounded-xl hover:bg-black transition-all shadow-lg flex items-center group uppercase tracking-widest">
+                    <svg class="h-4 w-4 mr-2 text-autocheck-red group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Safe-Pass Logbook
+                </button>
                 <button onclick="document.getElementById('serviceModal').classList.remove('hidden')" class="px-6 py-2.5 bg-autocheck-red text-white text-[10px] font-black rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 uppercase tracking-widest flex items-center">
                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     Add Service Log
@@ -49,9 +53,43 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 p-4 bg-gray-900 rounded-2xl border border-gray-800 shadow-xl">
+                        <div class="mt-4 p-4 bg-gray-900 rounded-2xl border border-gray-800 shadow-xl relative overflow-hidden group">
+                            <div class="absolute -top-4 -right-4 w-12 h-12 bg-white/5 rounded-full group-hover:scale-150 transition-transform"></div>
                             <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Plate Authentication</p>
                             <p class="text-lg font-black text-white tracking-[0.2em] italic">{{ $vehicle->plate_number }}</p>
+                        </div>
+
+                        <!-- Predictive Intelligence Card -->
+                        <div class="mt-4 p-5 bg-autocheck-red rounded-[2rem] text-white shadow-xl shadow-red-500/20 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-3 opacity-20 group-hover:rotate-12 transition-transform">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </div>
+                            <span class="block text-[8px] font-black uppercase tracking-[0.4em] mb-3 text-white/60">Predictive Intelligence</span>
+                            <div class="text-left space-y-3">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-widest">Next Window (Est.)</p>
+                                    <p class="text-lg font-black tracking-tight">{{ $vehicle->predictive_service_date ? $vehicle->predictive_service_date->format('M Y') : 'DATA PENDING' }}</p>
+                                </div>
+                                <div class="pt-2 border-t border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
+                                    <div>
+                                        <p class="text-[8px] font-black uppercase tracking-widest text-white/60">Historical Frequency</p>
+                                        <p class="text-xs font-black">{{ $vehicle->average_service_interval }} Days</p>
+                                    </div>
+                                    <div class="sm:text-right w-full sm:w-auto border-t sm:border-0 border-white/5 pt-2 sm:pt-0">
+                                        <p class="text-[8px] font-black uppercase tracking-widest text-white/60">Health Trend</p>
+                                        <span class="text-[10px] font-black uppercase tracking-widest flex items-center sm:justify-end">
+                                            @if($vehicle->health_trend === 'improving')
+                                                <svg class="w-3 h-3 mr-1 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                                            @elseif($vehicle->health_trend === 'declining')
+                                                <svg class="w-3 h-3 mr-1 text-yellow-300 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                            @else
+                                                <svg class="w-3 h-3 mr-1 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                                            @endif
+                                            {{ $vehicle->health_trend }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -88,13 +126,25 @@
                             <p class="text-xl font-black text-gray-900">{{ $serviceHistory->count() }}</p>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-600">
-                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between group gap-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-autocheck-red group-hover:bg-autocheck-red group-hover:text-white transition-colors duration-500 flex-shrink-0">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Reliability DNA</p>
+                                <div class="flex items-baseline space-x-2">
+                                    <p class="text-xl font-black text-gray-900">{{ $vehicle->reliability_index }}%</p>
+                                    <span class="text-[8px] font-black uppercase tracking-widest {{ $vehicle->health_trend === 'declining' ? 'text-autocheck-red' : 'text-green-500' }}">
+                                        {{ $vehicle->health_trend === 'stable' ? 'Stable' : ($vehicle->health_trend === 'improving' ? 'Improving' : 'Declining') }}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Maintenance Investment</p>
-                            <p class="text-xl font-black text-gray-900">₱{{ number_format($serviceHistory->sum('cost'), 2) }}</p>
+                        <div class="flex space-x-1 justify-center sm:justify-end">
+                            @for($i = 0; $i < 5; $i++)
+                                <div class="w-2 h-6 rounded-full {{ $i < ($vehicle->reliability_index / 20) ? 'bg-autocheck-red' : 'bg-gray-100' }}"></div>
+                            @endfor
                         </div>
                     </div>
                 </div>
@@ -350,7 +400,129 @@
         </div>
     </div>
 
+    <!-- PDF Generation Template (Hidden) -->
+    <div id="logbook-template" class="hidden">
+        <div class="p-10 bg-white font-sans text-gray-900" style="width: 800px; margin: 0 auto;">
+            <!-- Branded Header -->
+            <div class="flex justify-between items-start border-b-4 border-black pb-8 mb-8">
+                <div>
+                    <h1 class="text-3xl font-black uppercase tracking-tighter leading-none">Safe-Pass <span class="text-autocheck-red">Logbook</span></h1>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mt-2">Verified Maintenance Protocol • AutoCheck Philippines</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">Certificate ID</p>
+                    <p class="text-xs font-black italic">AP-{{ strtoupper(substr(md5($vehicle->id . time()), 0, 12)) }}</p>
+                </div>
+            </div>
+
+            <!-- Vehicle DNA Profile -->
+            <div class="grid grid-cols-3 gap-6 mb-10">
+                <div class="col-span-2 bg-gray-950 p-6 rounded-3xl text-white relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full blur-3xl"></div>
+                    <p class="text-[9px] font-black text-autocheck-red uppercase tracking-[0.4em] mb-4">Asset Identification</p>
+                    <h2 class="text-2xl font-black uppercase tracking-tight">{{ $vehicle->year }} {{ $vehicle->make }} {{ $vehicle->model }}</h2>
+                    <p class="text-xs font-bold text-gray-400 mt-1 uppercase tracking-widest italic">{{ $vehicle->plate_number }} • DNA Profile Active</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100 flex flex-col justify-center text-center">
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Reliability DNA</p>
+                    <p class="text-3xl font-black text-autocheck-red">{{ $vehicle->reliability_index }}%</p>
+                    <p class="text-[8px] font-bold text-gray-400 uppercase tracking-tighter mt-1 italic">Verified Score</p>
+                </div>
+            </div>
+
+            <!-- Summary Bar -->
+            <div class="grid grid-cols-4 gap-4 mb-10 border-y border-gray-100 py-6">
+                <div>
+                    <span class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Logs</span>
+                    <span class="text-lg font-black">{{ $serviceHistory->count() }} Records</span>
+                </div>
+                <div>
+                    <span class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Last Service</span>
+                    <span class="text-lg font-black uppercase">{{ $serviceHistory->first() ? $serviceHistory->first()->service_date->format('M d, Y') : 'NONE' }}</span>
+                </div>
+                <div class="col-span-2 text-right">
+                    <span class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Maintenance Investment</span>
+                    <span class="text-2xl font-black text-autocheck-red">₱{{ number_format($serviceHistory->sum('cost'), 2) }}</span>
+                </div>
+            </div>
+
+            <!-- Detailed Audit Trail -->
+            <h3 class="text-xs font-black uppercase tracking-[0.2em] mb-4 text-gray-400">Verified Service Records</h3>
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="text-left border-b-2 border-black">
+                        <th class="py-3 text-[9px] font-black uppercase tracking-widest">Service Item</th>
+                        <th class="py-3 text-[9px] font-black uppercase tracking-widest">Execution Date</th>
+                        <th class="py-3 text-[9px] font-black uppercase tracking-widest">Method</th>
+                        <th class="py-3 text-[9px] font-black uppercase tracking-widest text-right">Cost</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach($serviceHistory as $log)
+                        <tr>
+                            <td class="py-4">
+                                <p class="text-[11px] font-black uppercase leading-none">{{ $log->service_type }}</p>
+                                <p class="text-[8px] font-medium text-gray-400 mt-1 italic">{{ $log->notes ?: 'Standard Protocol' }}</p>
+                            </td>
+                            <td class="py-4 text-[10px] font-bold">{{ $log->service_date->format('M d, Y') }}</td>
+                            <td class="py-4 text-[9px] font-black uppercase tracking-widest italic">{{ $log->service_mode ?? 'Walk-in' }}</td>
+                            <td class="py-4 text-right text-[10px] font-black">₱{{ number_format($log->cost, 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <!-- Footnote & Verification -->
+            <div class="mt-20 flex justify-between items-end border-t border-gray-100 pt-10">
+                <div class="space-y-2">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em]">Authenticity Verified by AutoCheck API</span>
+                    </div>
+                    <p class="text-[8px] text-gray-300 max-w-sm leading-relaxed italic">
+                        This document is a certified digital representation of the vehicle's maintenance history as logged and verified through the AutoCheck Platform. Any tampering with this certificate renders the verification void.
+                    </p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-4">Authorized Verification Stamp</p>
+                    <div class="inline-block p-4 border-4 border-black rounded-2xl transform -rotate-6">
+                        <p class="text-sm font-black uppercase tracking-tighter leading-none">AUTOCHECK <br><span class="text-autocheck-red italic">CERTIFIED</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts & PDF Support -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <script>
+        function generateLogbook(event) {
+            const element = document.getElementById('logbook-template');
+            element.classList.remove('hidden');
+            
+            const opt = {
+                margin: [10, 10],
+                filename: 'SafePass-Logbook-{{ $vehicle->plate_number }}.pdf',
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Notification Feedback
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<svg class="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Generating...';
+            btn.disabled = true;
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.classList.add('hidden');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+
         function updatePrice() {
             const select = document.getElementById('service_type_id');
             const selectedOption = select.options[select.selectedIndex];

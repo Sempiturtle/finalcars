@@ -45,12 +45,31 @@
 
         <!-- Vehicle Table -->
         @if($vehicles->isEmpty())
-            <div class="bg-white rounded-2xl p-10 border border-gray-100 shadow-sm text-center">
-                <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-6 text-gray-300">
-                    <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16"></path></svg>
+            <div class="bg-white rounded-[2.5rem] p-12 md:p-20 border border-gray-100 shadow-sm text-center relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-transparent pointer-events-none"></div>
+                <div class="relative z-10">
+                    <div class="w-20 h-20 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-10 text-gray-200 group-hover:scale-110 group-hover:text-autocheck-red transition-all duration-500 shadow-inner">
+                        <svg class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16"></path></svg>
+                    </div>
+                    <span class="text-autocheck-red font-black text-[10px] uppercase tracking-[0.5em] mb-6 block italic">Fleet Initialization</span>
+                    <h3 class="text-3xl md:text-5xl font-black text-gray-900 mb-6 uppercase tracking-tighter leading-tight">INITIATE YOUR <br><span class="text-autocheck-red italic">LEGACY.</span></h3>
+                    <p class="text-[11px] text-gray-400 font-bold italic max-w-md mx-auto leading-relaxed mb-12">
+                        Your digital garage is currently offline. Deploy your first asset to start tracking performance metrics, maintenance health, and earn elite loyalty rewards.
+                    </p>
+                    
+                    @if(Auth::user()->hasCompleteProfile())
+                        <a href="{{ route('customer.vehicles.create') }}" class="inline-flex items-center px-12 py-5 bg-gray-900 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl hover:bg-autocheck-red transition-all shadow-2xl hover:shadow-red-500/20 active:scale-95 italic">
+                            Deploy First Asset
+                        </a>
+                    @else
+                        <a href="{{ route('customer.profile.index') }}" class="inline-flex items-center px-12 py-5 bg-amber-600 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl hover:bg-amber-700 transition-all shadow-2xl active:scale-95 italic">
+                            Unlock Garage Fleet
+                        </a>
+                    @endif
                 </div>
-                <h3 class="text-sm font-black text-gray-900 mb-1 uppercase tracking-tight">Fleet Empty</h3>
-                <p class="text-[10px] text-gray-400 font-bold italic">No assets detected. Add your first vehicle to begin tracking.</p>
+                <!-- Decorative background elements -->
+                <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-autocheck-red/5 rounded-full blur-3xl transition-colors group-hover:bg-autocheck-red/10"></div>
+                <div class="absolute -top-10 -left-10 w-40 h-40 bg-gray-900/5 rounded-full blur-3xl"></div>
             </div>
         @else
             <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
@@ -105,9 +124,18 @@
                                             <div class="hidden sm:flex w-9 h-9 bg-gray-50 rounded-lg items-center justify-center shrink-0 border border-gray-100 group-hover:bg-white group-hover:border-red-100 transition-colors">
                                                 <span class="text-[10px] font-black text-autocheck-red uppercase">{{ substr($vehicle->make, 0, 1) }}</span>
                                             </div>
-                                            <div>
-                                                <p class="text-[11px] font-black text-gray-900 tracking-tight uppercase">{{ $vehicle->make }} {{ $vehicle->model }}</p>
-                                                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">{{ $vehicle->year }} • {{ $vehicle->color ?? 'Standard' }}</p>
+                                            <div class="min-w-0">
+                                                <p class="text-[11px] font-black text-gray-900 tracking-tight uppercase truncate">{{ $vehicle->make }} {{ $vehicle->model }}</p>
+                                                <div class="flex items-center space-x-2 mt-1">
+                                                    <div class="flex flex-col">
+                                                        <div class="flex items-center space-x-1.5">
+                                                            <div class="w-12 h-1 bg-gray-100 rounded-full overflow-hidden">
+                                                                <div class="h-full {{ $vehicle->reliability_index > 70 ? 'bg-green-500' : ($vehicle->reliability_index > 40 ? 'bg-amber-500' : 'bg-autocheck-red') }}" style="width: {{ $vehicle->reliability_index }}%"></div>
+                                                            </div>
+                                                            <span class="text-[7px] font-black text-gray-400 uppercase tracking-tighter">Reliability DNA</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>

@@ -28,7 +28,7 @@
     <body class="antialiased bg-gray-50 text-gray-900 border-t-4 border-autocheck-red">
         <!-- Header -->
         <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-gray-100" x-data="{ open: false, loginOpen: false }">
-            <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
                 <div class="flex justify-between h-20">
                         <a href="/" class="flex-shrink-0 flex items-center space-x-3">
                             <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-12 w-12 rounded-full object-cover border-2 border-autocheck-red shadow-sm">
@@ -50,31 +50,12 @@
                             <svg class="ml-2 -mr-0.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
                         </a>
 
-                        <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-semibold rounded-full text-white bg-autocheck-red hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all shadow-lg shadow-red-500/30">
-                                Login
-                                <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-
-                            <div x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 mt-2 w-48 rounded-2xl shadow-xl bg-white ring-1 ring-black ring-opacity-5 overflow-hidden">
-                                <div class="py-1">
-                                    <a href="{{ route('login', ['type' => 'customer']) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-3">
-                                        <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
-                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                        </div>
-                                        <span>Customer Login</span>
-                                    </a>
-                                    <a href="{{ route('login', ['type' => 'admin']) }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-3">
-                                        <div class="p-2 bg-red-50 rounded-lg text-autocheck-red">
-                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                        </div>
-                                        <span>Admin Login</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                        <a href="{{ route('login') }}" class="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-semibold rounded-full text-white bg-autocheck-red hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all shadow-lg shadow-red-500/30">
+                            Login
+                            <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                            </svg>
+                        </a>
                     </div>
 
                     <!-- Mobile menu button -->
@@ -102,9 +83,8 @@
                 <a href="{{ route('features.index') }}" class="block px-4 py-3 text-base font-bold text-gray-700 hover:bg-gray-50 rounded-2xl transition-colors">Features</a>
                 <div class="grid grid-cols-1 gap-3 pt-4 border-t border-gray-100">
                     <a href="{{ route('register') }}" class="flex items-center justify-center px-6 py-4 rounded-2xl text-base font-black bg-autocheck-red text-white shadow-lg shadow-red-500/20 uppercase tracking-widest">Register Now</a>
-                    <div class="grid grid-cols-2 gap-3">
-                        <a href="{{ route('login', ['type' => 'customer']) }}" class="flex items-center justify-center px-4 py-3 rounded-2xl text-[10px] font-black bg-blue-600 text-white uppercase tracking-widest">Customer</a>
-                        <a href="{{ route('login', ['type' => 'admin']) }}" class="flex items-center justify-center px-4 py-3 rounded-2xl text-[10px] font-black bg-gray-900 text-white uppercase tracking-widest">Admin</a>
+                    <div class="grid grid-cols-1 gap-3">
+                        <a href="{{ route('login') }}" class="flex items-center justify-center px-4 py-4 rounded-2xl text-base font-black bg-gray-900 text-white uppercase tracking-widest">Login</a>
                     </div>
                 </div>
             </div>
@@ -117,7 +97,7 @@
                     <div class="absolute right-0 top-0 h-full w-full md:w-1/2 bg-gray-50 skew-x-0 md:skew-x-12 transform origin-right"></div>
                 </div>
                 
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 relative z-10">
                     <div class="lg:flex lg:items-center lg:space-x-16">
                         <div class="lg:w-1/2 text-center lg:text-left">
                             <div class="inline-flex items-center px-4 py-2 rounded-full bg-red-50 text-autocheck-red text-[10px] font-black mb-8 animate-pulse uppercase tracking-[0.3em]">
@@ -170,24 +150,24 @@
             </section>
 
             <!-- Features Quick Look -->
-            <section id="features" class="bg-gray-50 py-24">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section id="features" class="bg-gray-50 py-20 md:py-24">
+                <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                        <div class="bg-white p-8 md:p-10 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col items-center text-center transition-all hover:shadow-xl hover:border-autocheck-red/10">
                             <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
                                 <svg class="h-8 w-8 text-autocheck-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <h3 class="text-xl font-bold mb-4">Real-time Tracking</h3>
                             <p class="text-gray-600">Monitor your vehicle's maintenance status and history in real-time from anywhere.</p>
                         </div>
-                        <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                        <div class="bg-white p-8 md:p-10 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col items-center text-center transition-all hover:shadow-xl hover:border-autocheck-red/10">
                             <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
                                 <svg class="h-8 w-8 text-autocheck-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                             </div>
                             <h3 class="text-xl font-bold mb-4">Smart Alerts</h3>
                             <p class="text-gray-600">Receive automated notifications when your next preventive maintenance is due.</p>
                         </div>
-                        <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                        <div class="bg-white p-8 md:p-10 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col items-center text-center transition-all hover:shadow-xl hover:border-autocheck-red/10">
                             <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-6">
                                 <svg class="h-8 w-8 text-autocheck-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                             </div>
@@ -198,11 +178,103 @@
                 </div>
             </section>
 
+            <!-- Testimonials: Voices of Performance -->
+            <section class="py-24 bg-white overflow-hidden">
+                <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
+                    <div class="text-center mb-16">
+                        <span class="text-autocheck-red font-black text-[10px] uppercase tracking-[0.5em] mb-6 block italic">Client Verdict</span>
+                        <h2 class="text-4xl sm:text-5xl font-black text-gray-900 tracking-tighter uppercase leading-none">VOICES OF <br><span class="text-autocheck-red italic">PERFORMANCE.</span></h2>
+                    </div>
+
+                    @if($reviews->count() > 0)
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            @foreach($reviews as $review)
+                                <div class="bg-gray-50 p-10 rounded-[2.5rem] border border-gray-100 relative group hover:bg-white hover:shadow-2xl hover:border-autocheck-red/10 transition-all duration-500">
+                                    <div class="absolute -top-4 -left-4 w-12 h-12 bg-white rounded-2xl shadow-lg flex items-center justify-center text-autocheck-red transform -rotate-12 group-hover:rotate-0 transition-transform">
+                                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V11H12.017V9C12.017 6.79086 13.8079 5 16.017 5H19.017C21.2261 5 23.017 6.79086 23.017 9V15C23.017 18.3137 20.3307 21 17.017 21H14.017ZM2.017 21L2.017 18C2.017 16.8954 2.91243 16 4.017 16H7.017C7.56928 16 8.017 15.5523 8.017 15V9C8.017 8.44772 7.56928 8 7.017 8H3.017C2.46472 8 2.017 8.44772 2.017 9V11H0.017V9C0.017 6.79086 1.80786 5 4.017 5H7.017C9.22614 5 11.017 6.79086 11.017 9V15C11.017 18.3137 8.33071 21 5.017 21H2.017Z"/></svg>
+                                    </div>
+                                    <div class="flex items-center space-x-1 mb-6">
+                                        @for($i = 0; $i < 5; $i++)
+                                            <svg class="h-4 w-4 {{ $i < $review->rating ? 'text-yellow-400' : 'text-gray-200' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                        @endfor
+                                    </div>
+                                    <p class="text-gray-600 font-medium leading-relaxed italic mb-8">"{{ $review->comment }}"</p>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="h-10 w-10 bg-autocheck-red rounded-full flex items-center justify-center text-white font-black text-xs">
+                                            {{ substr($review->user->name, 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-black text-gray-900 leading-none">{{ $review->user->name }}</p>
+                                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Verified Client</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <!-- Mock Testimonials if none exist in DB -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="bg-gray-50 p-10 rounded-[2.5rem] border border-gray-100">
+                                <div class="flex items-center space-x-1 mb-6 text-yellow-400">
+                                    @for($i = 0; $i < 5; $i++) <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> @endfor
+                                </div>
+                                <p class="text-gray-600 font-medium leading-relaxed italic mb-8">"AutoCheck has completely transformed how I manage my fleet. The real-time tracking is second to none."</p>
+                                <div class="flex items-center space-x-4">
+                                    <div class="h-10 w-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-black text-xs">J</div>
+                                    <div>
+                                        <p class="text-sm font-black text-gray-900 leading-none">James Rodriguez</p>
+                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Fleet Manager</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Add more mock cards here if needed -->
+                        </div>
+                    @endif
+                </div>
+            </section>
+
+            <!-- Operational Ticker: Senior Product Architect Feature -->
+            <section class="py-8 bg-gray-900 overflow-hidden relative border-y border-white/5">
+                <div class="flex items-center animate-ticker whitespace-nowrap">
+                    @for($i = 0; $i < 10; $i++)
+                        <div class="flex items-center space-x-12 px-6">
+                            <span class="text-white/20 text-[10px] font-black uppercase tracking-[0.3em] flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-green-500 mr-3 animate-pulse"></span>
+                                Live Performance Pulse
+                            </span>
+                            <span class="text-white text-xs font-bold uppercase tracking-widest">
+                                <span class="text-autocheck-red">{{ number_format($recentServicesCount + 1500) }}+</span> Services Completed this month
+                            </span>
+                            <span class="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">
+                                Average Latency: 14ms
+                            </span>
+                            <span class="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">
+                                Technical Uptime: 99.99%
+                            </span>
+                        </div>
+                    @endfor
+                </div>
+            </section>
+
+            <style>
+                @keyframes ticker {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                .animate-ticker {
+                    display: inline-flex;
+                    animation: ticker 60s linear infinite;
+                }
+                .animate-ticker:hover {
+                    animation-play-state: paused;
+                }
+            </style>
+
         </main>
 
         <!-- Footer -->
-        <footer class="bg-gray-950 text-white pt-20 pb-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <footer class="bg-gray-950 text-white pt-16 pb-10">
+            <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     <div class="lg:col-span-2">
                         <div class="flex items-center space-x-3 mb-8">

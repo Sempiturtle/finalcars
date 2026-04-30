@@ -20,7 +20,7 @@
     <body class="antialiased bg-gray-50 text-gray-900 border-t-4 border-autocheck-red">
         <!-- Header -->
         <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-gray-100" x-data="{ open: false }">
-            <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
                 <div class="flex justify-between h-20">
                     <div class="flex items-center">
                         <a href="/" class="flex-shrink-0 flex items-center space-x-3">
@@ -71,7 +71,7 @@
         <main>
             <!-- Page Header -->
             <section class="bg-white py-20 border-b border-gray-100">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 text-center">
                     <h1 class="text-4xl sm:text-6xl font-black text-gray-900 mb-6 tracking-tight">
                         What <span class="text-autocheck-red">AutoCheck Enterprises</span> Offers
                     </h1>
@@ -82,8 +82,8 @@
             </section>
 
             <!-- Services Grid -->
-            <section class="py-24 bg-gray-50">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <section class="py-32 md:py-48 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
                         <!-- Service 1: Preventive Maintenance -->
                         <div class="group bg-white rounded-[3rem] p-10 lg:p-12 shadow-sm border border-gray-100 hover:shadow-2xl hover:shadow-red-500/10 transition-all duration-500 flex flex-col items-center text-center">
@@ -145,7 +145,7 @@
 
         <!-- Footer -->
         <footer class="bg-gray-950 text-white pt-20 pb-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     <div class="lg:col-span-2">
                         <div class="flex items-center space-x-3 mb-8">

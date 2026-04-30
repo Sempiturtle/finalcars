@@ -49,50 +49,89 @@
             <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm transition-all hover:shadow-md hover:border-autocheck-red/20 group">
                 <div class="flex items-center justify-between mb-2">
                     <div class="p-2 bg-yellow-50 text-yellow-600 rounded-lg group-hover:bg-autocheck-red group-hover:text-white transition-colors duration-300">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                 </div>
-                <h3 class="text-lg font-black text-gray-900 leading-tight">{{ number_format($stats['emails_sent']) }}</h3>
-                <p class="text-[9px] font-black text-gray-400 mt-0.5 uppercase tracking-widest">Alerts Sent</p>
+                <h3 class="text-lg font-black text-gray-900 leading-tight">{{ number_format($stats['points_liability']) }} <span class="text-[9px] uppercase">Pts</span></h3>
+                <p class="text-[9px] font-black text-gray-400 mt-0.5 uppercase tracking-widest">Points Liability</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <!-- Main Content Area -->
             <div class="lg:col-span-2 space-y-6">
+                <!-- Operational Velocity & Queue Pulse -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                    <div class="bg-gray-900 rounded-[1.5rem] p-6 text-white relative overflow-hidden group">
+                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full blur-3xl group-hover:bg-autocheck-red/20 transition-colors"></div>
+                        <div class="relative z-10">
+                            <span class="text-autocheck-red font-black text-[9px] uppercase tracking-[0.4em] mb-4 block italic">Platform Velocity</span>
+                            <div class="flex items-baseline space-x-2">
+                                <h4 class="text-4xl font-black tracking-tighter">{{ $avgVelocity }}</h4>
+                                <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest italic">Hours / Turnaround</span>
+                            </div>
+                            <p class="text-[9px] text-gray-500 mt-4 font-black uppercase tracking-widest">In-Progress to Completion Average</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-[1.5rem] p-6 border border-gray-100 shadow-sm">
+                        <span class="text-gray-400 font-black text-[9px] uppercase tracking-[0.4em] mb-4 block italic">Queue Depth</span>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="text-center">
+                                <span class="block text-2xl font-black text-gray-900">{{ $queuePulse['pending'] }}</span>
+                                <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Pending</span>
+                            </div>
+                            <div class="text-center border-x border-gray-50">
+                                <span class="block text-2xl font-black text-autocheck-red">{{ $queuePulse['active'] }}</span>
+                                <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Active</span>
+                            </div>
+                            <div class="text-center">
+                                <span class="block text-2xl font-black text-green-500">{{ $queuePulse['completed_today'] }}</span>
+                                <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Today</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Maintenance Overview & Chart -->
-                <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm overflow-hidden">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-lg font-black text-gray-900 uppercase tracking-tight">Maintenance <span class="text-autocheck-red">Status</span></h2>
+                <div class="bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-lg font-black text-gray-900 uppercase tracking-tight">Maintenance <span class="text-autocheck-red">DNA Overview</span></h2>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                        <div class="space-y-3">
-                            <div class="p-3.5 bg-blue-50/50 rounded-2xl border border-blue-100 flex items-center justify-between">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                        <div class="space-y-4">
+                            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between hover:border-blue-200 transition-colors">
                                 <div>
-                                    <span class="block text-[10px] font-black text-blue-600/70 uppercase tracking-widest mb-0.5">Upcoming</span>
-                                    <span class="text-xl font-black text-blue-600 leading-none">{{ $maintenanceOverview['upcoming'] }}</span>
+                                    <span class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Upcoming</span>
+                                    <span class="text-2xl font-black text-gray-900 leading-none">{{ $maintenanceOverview['upcoming'] }}</span>
                                 </div>
-                                <svg class="h-5 w-5 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            </div>
-                            <div class="p-3.5 bg-yellow-50/50 rounded-2xl border border-yellow-100 flex items-center justify-between">
-                                <div>
-                                    <span class="block text-[10px] font-black text-yellow-600/70 uppercase tracking-widest mb-0.5">Due Soon</span>
-                                    <span class="text-xl font-black text-yellow-600 leading-none">{{ $maintenanceOverview['due_soon'] }}</span>
+                                <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                 </div>
-                                <svg class="h-5 w-5 text-yellow-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
-                            <div class="p-3.5 bg-red-50/50 rounded-2xl border border-red-100 flex items-center justify-between">
+                            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between hover:border-yellow-200 transition-colors">
                                 <div>
-                                    <span class="block text-[10px] font-black text-autocheck-red/70 uppercase tracking-widest mb-0.5">Overdue</span>
+                                    <span class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Due Soon</span>
+                                    <span class="text-2xl font-black text-gray-900 leading-none">{{ $maintenanceOverview['due_soon'] }}</span>
+                                </div>
+                                <div class="w-10 h-10 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between hover:border-red-200 transition-colors">
+                                <div>
+                                    <span class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Overdue Assets</span>
                                     <div class="flex items-baseline space-x-2">
-                                        <span class="text-xl font-black text-autocheck-red leading-none">{{ $maintenanceOverview['overdue'] }}</span>
+                                        <span class="text-2xl font-black text-autocheck-red leading-none">{{ $maintenanceOverview['overdue'] }}</span>
                                         @if($maintenanceOverview['critical_overdue'] > 0)
-                                            <span class="text-[8px] font-black bg-red-600 text-white px-1.5 py-0.5 rounded-md animate-pulse">CRITICAL</span>
+                                            <span class="text-[8px] font-black bg-red-600 text-white px-2 py-0.5 rounded-full animate-pulse">CRITICAL</span>
                                         @endif
                                     </div>
                                 </div>
-                                <svg class="h-5 w-5 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                <div class="w-10 h-10 bg-red-50 text-autocheck-red rounded-xl flex items-center justify-center">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                </div>
                             </div>
                         </div>
                         <div class="relative">
@@ -101,49 +140,34 @@
                     </div>
                 </div>
 
-                <!-- Recent Services -->
-                <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm overflow-hidden">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-black text-gray-900 uppercase tracking-tight">Recent <span class="text-autocheck-red">Services</span></h2>
-                        <a href="{{ route('admin.maintenance.index') }}" class="text-[10px] font-black text-autocheck-red hover:underline italic uppercase tracking-widest">Manage All</a>
+                <!-- Real-time Activity Pulse -->
+                <div class="bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-lg font-black text-gray-900 uppercase tracking-tight">Activity <span class="text-autocheck-red">Pulse</span></h2>
+                        <a href="{{ route('admin.maintenance.index') }}" class="text-[10px] font-black text-autocheck-red hover:underline italic uppercase tracking-widest">Audit Logs</a>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead>
-                                <tr class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50">
-                                    <th class="py-2">Vehicle</th>
-                                    <th class="py-2">Type</th>
-                                    <th class="py-2">Date</th>
-                                    <th class="py-2 text-right">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-50">
-                                @forelse($recentServices as $service)
-                                    <tr>
-                                        <td class="py-3">
-                                            <div class="flex items-center space-x-2">
-                                                <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400 font-bold text-[10px]">
-                                                    {{ substr($service['plate_number'], 0, 2) }}
-                                                </div>
-                                                <div>
-                                                    <p class="text-xs font-bold text-gray-900 leading-none">{{ $service['vehicle'] }}</p>
-                                                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-1">{{ $service['plate_number'] }}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-3 text-[10px] font-bold text-gray-500 italic">{{ $service['service_type'] }}</td>
-                                        <td class="py-3 text-[10px] font-black text-gray-700">{{ $service['date'] }}</td>
-                                        <td class="py-3 text-right">
-                                            <span class="px-2 py-0.5 bg-green-50 text-green-600 text-[8px] font-black uppercase tracking-widest rounded-full">{{ $service['status'] }}</span>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="py-6 text-center text-gray-400 text-[10px] font-bold uppercase tracking-widest">No Activity</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                    <div class="space-y-4">
+                        @forelse($recentActivity as $log)
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-[1.5rem] hover:bg-gray-100 transition-all group gap-3">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-autocheck-red shadow-sm border border-gray-100 group-hover:rotate-6 transition-transform flex-shrink-0">
+                                        <span class="text-[10px] font-black uppercase">{{ substr($log->service_type, 0, 1) }}</span>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-[11px] font-black text-gray-900 uppercase tracking-tight leading-none truncate">{{ $log->vehicle->make }} {{ $log->vehicle->model }}</p>
+                                        <p class="text-[9px] font-bold text-gray-400 mt-1 italic">{{ $log->service_type }} • {{ $log->updated_at->diffForHumans() }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex sm:flex-col justify-between items-center sm:items-end">
+                                    <span class="px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest {{ $log->status === 'completed' ? 'bg-green-100 text-green-600' : ($log->status === 'in progress' ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600') }}">
+                                        {{ $log->status }}
+                                    </span>
+                                    <p class="text-[8px] font-bold text-gray-400 mt-1 uppercase tracking-widest">{{ $log->vehicle->owner->name ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="py-12 text-center opacity-30 italic text-[10px] font-bold">No active pulse detected.</div>
+                        @endforelse
                     </div>
                 </div>
             </div>

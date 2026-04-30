@@ -22,33 +22,29 @@
             <img src="{{ asset('images/background.jfif') }}" alt="" class="w-full h-full object-cover grayscale brightness-90">
         </div>
 
-        @php $loginType = request('type', 'customer'); @endphp
         <div class="max-w-[400px] w-full relative z-10">
             <div class="text-center mb-3">
                 <a href="/" class="inline-flex flex-col items-center space-y-1 mb-1">
-                    <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-10 w-10 rounded-full object-cover border-2 {{ $loginType === 'admin' ? 'border-autocheck-red' : 'border-blue-500' }} shadow-xl">
+                    <img src="{{ asset('images/logo.png') }}" alt="AutoCheck Logo" class="h-10 w-10 rounded-full object-cover border-2 border-autocheck-red shadow-xl">
                     <span class="text-lg font-black tracking-tight text-gray-900 leading-none">AutoCheck</span>
                 </a>
                 <h2 class="text-[11px] font-bold text-gray-600 uppercase tracking-widest leading-none">
-                    {{ $loginType === 'admin' ? 'Admin Portal' : 'Customer Portal' }}
+                    Secure Portal Login
                 </h2>
-                <p class="text-[8px] text-gray-400 mt-0.5 uppercase tracking-widest">Sign in to access account</p>
+                <p class="text-[8px] text-gray-400 mt-0.5 uppercase tracking-widest">Sign in to access your account</p>
             </div>
 
-            <div class="bg-white rounded-[1.5rem] shadow-2xl {{ $loginType === 'admin' ? 'shadow-red-500/10' : 'shadow-blue-500/10' }} border border-gray-100 p-5 md:p-7">
+            <div class="bg-white rounded-[1.5rem] shadow-2xl shadow-red-500/10 border border-gray-100 p-5 md:p-7">
                 <!-- Session Status -->
                 <x-auth-session-status class="mb-4" :status="session('status')" />
 
                 <!-- Portal Badge -->
                 <div class="flex justify-center mb-5">
-                    <div class="inline-flex items-center px-3 py-1.5 rounded-xl {{ $loginType === 'admin' ? 'bg-red-50 text-autocheck-red' : 'bg-blue-50 text-blue-600' }} text-[9px] font-black uppercase tracking-[0.2em]">
-                        @if($loginType === 'admin')
-                            <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            Administrator
-                        @else
-                            <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                            Customer
-                        @endif
+                    <div class="inline-flex items-center px-3 py-1.5 rounded-xl bg-red-50 text-autocheck-red text-[9px] font-black uppercase tracking-[0.2em]">
+                        <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                        Unified Login Access
                     </div>
                 </div>
 
@@ -88,20 +84,18 @@
                     </div>
 
                     <div class="pt-2">
-                        <button type="submit" class="w-full py-2.5 {{ $loginType === 'admin' ? 'bg-autocheck-red shadow-red-500/20 hover:bg-red-700' : 'bg-blue-600 shadow-blue-500/20 hover:bg-blue-700' }} text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 transform">
+                        <button type="submit" class="w-full py-2.5 bg-autocheck-red shadow-red-500/20 hover:bg-red-700 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 transform">
                             Secure Log In
                         </button>
                     </div>
 
-                    @if($loginType === 'customer')
-                        <div class="mt-4 text-center border-t border-gray-50 pt-4">
-                            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">New here?</p>
-                            <a href="{{ route('register') }}" class="inline-flex items-center text-[10px] font-black text-blue-600 hover:text-blue-800 transition-colors uppercase tracking-widest">
-                                Create Account
-                                <svg class="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </a>
-                        </div>
-                    @endif
+                    <div class="mt-4 text-center border-t border-gray-50 pt-4">
+                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">New here?</p>
+                        <a href="{{ route('register') }}" class="inline-flex items-center text-[10px] font-black text-autocheck-red hover:text-red-700 transition-colors uppercase tracking-widest">
+                            Create Customer Account
+                            <svg class="ml-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
                 </form>
             </div>
 

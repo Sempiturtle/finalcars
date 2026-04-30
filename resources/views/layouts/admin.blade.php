@@ -212,15 +212,22 @@
         <!-- Main Content -->
         <main class="flex-1 h-screen overflow-y-auto">
             <!-- Topbar -->
-            <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-40">
-                <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:outline-none transition-colors">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                </button>
+            <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-40">
+                <div class="flex items-center space-x-6 flex-1 min-w-0">
+                    <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600 focus:outline-none transition-colors shrink-0">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                    </button>
+                    <div class="flex items-center space-x-2 text-[11px] font-black tracking-[0.2em] uppercase italic text-gray-400 truncate">
+                        <span>ADMIN</span>
+                        <span class="text-autocheck-red font-black">/</span>
+                        <span class="text-gray-400">{{ strtoupper(str_replace(['admin.', '.'], ['', ' / '], request()->route()->getName())) }}</span>
+                    </div>
+                </div>
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-6 shrink-0 h-full">
                     <!-- Test Email Trigger -->
-                    <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class="p-2.5 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-autocheck-red focus:outline-none transition-all group" title="Send Test Email">
+                    <div x-data="{ open: false }" class="relative h-full flex items-center">
+                        <button @click="open = !open" class="p-2 rounded-xl text-gray-400 hover:text-autocheck-red focus:outline-none transition-all group" title="Send Test Email">
                             <svg class="h-6 w-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         </button>
                         <div x-show="open" 
@@ -231,46 +238,50 @@
                              x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                              x-transition:leave-end="opacity-0 scale-95 translate-y-2"
                              @click.away="open = false" 
-                             class="fixed inset-x-4 md:absolute md:inset-auto md:right-0 mt-3 w-auto md:w-72 bg-white rounded-[2rem] md:rounded-3xl shadow-2xl border border-gray-100 p-6 z-50 overflow-hidden"
+                             class="fixed inset-x-4 md:absolute md:inset-auto md:right-0 mt-4 w-auto md:w-80 bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 p-8 z-50 overflow-hidden"
                              style="display: none;"
                         >
                             <div class="absolute top-0 right-0 -mt-2 -mr-2 w-16 h-16 bg-autocheck-red/5 rounded-full"></div>
                             
-                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 relative z-10">Manual Test Email</h4>
-                            <p class="text-[10px] text-gray-500 mb-4 font-medium leading-relaxed">Select a user to send a sample maintenance reminder.</p>
+                            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6 relative z-10 italic">Manual Test Email</h4>
+                            <p class="text-xs text-gray-500 mb-6 font-medium leading-relaxed italic">Deploy a maintenance notification to a specific asset holder.</p>
                             
-                            <form action="{{ route('admin.test-email.send') }}" method="POST" class="relative z-10">
+                            <form action="{{ route('admin.test-email.send') }}" method="POST" class="relative z-10 space-y-6">
                                 @csrf
-                                <div class="mb-4">
-                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 font-bold select-none">Select Recipient</label>
-                                    <select name="user_id" class="w-full text-xs font-bold bg-gray-50 border-gray-100 rounded-2xl focus:ring-autocheck-red/20 focus:border-autocheck-red focus:bg-white transition-all py-3 px-4">
+                                <div>
+                                    <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-3 font-bold select-none">Target Recipient</label>
+                                    <select name="user_id" class="w-full text-xs font-bold bg-gray-50 border-gray-100 rounded-2xl focus:ring-autocheck-red/20 focus:border-autocheck-red focus:bg-white transition-all py-3.5 px-4">
                                         @foreach($allCustomers as $customer)
                                             <option value="{{ $customer->id }}">{{ $customer->name }} ({{ $customer->email }})</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <button type="submit" class="w-full py-4 bg-autocheck-red text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 active:scale-[0.98]">
-                                    Send Test Now
+                                <button type="submit" class="w-full py-4 bg-autocheck-red text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl hover:bg-red-700 transition-all shadow-xl shadow-red-500/30 active:scale-[0.98]">
+                                    Execute Send
                                 </button>
                             </form>
                         </div>
                     </div>
 
-                    <div class="h-8 w-px bg-gray-100 mx-2"></div>
+                    <div class="h-8 w-px bg-gray-100 hidden md:block shrink-0"></div>
 
-                    <div class="flex items-center space-x-6">
-                    <div class="flex flex-col items-end">
-                        <span class="text-sm font-bold text-gray-900">{{ Auth::user()->name }}</span>
-                        <span class="text-xs font-bold text-autocheck-red uppercase tracking-widest">{{ Auth::user()->role }}</span>
-                    </div>
-                    <div class="h-10 w-10 bg-autocheck-red rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-500/20">
-                        {{ substr(Auth::user()->name, 0, 1) }}
+                    <div class="flex items-center space-x-4 md:space-x-6 h-full">
+                        <div class="flex flex-col items-end hidden md:flex">
+                            <span class="text-sm font-black text-gray-900 leading-none tracking-tight">{{ Auth::user()->name }}</span>
+                            <span class="text-[9px] font-black uppercase tracking-widest italic mt-1.5 text-autocheck-red">
+                                {{ strtoupper(Auth::user()->role) }}
+                            </span>
+                        </div>
+                        <div class="h-10 w-10 bg-white rounded-xl flex items-center justify-center text-gray-900 font-black shadow-lg shadow-gray-200/50 border-2 border-gray-50 transform hover:rotate-6 transition-transform overflow-hidden relative group">
+                            <div class="absolute inset-0 bg-autocheck-red opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                            {{ substr(Auth::user()->name, 0, 1) }}
+                        </div>
                     </div>
                 </div>
             </header>
 
             <!-- Page Content -->
-            <div class="p-4">
+            <div class="p-6 md:p-8 lg:p-12 max-w-7xl mx-auto">
                 @if(session('success'))
                     <div class="mb-6 p-4 bg-green-50 rounded-2xl border border-green-100 flex items-center space-x-3 animate-fade-in shadow-sm">
                         <div class="flex-shrink-0 w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-500/20">

@@ -14,14 +14,42 @@ class ChatController extends Controller
 
     public function adminIndex()
     {
-        $customers = User::where('role', 'customer')->get()->map(function($user) {
-            $user->unread_count = ChatMessage::where('sender_id', $user->id)
-                ->where('receiver_id', Auth::id())
-                ->whereNull('read_at')
-                ->count();
-            return $user;
-        });
+        // Get only users who have a conversation with the current admin
+        $customers = User::whereIn('role', ['customer', 'staff'])
+            ->where(function($query) {
+                $query->whereHas('sentMessages', function($q) {
+                    $q->where('receiver_id', Auth::id());
+                })
+                ->orWhereHas('receivedMessages', function($q) {
+                    $q->where('sender_id', Auth::id());
+                });
+            })
+            ->get()
+            ->map(function($user) {
+                $user->unread_count = ChatMessage::where('sender_id', $user->id)
+                    ->where('receiver_id', Auth::id())
+                    ->whereNull('read_at')
+                    ->count();
+                return $user;
+            });
         return view('admin.chat.index', compact('customers'));
+    }
+
+    public function searchCustomers(Request $request)
+    {
+        $search = $request->query('q');
+        if (!$search) return response()->json([]);
+
+        // Search for both customers and staff members
+        $users = User::whereIn('role', ['customer', 'staff'])
+            ->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->limit(10)
+            ->get();
+
+        return response()->json($users);
     }
 
     public function getUnreadCounts()

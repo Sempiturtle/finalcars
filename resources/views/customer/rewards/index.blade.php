@@ -124,7 +124,13 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="flex flex-col items-center justify-center h-32 opacity-30 italic text-[10px] font-bold">No active promos.</div>
+                            <div class="flex flex-col items-center justify-center h-48 px-6 text-center group">
+                                <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mb-4 text-gray-200 group-hover:text-autocheck-red transition-all duration-500">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                </div>
+                                <h4 class="text-[10px] font-black text-gray-900 uppercase tracking-tight mb-1 italic">Vault Sealed</h4>
+                                <p class="text-[8px] text-gray-400 font-bold leading-relaxed italic">Claim a promo from the list to unlock your exclusive digital voucher code.</p>
+                            </div>
                         @endforelse
                     </div>
                 </div>
@@ -164,7 +170,13 @@
                                     @endforeach
                             </div>
                         @else
-                            <div class="py-10 text-center opacity-30 italic text-[10px] font-bold">No data.</div>
+                            <div class="py-16 px-8 text-center">
+                                <div class="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mx-auto mb-4 text-gray-200">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                </div>
+                                <h4 class="text-[10px] font-black text-gray-900 uppercase tracking-widest mb-1 italic">Dormant Stream</h4>
+                                <p class="text-[8px] text-gray-400 font-bold leading-relaxed italic max-w-[150px] mx-auto">Complete service appointments to generate point flow and build your elite standing.</p>
+                            </div>
                         @endif
                     </div>
                 </div>

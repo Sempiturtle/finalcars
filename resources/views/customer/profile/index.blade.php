@@ -50,6 +50,35 @@
                         </button>
                         @endforeach
                     </nav>
+
+                    <!-- Profile Strength Sidebar Widget -->
+                    @if($user->profile_strength < 100)
+                    <div class="mt-6 p-4 bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden relative group">
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest italic">Strength</span>
+                                <span class="text-[10px] font-black text-autocheck-red">{{ $user->profile_strength }}%</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-autocheck-red rounded-full transition-all duration-1000" style="width: {{ $user->profile_strength }}%"></div>
+                            </div>
+                            <p class="text-[8px] text-gray-500 font-bold mt-3 leading-relaxed">
+                                Complete your profile to reach <span class="text-gray-900 italic">Verified Status</span>.
+                            </p>
+                        </div>
+                        <div class="absolute -bottom-6 -right-6 w-16 h-16 bg-autocheck-red/5 rounded-full blur-xl group-hover:bg-autocheck-red/10 transition-colors"></div>
+                    </div>
+                    @else
+                    <div class="mt-6 p-4 bg-green-50 rounded-2xl border border-green-100 flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-green-500/20">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-black text-green-900 uppercase tracking-tight leading-none">Verified Account</p>
+                            <p class="text-[8px] text-green-600 font-bold italic mt-1">Profile Complete</p>
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
 

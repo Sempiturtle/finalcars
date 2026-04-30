@@ -1,7 +1,7 @@
 <x-customer-layout>
-    <div class="bg-[#0F172A] min-h-screen text-white space-y-20 pb-20 overflow-x-hidden">
+    <div class="bg-[#0F172A] min-h-screen text-white space-y-20 md:space-y-24 pb-20 md:pb-24 overflow-x-hidden">
         <!-- Hero Section with Advanced Parallax -->
-        <section class="relative h-[80vh] sm:h-[85vh] overflow-hidden group select-none" aria-label="Customer Hero">
+        <section class="relative h-[65vh] sm:h-[70vh] overflow-hidden group select-none" aria-label="Customer Hero">
             <div class="absolute inset-0 z-0">
                 <img src="{{ asset('images/pic6.png') }}" 
                      alt="Premium Automotive Performance"
@@ -13,7 +13,7 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-[#0F172A]/40 to-transparent"></div>
             </div>
             
-            <div class="relative h-full flex flex-col items-center justify-center text-center px-6 max-w-7xl mx-auto z-10">
+            <div class="relative h-full flex flex-col items-center justify-center text-center px-8 md:px-16 max-w-7xl mx-auto z-10">
                 <div class="reveal inline-flex items-center px-5 py-2 bg-white/5 backdrop-blur-xl rounded-full border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.4em] mb-10 shadow-2xl">
                     <span class="relative flex h-2 w-2 mr-3" aria-hidden="true">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -22,7 +22,7 @@
                     Authenticated Premium Access
                 </div>
                 
-                <h1 class="reveal text-4xl sm:text-7xl md:text-9xl font-black text-white tracking-tighter leading-tight sm:leading-none mb-8 sm:mb-10 uppercase transition-all duration-700 hover:tracking-normal cursor-default select-none">
+                <h1 class="reveal text-4xl sm:text-6xl md:text-8xl font-black text-white tracking-tighter leading-tight sm:leading-none mb-6 sm:mb-8 uppercase transition-all duration-700 hover:tracking-normal cursor-default select-none">
                     COMMAND <br><span class="text-autocheck-red italic">CENTRAL.</span>
                 </h1>
                 
@@ -45,11 +45,6 @@
                 </div>
             </div>
 
-            <!-- Scroll Indicator -->
-            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-2 opacity-40 animate-bounce-slow" aria-hidden="true">
-                <span class="text-[8px] font-black uppercase tracking-[0.4em] text-white">Scroll</span>
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-            </div>
         </section>
 
         <!-- Onboarding Guide for New Users -->
@@ -161,15 +156,15 @@
 
         <!-- Dynamic Metrics Grid (Bento Style) -->
         <section class="w-full" aria-label="Quick Metrics">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <article class="reveal glass p-6 rounded-[1.5rem] relative overflow-hidden group">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10">
+                <article class="reveal glass p-6 md:p-8 rounded-[1.5rem] relative overflow-hidden group">
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-autocheck-red/10 rounded-full blur-3xl group-hover:bg-autocheck-red/20 transition-colors" aria-hidden="true"></div>
                     <p class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-2">Total Fleet</p>
                     <p class="text-4xl font-black text-white tracking-tighter">{{ number_format($highlights['total_vehicles']) }}</p>
                     <p class="text-[9px] text-gray-400 mt-2 font-bold">Active Units</p>
                 </article>
                 
-                <article class="reveal glass p-6 rounded-[1.5rem] border-autocheck-red/20" style="transition-delay: 100ms">
+                <article class="reveal glass p-6 md:p-8 rounded-[1.5rem] border-autocheck-red/20" style="transition-delay: 100ms">
                     <p class="text-[10px] font-black text-autocheck-red uppercase tracking-[0.3em] mb-2">Loyalty Power</p>
                     <p class="text-4xl font-black text-white tracking-tighter">{{ number_format($highlights['available_points']) }}</p>
                     <div class="mt-2 flex items-center text-[9px] text-red-400 font-bold uppercase tracking-widest">
@@ -178,7 +173,7 @@
                     </div>
                 </article>
 
-                <article class="reveal glass p-6 rounded-[1.5rem] md:col-span-2 flex items-center justify-between group overflow-hidden" style="transition-delay: 200ms">
+                <article class="reveal glass p-6 md:p-8 rounded-[1.5rem] md:col-span-2 flex items-center justify-between group overflow-hidden" style="transition-delay: 200ms">
                     <div class="relative z-10">
                         <p class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-2">System Status</p>
                         <p class="text-2xl font-black text-white tracking-tighter uppercase">Fully <span class="text-green-500">Operational</span></p>
@@ -195,7 +190,7 @@
 
         <!-- Intelligent Service Bento Grid -->
         <section class="w-full space-y-16" id="services" aria-label="Featured Services">
-            <header class="flex flex-col md:flex-row md:items-end justify-between px-4">
+            <header class="flex flex-col md:flex-row md:items-end justify-between px-8 md:px-12">
                 <div class="max-w-xl">
                     <h2 class="reveal text-xs font-black text-autocheck-red uppercase tracking-[0.5em] mb-6 block italic">The Service Catalog</h2>
                     <h3 class="reveal text-4xl md:text-7xl font-black text-white tracking-tighter uppercase leading-none" style="transition-delay: 100ms">PREMIUM <br>MAINTENANCE.</h3>
@@ -205,7 +200,7 @@
                 </a>
             </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:auto-rows-[300px]">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 md:auto-rows-[300px]">
                 <!-- Main Service Card -->
                 <article class="reveal md:col-span-8 md:row-span-2 rounded-[2rem] md:rounded-[3.5rem] overflow-hidden group relative min-h-[400px] md:min-h-0">
                     <img src="{{ asset('images/picture1.jfif') }}" 
@@ -258,7 +253,7 @@
             <!-- Scrollable Service Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
                 @foreach($featuredServices->skip(1) as $service)
-                    <article class="reveal glass p-10 rounded-[2.5rem] hover:bg-white/5 transition-all duration-500 group relative overflow-hidden" style="transition-delay: {{ $loop->index * 100 }}ms">
+                    <article class="reveal glass p-8 md:p-10 rounded-[2rem] hover:bg-white/5 transition-all duration-500 group relative overflow-hidden" style="transition-delay: {{ $loop->index * 100 }}ms">
                         <div class="absolute -top-10 -right-10 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:bg-autocheck-red/5" aria-hidden="true"></div>
                         <div class="flex justify-between items-start mb-10">
                             <div class="w-12 h-12 glass rounded-2xl flex items-center justify-center text-autocheck-red">
@@ -278,7 +273,7 @@
         </section>
 
         <!-- Dynamic Timeline & Facility Showcase -->
-        <section class="relative py-24 bg-slate-900 overflow-hidden" aria-label="Facility In-Depth">
+        <section class="relative py-16 md:py-20 bg-slate-900 overflow-hidden" aria-label="Facility In-Depth">
             <div class="absolute inset-0 z-0 overflow-hidden">
                 <img src="{{ asset('images/pic7.jpg') }}" 
                      alt="Facility Interior Background"
@@ -342,7 +337,7 @@
 
         <!-- Final CTA with Background Image -->
         <section class="w-full">
-            <div class="relative rounded-3xl sm:rounded-[4rem] overflow-hidden group py-16 sm:py-24 text-center border border-white/5">
+            <div class="relative rounded-3xl sm:rounded-[4rem] overflow-hidden group py-12 sm:py-16 text-center border border-white/5">
                 <div class="absolute inset-0 z-0">
                     <img src="{{ asset('images/picture8.jfif') }}" 
                          alt="Facility Exterior Dusk"
