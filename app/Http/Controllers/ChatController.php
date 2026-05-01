@@ -157,4 +157,20 @@ class ChatController extends Controller
 
         return response()->json($message);
     }
+    public function getOtherUserStatus(Request $request)
+    {
+        $otherUserId = $request->query('user_id');
+        
+        if (Auth::user()->isCustomer()) {
+            $admin = User::where('role', 'admin')->first();
+            return response()->json($admin);
+        }
+
+        if ($otherUserId) {
+            $user = User::find($otherUserId);
+            return response()->json($user);
+        }
+
+        return response()->json(null);
+    }
 }

@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
 
     // Global Chat Notifications
     Route::get('/chat/unread-count', [\App\Http\Controllers\ChatController::class, 'getUnreadCounts'])->name('chat.unread-count');
+    Route::get('/chat/status', [\App\Http\Controllers\ChatController::class, 'getOtherUserStatus'])->name('chat.status');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {

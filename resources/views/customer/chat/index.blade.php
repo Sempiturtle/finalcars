@@ -17,13 +17,13 @@
                     </div>
                     <div class="relative">
                         <div class="h-10 w-10 md:h-12 md:w-12 rounded-full bg-autocheck-red flex items-center justify-center text-white font-black text-sm md:text-base shadow-lg shadow-red-500/20 animate-pulse-slow">AS</div>
-                        <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 md:w-4 md:h-4 bg-green-500 border-2 rounded-full transition-colors duration-500"
-                             :class="darkMode ? 'border-[#18191A]' : 'border-white'"></div>
+                        <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 md:w-4 md:h-4 border-2 rounded-full transition-colors duration-500"
+                             :class="[darkMode ? 'border-[#18191A]' : 'border-white', adminStatus?.is_online ? 'bg-green-500' : 'bg-gray-400']"></div>
                     </div>
                     <div>
                         <h3 class="font-bold text-base md:text-lg tracking-tight leading-none"
                             :class="darkMode ? 'text-white' : 'text-gray-900'">AutoCheck Support</h3>
-                        <p class="text-[11px] font-medium text-gray-500 mt-1">Active now</p>
+                        <p class="text-[11px] font-medium text-gray-500 mt-1" x-text="adminStatus?.is_online ? 'Active now' : 'Offline'"></p>
                     </div>
                 </div>
                 
@@ -134,6 +134,7 @@
                 sending: false,
                 pollingTimer: null,
                 darkMode: true,
+                adminStatus: null,
 
                 init() {
                     this.fetchMessages();
@@ -173,6 +174,14 @@
                             if (this.messages.length > oldLength) {
                                 this.scrollToBottom();
                             }
+                        })
+                        .catch(err => console.error(err));
+
+                    // Also fetch admin status
+                    fetch('/chat/status')
+                        .then(res => res.json())
+                        .then(data => {
+                            this.adminStatus = data;
                         })
                         .catch(err => console.error(err));
                 },

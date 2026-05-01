@@ -57,7 +57,8 @@
                                     <div class="h-12 w-12 rounded-xl bg-autocheck-red flex items-center justify-center text-white font-black text-sm shadow-lg shadow-red-500/20 group-hover:scale-105 transition-transform"
                                          x-text="getInitials(user.name)">
                                     </div>
-                                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-4 border-gray-50 rounded-full"></div>
+                                    <div class="absolute -bottom-1 -right-1 w-4 h-4 border-4 border-gray-50 rounded-full"
+                                         :class="user.is_online ? 'bg-green-500' : 'bg-gray-300'"></div>
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center justify-between mb-0.5">
@@ -107,13 +108,16 @@
                                 </button>
                                 <div class="relative">
                                     <div class="h-10 w-10 rounded-xl bg-autocheck-red flex items-center justify-center text-white font-black text-xs shadow-lg shadow-red-500/20" x-text="getInitials(selectedUser.name)"></div>
-                                    <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
+                                    <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 border-2 border-white rounded-full"
+                                         :class="selectedUser.is_online ? 'bg-green-500' : 'bg-gray-300'"></div>
                                 </div>
                                 <div class="min-w-0">
                                     <h3 class="font-black text-sm text-gray-900 tracking-tight leading-none truncate uppercase" x-text="selectedUser.name"></h3>
                                     <div class="flex items-center mt-1.5">
-                                        <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mr-2"></div>
-                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Now</p>
+                                        <div class="w-1.5 h-1.5 rounded-full mr-2"
+                                             :class="selectedUser.is_online ? 'bg-green-500 animate-pulse' : 'bg-gray-400'"></div>
+                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest"
+                                           x-text="selectedUser.is_online ? 'Active Now' : 'Offline'"></p>
                                     </div>
                                 </div>
                             </div>
@@ -275,6 +279,18 @@
                         .then(data => {
                             const oldLength = this.messages.length;
                             this.messages = data.messages;
+                            
+                            // Update selected user's status
+                            if (data.user) {
+                                this.selectedUser.is_online = data.user.is_online;
+                                this.selectedUser.last_seen_at = data.user.last_seen_at;
+                                
+                                // Update in customers list too
+                                const customer = this.customers.find(c => c.id === data.user.id);
+                                if (customer) {
+                                    customer.is_online = data.user.is_online;
+                                }
+                            }
                             
                             if (this.messages.length > oldLength) {
                                 this.scrollToBottom();
