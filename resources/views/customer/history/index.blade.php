@@ -1,5 +1,5 @@
 <x-customer-layout>
-    <div class="space-y-4 animate-fade-in">
+    <div class="max-w-7xl mx-auto p-6 md:p-8 space-y-4 animate-fade-in">
         <!-- Header Section -->
         <div class="bg-white rounded-2xl p-4 shadow-lg border border-gray-100 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
             <div class="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-autocheck-red/5 rounded-full"></div>

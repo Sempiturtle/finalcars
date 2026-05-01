@@ -215,7 +215,7 @@
         </style>
         <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}?v=2">
     </head>
-    <body class="antialiased bg-gray-50 flex items-center justify-center min-h-screen py-4 px-4 overflow-hidden">
+    <body class="antialiased bg-gray-50 flex items-center justify-center min-h-screen py-12 px-4">
         <!-- Watermark Background -->
         <div class="fixed inset-0 z-0 pointer-events-none opacity-[0.2] overflow-hidden">
             <img src="{{ asset('images/background.jfif') }}" alt="" class="w-full h-full object-cover grayscale brightness-90">
@@ -730,7 +730,7 @@
             </div>
 
             {{-- Back to Website --}}
-            <div class="mt-4 text-center" x-show="!showSuccess">
+            <div class="mt-8 text-center pb-6" x-show="!showSuccess">
                 <a href="/" class="text-[11px] font-bold text-gray-400 hover:text-gray-600 transition-colors uppercase tracking-widest flex items-center justify-center group">
                     <svg class="h-4 w-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Back to Website

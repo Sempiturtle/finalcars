@@ -1,5 +1,5 @@
 <x-customer-layout>
-    <div class="max-w-6xl mx-auto space-y-6 pb-20" x-data="{ activeTab: 'info' }">
+    <div class="max-w-7xl mx-auto p-6 md:p-8 space-y-6 pb-20" x-data="{ activeTab: 'info' }">
         <!-- Compact Header Section -->
         <div class="relative min-h-[140px] rounded-2xl overflow-hidden shadow-lg bg-gray-900 group">
             <div class="absolute inset-0 opacity-30">

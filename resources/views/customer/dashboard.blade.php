@@ -1,5 +1,5 @@
 <x-customer-layout>
-    <div class="p-4 sm:p-0 space-y-8">
+    <div class="max-w-7xl mx-auto p-6 md:p-8 space-y-8">
         <!-- Welcome Header -->
         <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden group">
             <div class="absolute top-0 right-0 w-48 h-48 bg-red-50 rounded-full -mr-24 -mt-24 transition-transform group-hover:scale-110 duration-700"></div>

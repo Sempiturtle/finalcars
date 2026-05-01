@@ -1,5 +1,5 @@
 <x-customer-layout>
-    <div class="space-y-8">
+    <div class="max-w-7xl mx-auto p-6 md:p-8 space-y-8">
         <div>
             <h1 class="text-3xl font-black text-gray-900 tracking-tight">Maintenance <span class="text-autocheck-red">Timeline</span></h1>
             <p class="text-gray-500 font-medium mt-1">Track when your vehicles are due for their next service.</p>

@@ -49,7 +49,7 @@
 
         <!-- Onboarding Guide for New Users -->
         @if(Auth::user()->vehicles()->count() === 0)
-        <section class="w-full -mt-10 md:-mt-20 relative z-30 reveal px-4 sm:px-12">
+        <section class="max-w-7xl mx-auto px-6 md:px-12 w-full -mt-10 md:-mt-20 relative z-30 reveal">
             <div class="glass p-6 md:p-12 rounded-[2.5rem] md:rounded-[3rem] border-white/10 shadow-2xl overflow-hidden relative group">
                 <div class="absolute inset-0 bg-gradient-to-r from-autocheck-red/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                 
@@ -100,7 +100,7 @@
 
         <!-- Profile Completion Tracker (Gamified) -->
         @if(Auth::user()->profile_strength < 100 && Auth::user()->vehicles()->exists())
-        <section class="w-full -mt-5 md:-mt-10 relative z-20 reveal">
+        <section class="max-w-7xl mx-auto px-6 md:px-12 w-full -mt-5 md:-mt-10 relative z-20 reveal">
             <div class="glass p-6 md:p-8 rounded-[2.5rem] border-autocheck-red/30 shadow-2xl overflow-hidden group">
                 <div class="flex flex-col md:flex-row items-center justify-between gap-8">
                     <div class="flex items-center space-x-6">
@@ -155,7 +155,7 @@
         @endif
 
         <!-- Dynamic Metrics Grid (Bento Style) -->
-        <section class="w-full" aria-label="Quick Metrics">
+        <section class="max-w-7xl mx-auto px-6 md:px-12 w-full" aria-label="Quick Metrics">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10">
                 <article class="reveal glass p-6 md:p-8 rounded-[1.5rem] relative overflow-hidden group">
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-autocheck-red/10 rounded-full blur-3xl group-hover:bg-autocheck-red/20 transition-colors" aria-hidden="true"></div>
@@ -189,8 +189,8 @@
         </section>
 
         <!-- Intelligent Service Bento Grid -->
-        <section class="w-full space-y-16" id="services" aria-label="Featured Services">
-            <header class="flex flex-col md:flex-row md:items-end justify-between px-8 md:px-12">
+        <section class="max-w-7xl mx-auto px-6 md:px-12 w-full space-y-16" id="services" aria-label="Featured Services">
+            <header class="flex flex-col md:flex-row md:items-end justify-between">
                 <div class="max-w-xl">
                     <h2 class="reveal text-xs font-black text-autocheck-red uppercase tracking-[0.5em] mb-6 block italic">The Service Catalog</h2>
                     <h3 class="reveal text-4xl md:text-7xl font-black text-white tracking-tighter uppercase leading-none" style="transition-delay: 100ms">PREMIUM <br>MAINTENANCE.</h3>
@@ -284,7 +284,7 @@
                      style="--scroll-offset: 0px;">
             </div>
             
-            <div class="w-full relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+            <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
                 <div>
                     <span class="reveal text-autocheck-red font-black text-[10px] uppercase tracking-[0.5em] mb-6 block italic">Operational Architecture</span>
                     <h3 class="reveal text-4xl md:text-7xl font-black text-white tracking-tighter uppercase mb-10 leading-none" style="transition-delay: 100ms">BUILT FOR <br><span class="italic">SPEED.</span></h3>
@@ -336,7 +336,7 @@
         </section>
 
         <!-- Final CTA with Background Image -->
-        <section class="w-full">
+        <section class="max-w-7xl mx-auto px-6 md:px-12 w-full">
             <div class="relative rounded-3xl sm:rounded-[4rem] overflow-hidden group py-12 sm:py-16 text-center border border-white/5">
                 <div class="absolute inset-0 z-0">
                     <img src="{{ asset('images/picture8.jfif') }}" 
