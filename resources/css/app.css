@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Hide browser default password reveal button */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
