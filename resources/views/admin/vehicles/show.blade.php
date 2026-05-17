@@ -17,6 +17,8 @@
                 <div x-data="{ 
                     showVerifyModal: false, 
                     showStartModal: false,
+                    showViewModal: false,
+                    selectedVehicle: null,
                     currentVehicleId: {{ $vehicle->id }}, 
                     currentPlate: '{{ $vehicle->plate_number }}', 
                     pendingServices: {{ $pendingServices->toJson() }}, 
@@ -30,6 +32,10 @@
                     openStart() {
                         this.selectedServices = this.scheduledServices.map(s => String(s.original_index));
                         this.showStartModal = true;
+                    },
+                    openView(vehicle) {
+                        this.selectedVehicle = vehicle;
+                        this.showViewModal = true;
                     }
                 }">
                     <div class="flex items-center space-x-2">
@@ -92,14 +98,10 @@
 
                         <div>
                             <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Ownership & Personnel</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 gap-6">
                                 <div>
                                     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Owner Name</p>
                                     <p class="text-lg font-black text-gray-900">{{ $vehicle->owner_name }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Assigned Mechanic</p>
-                                    <p class="text-lg font-black text-gray-900 italic tracking-tight">{{ $vehicle->mechanic_name ?? 'Not Assigned' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -148,14 +150,13 @@
                         </div>
                     </div>
                 </div>
-                </div>
 
                 <!-- Service Records Section -->
                 @if(!empty($vehicle->services) && count($vehicle->services) > 0)
                 <div class="mt-12 pt-12 border-t border-gray-100">
                     <h3 class="text-lg font-black text-gray-900 tracking-tight mb-6">Service Records</h3>
-                    <div class="bg-gray-50 rounded-3xl overflow-hidden border border-gray-100">
-                        <table class="w-full text-left">
+                    <div class="bg-gray-50 rounded-3xl overflow-x-auto border border-gray-100 shadow-sm">
+                        <table class="w-full text-left min-w-[500px]">
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th class="px-8 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Service Type</th>
@@ -188,11 +189,11 @@
                             </tbody>
                             <tfoot class="bg-gray-100/50">
                                 <tr>
-                                    <td class="px-8 py-4 text-right">
-                                        <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Total Cost</span>
+                                    <td colspan="2" class="px-8 py-4 text-right">
+                                        <span class="text-xs font-black text-gray-400 uppercase tracking-widest mr-4">Total Maintenance Cost</span>
                                     </td>
                                     <td class="px-8 py-4 text-right">
-                                        <span class="text-lg font-black text-autocheck-red">₱{{ number_format($vehicle->total_cost ?? 0, 2) }}</span>
+                                        <span class="text-xl font-black text-autocheck-red tracking-tight">₱{{ number_format($vehicle->total_cost ?? 0, 2) }}</span>
                                     </td>
                                 </tr>
                             </tfoot>
@@ -201,4 +202,6 @@
                 </div>
                 @endif
             </div>
+        </div>
+    </div>
 </x-admin-layout>
