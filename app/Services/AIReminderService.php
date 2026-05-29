@@ -26,7 +26,7 @@ class AIReminderService
                        Status: " . ($vehicle->isCriticalOverdue() ? 'Critical Overdue' : 'Due Soon') . ".
                        Keep it under 150 characters.";
 
-            $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
+            $response = Http::withoutVerifying()->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
                 'contents' => [
                     [
                         'parts' => [

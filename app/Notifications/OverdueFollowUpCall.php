@@ -59,6 +59,7 @@ class OverdueFollowUpCall extends Notification
             $twiml = "<Response><Pause length='1'/><Say voice='alice' language='en-US'>{$this->message}</Say></Response>";
             
             $response = \Illuminate\Support\Facades\Http::withBasicAuth($sid, $token)
+                ->withoutVerifying()
                 ->asForm()
                 ->post("https://api.twilio.com/2010-04-01/Accounts/{$sid}/Calls.json", [
                     'To' => $to,
