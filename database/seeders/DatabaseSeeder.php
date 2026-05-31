@@ -47,6 +47,22 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // Seed default mechanics
+        $defaultMechanics = [
+            ['name' => 'Master Tech - Dave', 'specialty' => 'Engine & Transmission'],
+            ['name' => 'Senior Tech - Alex', 'specialty' => 'Diagnostics & Electrical'],
+            ['name' => 'Performance Specialist - Ryan', 'specialty' => 'Suspension & Tuning'],
+            ['name' => 'EV Tech - Marcus', 'specialty' => 'Electric & Hybrids'],
+            ['name' => 'Euro Specialist - Christian', 'specialty' => 'European Cars'],
+        ];
+
+        foreach ($defaultMechanics as $mech) {
+            \App\Models\Mechanic::updateOrCreate(
+                ['name' => $mech['name']],
+                ['specialty' => $mech['specialty']]
+            );
+        }
+
         $this->call([
             VehicleSeeder::class,
         ]);

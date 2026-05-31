@@ -236,8 +236,16 @@
                                     </div>
                                 </div>
                                 <div>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Assigned Mechanic</span>
+                                    <span class="text-sm font-black text-autocheck-red block truncate" x-text="selectedVehicle.mechanic_name || 'Not Assigned'"></span>
+                                </div>
+                                <div>
                                     <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Registration Date</span>
                                     <span class="text-sm font-black text-gray-900 block truncate" x-text="selectedVehicle.registration_date"></span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Next Service Date</span>
+                                    <span class="text-sm font-black text-gray-900 block truncate" x-text="selectedVehicle.next_service_date"></span>
                                 </div>
                             </div>
                         </div>
@@ -302,12 +310,20 @@
 
                     <!-- Drawer Footer -->
                     <div class="p-6 bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0 shadow-md z-10">
-                        <a :href="selectedVehicle.show_url" class="inline-flex items-center justify-center px-6 py-3.5 bg-gray-900 text-white hover:bg-autocheck-red rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-gray-900/20 w-full sm:w-auto text-center">
-                            <span>Open Full Details Page</span>
-                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
+                        <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                            <a :href="selectedVehicle.show_url" class="inline-flex items-center justify-center px-6 py-3.5 bg-gray-900 text-white hover:bg-autocheck-red rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-gray-900/20 w-full sm:w-auto text-center">
+                                <span>Full Details</span>
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                            <template x-if="selectedVehicle.status === 'completed'">
+                                <a :href="`/admin/vehicles/${selectedVehicle.id}/receipt`" target="_blank" class="inline-flex items-center justify-center px-6 py-3.5 bg-amber-500 text-white hover:bg-amber-600 rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-amber-500/20 w-full sm:w-auto text-center">
+                                    <span>Print Receipt</span>
+                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                </a>
+                            </template>
+                        </div>
                         <button type="button" @click="showViewModal = false" class="px-6 py-3.5 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-2xl text-xs font-black uppercase tracking-widest transition-all focus:outline-none w-full sm:w-auto text-center justify-center">
-                            Close Quick View
+                            Close
                         </button>
                     </div>
                 </div>

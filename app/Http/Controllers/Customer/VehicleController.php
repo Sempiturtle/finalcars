@@ -285,4 +285,16 @@ class VehicleController extends Controller
             'is_past' => $isPast
         ]);
     }
+
+    /**
+     * Display the invoice receipt of the completed/active vehicle.
+     */
+    public function receipt(Vehicle $vehicle)
+    {
+        if ($vehicle->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        return view('admin.vehicles.receipt', compact('vehicle'));
+    }
 }

@@ -3,7 +3,7 @@
         x-data="{ 
             showAddModal: {{ $errors->any() ? 'true' : 'false' }}, 
             showEditModal: false, 
-            editUser: { id: null, name: '', email: '', username: '', phone: '+63', role: '', address: '' },
+            editUser: { id: null, name: '', email: '', username: '', role: '' },
             showToast: {{ session('success') || session('error') ? 'true' : 'false' }},
             updateScrollLock() {
                 const main = document.querySelector('main');
@@ -52,12 +52,12 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-xl border border-gray-100">
             <div>
-                <h1 class="text-2xl font-black text-gray-900 tracking-tight">Admin <span class="text-autocheck-red">Management</span></h1>
-                <p class="text-[13px] text-gray-500 font-bold mt-0.5">Manage system administrator accounts.</p>
+                <h1 class="text-2xl font-black text-gray-900 tracking-tight">User <span class="text-autocheck-red">Management</span></h1>
+                <p class="text-[13px] text-gray-500 font-bold mt-0.5">Manage all system users — admins and customers.</p>
             </div>
             <button @click="showAddModal = true" class="px-6 py-3 bg-autocheck-red text-white font-black rounded-xl hover:bg-red-700 transition-all shadow-xl shadow-red-500/20 flex items-center space-x-2 text-[11px] uppercase tracking-widest">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
-                <span>Add Admin</span>
+                <span>Add User</span>
             </button>
         </div>
 
@@ -114,7 +114,8 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex flex-col">
-                                        <span class="px-3 py-1 w-fit rounded-full text-[9px] font-black uppercase tracking-widest {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }}">@ {{ $user->role }}</span>
+                                    <span class="px-3 py-1 w-fit rounded-full text-[9px] font-black uppercase tracking-widest 
+                                        {{ $user->role === 'admin' ? 'bg-red-100 text-red-600' : ($user->role === 'staff' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-600') }}">@ {{ $user->role }}</span>
                                         @if($user->isCustomer())
                                             <div class="mt-1.5 flex items-center space-x-2">
                                                 <div class="w-16 h-1 bg-gray-100 rounded-full overflow-hidden">
@@ -128,7 +129,7 @@
                                 <td class="px-6 py-4 text-[13px] font-bold text-gray-500">{{ $user->phone ?? 'N/A' }}</td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end space-x-1.5">
-                                        <button @click="editUser = { id: '{{ $user->id }}', name: '{{ addslashes($user->name) }}', email: '{{ $user->email }}', username: '{{ $user->username }}', phone: '{{ $user->phone }}', role: '{{ $user->role }}', address: '{{ addslashes($user->address) }}' }; showEditModal = true;" class="p-2 bg-gray-50 text-gray-400 hover:bg-gray-900 hover:text-white rounded-lg transition-all"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
+                                        <button @click="editUser = { id: '{{ $user->id }}', name: '{{ addslashes($user->name) }}', email: '{{ $user->email }}', username: '{{ $user->username }}', role: '{{ $user->role }}' }; showEditModal = true;" class="p-2 bg-gray-50 text-gray-400 hover:bg-gray-900 hover:text-white rounded-lg transition-all"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
                                         <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline" id="del-user-{{ $user->id }}">
                                             @csrf @method('DELETE')
                                             <button
@@ -155,17 +156,15 @@
             <div class="fixed inset-0 overflow-y-auto flex items-center justify-center p-4">
                 <div class="bg-white w-full max-w-xl rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden" x-show="showAddModal" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="scale-95 opacity-0" x-transition:enter-end="scale-100 opacity-100">
                     <div class="p-8">
-                        <div class="flex items-center justify-between mb-8"><h2 class="text-2xl font-black text-gray-900">New <span class="text-autocheck-red">Admin</span></h2><button @click="showAddModal = false" class="text-gray-400 hover:text-gray-600"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+                        <div class="flex items-center justify-between mb-8"><h2 class="text-2xl font-black text-gray-900">New <span class="text-autocheck-red">User</span></h2><button @click="showAddModal = false" class="text-gray-400 hover:text-gray-600"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
                         <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-4">
                             @csrf
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Name</label><input type="text" name="name" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Username</label><input type="text" name="username" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
-                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label><input type="email" name="email" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
-                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone</label><input type="text" name="phone" value="+63" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
-                                <input type="hidden" name="role" value="admin">
-                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Password</label><input type="password" name="password" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
-                                <div class="col-span-2 space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Address</label><textarea name="address" rows="2" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none"></textarea></div>
+                                <div class="space-y-1 col-span-2"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label><input type="email" name="email" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <div class="space-y-1 col-span-2"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Role</label><select name="role" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"><option value="admin">🔒 Admin</option></select></div>
+                                <div class="space-y-1 col-span-2"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Password</label><input type="password" name="password" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
                             </div>
                             <button type="submit" class="w-full py-4 bg-autocheck-red text-white font-black rounded-xl hover:bg-red-700 transition-all mt-4 tracking-widest shadow-xl shadow-red-500/10">AUTHENTICATE REGISTRATION</button>
                         </form>
@@ -186,11 +185,9 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label><input type="text" name="name" x-model="editUser.name" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
                                 <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Username</label><input type="text" name="username" x-model="editUser.username" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
-                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label><input type="email" name="email" x-model="editUser.email" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
-                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone</label><input type="text" name="phone" x-model="editUser.phone" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
-                                <input type="hidden" name="role" value="admin">
-                                <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">New Password (Empty to keep)</label><input type="password" name="password" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
-                                <div class="col-span-2 space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Physical Address</label><textarea name="address" x-model="editUser.address" rows="2" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none"></textarea></div>
+                                <div class="space-y-1 col-span-2"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label><input type="email" name="email" x-model="editUser.email" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
+                                <div class="space-y-1 col-span-2"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Role</label><select name="role" x-model="editUser.role" required class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"><option value="admin">🔒 Admin</option></select></div>
+                                <div class="space-y-1 col-span-2"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">New Password (Empty to keep)</label><input type="password" name="password" class="w-full px-5 py-3.5 bg-gray-50 border-transparent rounded-xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"></div>
                             </div>
                             <button type="submit" class="w-full py-4 bg-autocheck-red text-white font-black rounded-xl hover:bg-red-700 transition-all mt-4 tracking-widest shadow-xl shadow-red-500/10">FINALIZE MODIFICATIONS</button>
                         </form>

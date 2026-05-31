@@ -20,6 +20,7 @@ class Vehicle extends Model
         'color',
         'owner_name',
         'mechanic_name',
+        'is_archived',
         'next_service_date',
         'registration_date',
         'status',
@@ -35,6 +36,7 @@ class Vehicle extends Model
         'services' => 'array',
         'total_cost' => 'decimal:2',
         'last_notification_at' => 'datetime',
+        'is_archived' => 'boolean',
     ];
 
     /**

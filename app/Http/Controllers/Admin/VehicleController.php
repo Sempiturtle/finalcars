@@ -16,7 +16,7 @@ class VehicleController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Vehicle::query();
+        $query = Vehicle::query()->where('is_archived', false);
 
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
@@ -43,7 +43,8 @@ class VehicleController extends Controller
     {
         $users = User::where('role', 'customer')->orderBy('name')->get();
         $serviceTypes = \App\Models\ServiceType::orderBy('name')->get();
-        return view('admin.vehicles.create', compact('users', 'serviceTypes'));
+        $mechanics = \App\Models\Mechanic::orderBy('name')->get();
+        return view('admin.vehicles.create', compact('users', 'serviceTypes', 'mechanics'));
     }
 
     /**
@@ -58,6 +59,7 @@ class VehicleController extends Controller
             'year' => 'required|string',
             'color' => 'nullable|string',
             'user_id' => 'required|exists:users,id',
+            'mechanic_name' => 'nullable|string|max:255',
             'next_service_date' => 'nullable|date',
             'registration_date' => 'nullable|date',
             'status' => 'nullable|in:completed,in progress,scheduled,inactive,overdue',
@@ -113,6 +115,7 @@ class VehicleController extends Controller
      */
     public function show(Vehicle $vehicle)
     {
+        $this->checkAccess($vehicle);
         return view('admin.vehicles.show', compact('vehicle'));
     }
 
@@ -121,9 +124,11 @@ class VehicleController extends Controller
      */
     public function edit(Vehicle $vehicle)
     {
+        $this->checkAccess($vehicle);
         $users = User::where('role', 'customer')->orderBy('name')->get();
         $serviceTypes = \App\Models\ServiceType::orderBy('name')->get();
-        return view('admin.vehicles.edit', compact('vehicle', 'users', 'serviceTypes'));
+        $mechanics = \App\Models\Mechanic::orderBy('name')->get();
+        return view('admin.vehicles.edit', compact('vehicle', 'users', 'serviceTypes', 'mechanics'));
     }
 
     /**
@@ -131,6 +136,7 @@ class VehicleController extends Controller
      */
     public function update(Request $request, Vehicle $vehicle)
     {
+        $this->checkAccess($vehicle);
         $validated = $request->validate([
             'plate_number' => 'required|string|unique:vehicles,plate_number,' . $vehicle->id,
             'make' => 'required|string',
@@ -138,6 +144,7 @@ class VehicleController extends Controller
             'year' => 'required|string',
             'color' => 'nullable|string',
             'user_id' => 'required|exists:users,id',
+            'mechanic_name' => 'nullable|string|max:255',
             'next_service_date' => 'nullable|date',
             'registration_date' => 'nullable|date',
             'status' => 'nullable|in:completed,in progress,scheduled,inactive,overdue',
@@ -206,6 +213,7 @@ class VehicleController extends Controller
      */
     public function destroy(Vehicle $vehicle)
     {
+        $this->checkAccess($vehicle);
         $vehicle->delete();
 
         return redirect()->route('admin.vehicles.index')
@@ -214,6 +222,7 @@ class VehicleController extends Controller
 
     public function quickVerify(Request $request, Vehicle $vehicle)
     {
+        $this->checkAccess($vehicle);
         $validated = $request->validate([
             'completed_indexes' => 'required|array',
             'completed_indexes.*' => 'integer',
@@ -249,6 +258,7 @@ class VehicleController extends Controller
 
     public function quickStart(Request $request, Vehicle $vehicle)
     {
+        $this->checkAccess($vehicle);
         $validated = $request->validate([
             'start_indexes' => 'required|array',
             'start_indexes.*' => 'integer',
@@ -289,5 +299,71 @@ class VehicleController extends Controller
         }
 
         return redirect()->back()->with('info', 'No valid services were selected to start.');
+    }
+
+    /**
+     * Display a listing of archived vehicles.
+     */
+    public function archived(Request $request)
+    {
+        $query = Vehicle::query()->where('is_archived', true);
+
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('plate_number', 'like', '%' . $request->search . '%')
+                  ->orWhere('owner_name', 'like', '%' . $request->search . '%')
+                  ->orWhere('make', 'like', '%' . $request->search . '%')
+                  ->orWhere('model', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        $vehicles = $query->latest()->paginate(10);
+
+        return view('admin.vehicles.archived', compact('vehicles'));
+    }
+
+    /**
+     * Move a vehicle to archives.
+     */
+    public function archive(Vehicle $vehicle)
+    {
+        $this->checkAccess($vehicle);
+        $vehicle->update(['is_archived' => true]);
+
+        return redirect()->route('admin.vehicles.index')
+            ->with('success', 'Vehicle successfully moved to archives.');
+    }
+
+    /**
+     * Restore a vehicle from archives.
+     */
+    public function restore(Vehicle $vehicle)
+    {
+        $this->checkAccess($vehicle);
+        $vehicle->update(['is_archived' => false]);
+
+        return redirect()->route('admin.vehicles.archived')
+            ->with('success', 'Vehicle successfully restored to active fleet.');
+    }
+
+    /**
+     * Display the invoice receipt of the completed vehicle.
+     */
+    public function receipt(Vehicle $vehicle)
+    {
+        $this->checkAccess($vehicle);
+        return view('admin.vehicles.receipt', compact('vehicle'));
+    }
+
+    /**
+     * Check if the authenticated staff user has access to this vehicle.
+     */
+    private function checkAccess(Vehicle $vehicle): void
+    {
+        // No checks needed as access is admin-only now
     }
 }

@@ -46,6 +46,45 @@
                         @error('user_id') <p class="text-xs text-autocheck-red font-bold mt-1 ml-1">{{ $message }}</p> @enderror
                     </div>
 
+                    <!-- Mechanic Name -->
+                    <div class="space-y-2">
+                        <label for="mechanic_name" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Assigned Mechanic</label>
+                        <select name="mechanic_name" id="mechanic_name"
+                            class="block w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
+                            <option value="">Select Mechanic (Optional)</option>
+                             @foreach($mechanics as $mechanic)
+                                 @php
+                                     $inProgress = $mechanic->inProgressCount();
+                                     $scheduled = $mechanic->scheduledCount();
+                                     $activeVeh = $mechanic->currentActiveVehicle();
+                                     
+                                     // Adjust count if editing this vehicle and it is currently assigned to this mechanic
+                                     if ($vehicle->mechanic_name === $mechanic->name) {
+                                         if ($vehicle->status === 'in progress') {
+                                             $inProgress = max(0, $inProgress - 1);
+                                         } elseif ($vehicle->status === 'scheduled') {
+                                             $scheduled = max(0, $scheduled - 1);
+                                         }
+                                     }
+                                     
+                                     if ($inProgress >= 1) {
+                                         $statusStr = '🔴 Active (' . ($activeVeh ? $activeVeh->plate_number : 'N/A') . ')';
+                                     } elseif ($scheduled >= 5) {
+                                         $statusStr = '🔴 Fully Booked (' . $scheduled . ' Scheduled)';
+                                     } elseif ($scheduled > 0) {
+                                         $statusStr = '🟢 Available (' . $scheduled . ' Scheduled)';
+                                     } else {
+                                         $statusStr = '🟢 Available';
+                                     }
+                                 @endphp
+                                 <option value="{{ $mechanic->name }}" {{ old('mechanic_name', $vehicle->mechanic_name) == $mechanic->name ? 'selected' : '' }}>
+                                     {{ $mechanic->name }} ({{ $statusStr }})
+                                 </option>
+                             @endforeach
+                        </select>
+                        @error('mechanic_name') <p class="text-xs text-autocheck-red font-bold mt-1 ml-1">{{ $message }}</p> @enderror
+                    </div>
+
 
 
                     <!-- Make -->

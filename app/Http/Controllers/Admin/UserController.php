@@ -48,7 +48,7 @@ class UserController extends Controller implements HasMiddleware
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
-            'role' => 'required|in:admin',
+            'role' => 'required|in:admin,customer',
             'password' => 'required|string|min:8',
         ]);
 
@@ -97,7 +97,7 @@ class UserController extends Controller implements HasMiddleware
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
-            'role' => 'required|in:admin',
+            'role' => 'required|in:admin,customer',
         ]);
 
         if ($request->filled('password')) {

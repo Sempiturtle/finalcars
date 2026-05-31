@@ -198,11 +198,11 @@
                 <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm relative overflow-hidden group/attn">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-black text-gray-900 uppercase tracking-tight">Attention <span class="text-autocheck-red">Required</span></h2>
-                        <a href="{{ route('admin.attention-required') }}" class="text-[9px] font-black text-autocheck-red uppercase tracking-widest hover:underline italic">View All</a>
+                        <a href="{{ route('admin.attention-required.index') }}" class="text-[9px] font-black text-autocheck-red uppercase tracking-widest hover:underline italic">View All</a>
                     </div>
                     <div class="space-y-3">
                         @forelse($attentionRequired as $vehicle)
-                            <a href="{{ route('admin.attention-required') }}" class="block p-3 rounded-2xl bg-red-50/30 border border-red-100 flex items-center space-x-3 group hover:bg-red-50 transition-colors">
+                            <a href="{{ route('admin.attention-required.index') }}" class="block p-3 rounded-2xl bg-red-50/30 border border-red-100 flex items-center space-x-3 group hover:bg-red-50 transition-colors">
                                 <div class="p-2 bg-white text-autocheck-red rounded-xl shadow-sm group-hover:bg-autocheck-red group-hover:text-white transition-colors">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                 </div>
@@ -238,7 +238,7 @@
                     </div>
 
                     @if($attentionRequired->isNotEmpty())
-                        <a href="{{ route('admin.attention-required') }}" class="block w-full mt-4 py-3 bg-gray-950 text-white rounded-xl font-black text-center text-[9px] uppercase tracking-widest hover:bg-gray-900 transition-colors shadow-lg">
+                        <a href="{{ route('admin.attention-required.index') }}" class="block w-full mt-4 py-3 bg-gray-950 text-white rounded-xl font-black text-center text-[9px] uppercase tracking-widest hover:bg-gray-900 transition-colors shadow-lg">
                             Notify All Owners
                         </a>
                     @endif

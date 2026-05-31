@@ -111,16 +111,19 @@
 
                 <!-- Navigation -->
                 <nav class="flex-1 px-4 space-y-0.5 overflow-y-auto mt-4 custom-scrollbar">
+                    @if(auth()->user()->isAdmin())
                     <a href="{{ route('admin.dashboard') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.dashboard') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                         Dashboard
                     </a>
+                    @endif
                     
                     <a href="{{ route('admin.vehicles.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.vehicles.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                         Vehicle Fleet
                     </a>
 
+                    @if(auth()->user()->isAdmin())
                     <a href="{{ route('admin.service-types.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.service-types.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         Service Types
@@ -135,18 +138,22 @@
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         Scheduling Dashboard
                     </a>
+                    @endif
 
                     <a href="{{ route('admin.maintenance.timeline') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.maintenance.timeline') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Timeline Monitoring
                     </a>
 
+                    @if(auth()->user()->isAdmin())
                     <a href="{{ route('admin.notifications.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.notifications.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         Email Notifications
                     </a>
+                    @endif
 
-                    <a href="{{ route('admin.attention-required') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.attention-required') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
+                    @if(auth()->user()->isAdmin())
+                    <a href="{{ route('admin.attention-required.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.attention-required.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         Overdue Alerts
                     </a>
@@ -165,7 +172,13 @@
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
                         Customer Feedback
                     </a>
+                    @endif
 
+                    @if(auth()->user()->isAdmin())
+                    <a href="{{ route('admin.mechanics.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.mechanics.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
+                        <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                        Mechanic Management
+                    </a>
                     <a href="{{ route('admin.users.index') }}" class="sidebar-item flex items-center px-4 py-1.5 rounded-xl text-sm font-bold {{ request()->routeIs('admin.users.*') ? 'active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         User Management
@@ -182,6 +195,7 @@
                         <svg class="h-5 w-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         Analytics / Tracking
                     </a>
+                    @endif
                     <a href="{{ route('admin.chat.index') }}" 
                        x-data="{ unreadCount: 0, poll() { fetch('{{ route('chat.unread-count') }}').then(r => r.json()).then(d => this.unreadCount = d.total) } }"
                        x-init="poll(); setInterval(() => poll(), 10000)"
@@ -226,6 +240,7 @@
 
                 <div class="flex items-center space-x-6 shrink-0 h-full">
                     <!-- Test Email Trigger -->
+                    @if(auth()->user()->isAdmin())
                     <div x-data="{ open: false }" class="relative h-full flex items-center">
                         <button @click="open = !open" class="p-2 rounded-xl text-gray-400 hover:text-autocheck-red focus:outline-none transition-all group" title="Send Test Email">
                             <svg class="h-6 w-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
@@ -262,6 +277,7 @@
                             </form>
                         </div>
                     </div>
+                    @endif
 
                     <div class="h-8 w-px bg-gray-100 hidden md:block shrink-0"></div>
 
