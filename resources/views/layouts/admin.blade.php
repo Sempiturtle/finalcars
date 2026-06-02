@@ -297,7 +297,7 @@
             </header>
 
             <!-- Page Content -->
-            <div class="p-6 md:p-8 lg:p-12 max-w-7xl mx-auto">
+            <div class="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
                 @if(session('success'))
                     <div class="mb-6 p-4 bg-green-50 rounded-2xl border border-green-100 flex items-center space-x-3 animate-fade-in shadow-sm">
                         <div class="flex-shrink-0 w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-500/20">

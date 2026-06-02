@@ -47,8 +47,66 @@
                     </div>
 
                     <!-- Mechanic Name -->
-                    <div class="space-y-2">
-                        <label for="mechanic_name" class="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Assigned Mechanic</label>
+                    <div class="space-y-2" x-data="{
+                        openModal: false,
+                        name: '',
+                        specialty: '',
+                        phone: '',
+                        loading: false,
+                        errorMsg: '',
+                        async submitMechanic() {
+                            if (!this.name) {
+                                this.errorMsg = 'Name is required.';
+                                return;
+                            }
+                            this.loading = true;
+                            this.errorMsg = '';
+                            try {
+                                const response = await fetch('{{ route('admin.mechanics.store') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                    },
+                                    body: JSON.stringify({
+                                        name: this.name,
+                                        specialty: this.specialty,
+                                        phone: this.phone
+                                    })
+                                });
+                                const result = await response.json();
+                                if (response.ok && result.success) {
+                                    // Add to dropdown list and select it
+                                    const select = document.getElementById('mechanic_name');
+                                    const option = document.createElement('option');
+                                    option.value = result.mechanic.name;
+                                    option.text = result.mechanic.name + ' (🟢 Available)';
+                                    option.selected = true;
+                                    select.appendChild(option);
+                                    
+                                    // Reset & close
+                                    this.name = '';
+                                    this.specialty = '';
+                                    this.phone = '';
+                                    this.openModal = false;
+                                } else {
+                                    this.errorMsg = result.message || 'Error creating mechanic. Maybe name already exists?';
+                                }
+                            } catch (e) {
+                                this.errorMsg = 'An unexpected error occurred.';
+                            } finally {
+                                this.loading = false;
+                            }
+                        }
+                    }">
+                        <div class="flex items-center justify-between ml-1">
+                            <label for="mechanic_name" class="text-xs font-black text-gray-400 uppercase tracking-widest">Assigned Mechanic</label>
+                            <button type="button" @click="openModal = true" class="text-autocheck-red hover:text-red-700 font-black text-[10px] uppercase tracking-wider flex items-center gap-1 transition-all">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                                Quick Add
+                            </button>
+                        </div>
                         <select name="mechanic_name" id="mechanic_name"
                             class="block w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-sm font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
                             <option value="">Select Mechanic (Optional)</option>
@@ -83,6 +141,43 @@
                              @endforeach
                         </select>
                         @error('mechanic_name') <p class="text-xs text-autocheck-red font-bold mt-1 ml-1">{{ $message }}</p> @enderror
+
+                        <!-- Modal backdrop -->
+                        <div x-show="openModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm" x-cloak x-transition>
+                            <div class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden p-8 space-y-6" @click.away="openModal = false">
+                                <div>
+                                    <h3 class="text-lg font-black text-gray-900">Quick Add Mechanic</h3>
+                                    <p class="text-gray-500 text-xs mt-1">Register a new mechanic to the workshop system.</p>
+                                </div>
+
+                                <div class="space-y-4 text-left">
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Name</label>
+                                        <input type="text" x-model="name" class="block w-full px-5 py-3 bg-gray-50 border-transparent rounded-xl text-xs font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all" placeholder="e.g. John Doe">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Specialty</label>
+                                        <input type="text" x-model="specialty" class="block w-full px-5 py-3 bg-gray-50 border-transparent rounded-xl text-xs font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all" placeholder="e.g. Engine Specialist">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone</label>
+                                        <input type="text" x-model="phone" class="block w-full px-5 py-3 bg-gray-50 border-transparent rounded-xl text-xs font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all" placeholder="e.g. 09123456789">
+                                    </div>
+                                    
+                                    <div x-show="errorMsg" class="text-xs text-autocheck-red font-bold bg-red-50 border border-red-100 rounded-xl p-3" x-text="errorMsg"></div>
+                                </div>
+
+                                <div class="flex justify-end gap-3 pt-2">
+                                    <button type="button" @click="openModal = false" class="px-5 py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-bold rounded-xl transition-all uppercase tracking-widest">
+                                        Cancel
+                                    </button>
+                                    <button type="button" @click="submitMechanic()" :disabled="loading" class="px-5 py-3 bg-autocheck-red hover:bg-red-700 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-red-500/20 uppercase tracking-widest flex items-center gap-2">
+                                        <span x-show="loading" class="inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                        <span>Save Mechanic</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
 

@@ -360,6 +360,21 @@ class VehicleController extends Controller
     }
 
     /**
+     * Quick assign a mechanic to a vehicle.
+     */
+    public function quickAssign(Request $request, Vehicle $vehicle)
+    {
+        $this->checkAccess($vehicle);
+        $validated = $request->validate([
+            'mechanic_name' => 'required|string|max:255|exists:mechanics,name',
+        ]);
+
+        $vehicle->update(['mechanic_name' => $validated['mechanic_name']]);
+
+        return redirect()->back()->with('success', 'Mechanic assigned successfully.');
+    }
+
+    /**
      * Check if the authenticated staff user has access to this vehicle.
      */
     private function checkAccess(Vehicle $vehicle): void

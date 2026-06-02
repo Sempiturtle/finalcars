@@ -69,6 +69,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('vehicles', Admin\VehicleController::class);
     Route::post('/vehicles/{vehicle}/quick-verify', [Admin\VehicleController::class, 'quickVerify'])->name('vehicles.quick-verify');
     Route::post('/vehicles/{vehicle}/quick-start', [Admin\VehicleController::class, 'quickStart'])->name('vehicles.quick-start');
+    Route::post('/vehicles/{vehicle}/quick-assign', [Admin\VehicleController::class, 'quickAssign'])->name('vehicles.quick-assign');
 
     // Users, Mechanics & Service Types
     Route::resource('users', Admin\UserController::class);

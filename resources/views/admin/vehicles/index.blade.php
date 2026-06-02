@@ -3,6 +3,7 @@
         showVerifyModal: false, 
         showStartModal: false,
         showViewModal: false,
+        showAssignModal: false,
         currentVehicleId: null, 
         currentPlate: '', 
         pendingServices: [], 
@@ -28,6 +29,11 @@
         openView(vehicle) {
             this.selectedVehicle = vehicle;
             this.showViewModal = true;
+        },
+        openQuickAssign(id, plate) {
+            this.currentVehicleId = id;
+            this.currentPlate = plate;
+            this.showAssignModal = true;
         }
     }" class="space-y-6">
         <!-- Header -->
@@ -87,12 +93,12 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-gray-50/50 border-b border-gray-100">
-                                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Vehicle</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest hidden sm:table-cell">Owner</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Plate</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right hidden md:table-cell">Total</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                                <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                                <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Vehicle</th>
+                                <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest hidden sm:table-cell">Owner</th>
+                                <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Plate</th>
+                                <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right hidden md:table-cell">Total</th>
+                                <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
@@ -137,10 +143,10 @@
                                 @endphp
                                 <tr class="group hover:bg-gray-50/30 transition-all duration-300">
                                     <!-- Status -->
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex flex-col space-y-2">
-                                            <div class="flex items-center justify-between gap-3">
-                                                <span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider {{ 
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="flex flex-col space-y-1.5">
+                                            <div class="flex items-center justify-between gap-2.5">
+                                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ 
                                                     match($displayStatus) {
                                                         'completed' => 'bg-green-50 text-green-600',
                                                         'in progress' => 'bg-blue-50 text-blue-600',
@@ -156,7 +162,7 @@
                                             </div>
                                             
                                             <!-- Progress Bar -->
-                                            <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                                            <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
                                                 <div class="h-full transition-all duration-500 {{ $displayStatus === 'completed' ? 'bg-green-500' : 'bg-autocheck-red' }}" 
                                                      style="width: {{ $progress['percent'] }}%"></div>
                                             </div>
@@ -164,113 +170,124 @@
                                     </td>
 
                                     <!-- Vehicle Details -->
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center space-x-3">
-                                            <button type="button" @click="openView({{ json_encode($vehicleData) }})" class="hidden sm:flex w-9 h-9 bg-gray-50 rounded-lg items-center justify-center shrink-0 border border-gray-100 group-hover:bg-white group-hover:border-red-100 transition-colors focus:outline-none">
-                                                <svg class="h-4 w-4 text-gray-400 group-hover:text-autocheck-red transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center space-x-2">
+                                            <button type="button" @click="openView({{ json_encode($vehicleData) }})" class="hidden sm:flex w-8 h-8 bg-gray-50 rounded-lg items-center justify-center shrink-0 border border-gray-100 group-hover:bg-white group-hover:border-red-100 transition-colors focus:outline-none">
+                                                <svg class="h-3.5 w-3.5 text-gray-400 group-hover:text-autocheck-red transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                                             </button>
-                                            <button type="button" @click="openView({{ json_encode($vehicleData) }})" class="text-left block focus:outline-none group/link">
-                                                <div class="flex items-center gap-1.5">
-                                                    <p class="text-sm font-black text-gray-900 tracking-tight group-hover/link:text-autocheck-red transition-colors">{{ $vehicle->make }} {{ $vehicle->model }}</p>
-                                                    <svg class="w-3.5 h-3.5 text-gray-300 opacity-0 group-hover/link:opacity-100 group-hover/link:text-autocheck-red transition-all transform -translate-x-1 group-hover/link:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                            <div class="text-left block">
+                                                <button type="button" @click="openView({{ json_encode($vehicleData) }})" class="block focus:outline-none group/link text-left">
+                                                    <div class="flex items-center gap-1">
+                                                        <p class="text-xs font-black text-gray-900 tracking-tight group-hover/link:text-autocheck-red transition-colors">{{ $vehicle->make }} {{ $vehicle->model }}</p>
+                                                        <svg class="w-3 h-3 text-gray-300 opacity-0 group-hover/link:opacity-100 group-hover/link:text-autocheck-red transition-all transform -translate-x-1 group-hover/link:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                    </div>
+                                                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">{{ $vehicle->year }} • {{ $vehicle->color ?? 'Standard' }}</p>
+                                                </button>
+                                                <div class="flex items-center gap-1 mt-1">
+                                                    @if(empty($vehicle->mechanic_name))
+                                                        <button type="button" @click.stop="openQuickAssign({{ $vehicle->id }}, '{{ $vehicle->plate_number }}')" class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-red-50 text-autocheck-red border border-red-150 shadow-sm hover:bg-autocheck-red hover:text-white transition-all">
+                                                            <svg class="w-2 h-2 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path>
+                                                            </svg>
+                                                            Assign Mechanic
+                                                        </button>
+                                                    @else
+                                                        <button type="button" @click.stop="openQuickAssign({{ $vehicle->id }}, '{{ $vehicle->plate_number }}')" class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-gray-50 text-gray-550 border border-gray-150 shadow-sm hover:bg-gray-100 hover:text-gray-900 transition-all">
+                                                            <svg class="w-2 h-2 mr-0.5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                            </svg>
+                                                            Mech: {{ $vehicle->mechanic_name }}
+                                                        </button>
+                                                    @endif
                                                 </div>
-                                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">{{ $vehicle->year }} • {{ $vehicle->color ?? 'Standard' }}</p>
-                                                <div class="flex items-center gap-1.5 mt-1">
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-550 border border-gray-150 shadow-sm group-hover:bg-white transition-colors">
-                                                        <svg class="w-2.5 h-2.5 mr-0.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                        </svg>
-                                                        Mech: {{ $vehicle->mechanic_name ?? 'Unassigned' }}
-                                                    </span>
-                                                </div>
-                                            </button>
+                                            </div>
                                         </div>
                                     </td>
 
                                     <!-- Owner -->
-                                    <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                                    <td class="px-4 py-3 whitespace-nowrap hidden sm:table-cell">
                                         <div class="flex items-center space-x-2">
-                                            <div class="w-7 h-7 bg-white rounded flex items-center justify-center text-[10px] font-black text-autocheck-red border border-gray-100 shadow-sm group-hover:bg-red-50 transition-colors">
+                                            <div class="w-6.5 h-6.5 bg-white rounded flex items-center justify-center text-[9px] font-black text-autocheck-red border border-gray-100 shadow-sm group-hover:bg-red-50 transition-colors">
                                                 {{ substr($vehicle->owner_name, 0, 1) }}
                                             </div>
-                                            <span class="text-[13px] font-bold text-gray-700">{{ $vehicle->owner_name }}</span>
+                                            <span class="text-xs font-bold text-gray-700">{{ $vehicle->owner_name }}</span>
                                         </div>
                                     </td>
 
                                     <!-- Plate Number -->
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        <span class="px-2 py-1 bg-gray-50 rounded text-[11px] font-black text-gray-900 italic tracking-widest border border-gray-100 group-hover:bg-white transition-colors">
+                                    <td class="px-4 py-3 whitespace-nowrap text-center">
+                                        <span class="px-2 py-0.5 bg-gray-50 rounded text-xs font-black text-gray-900 italic tracking-widest border border-gray-100 group-hover:bg-white transition-colors">
                                             {{ $vehicle->plate_number }}
                                         </span>
                                     </td>
 
                                     <!-- Total Maintenance Cost -->
-                                    <td class="px-6 py-4 whitespace-nowrap text-right hidden md:table-cell">
-                                        <p class="text-[13px] font-black text-autocheck-red tracking-tight">₱{{ number_format($vehicle->total_cost ?? 0, 2) }}</p>
+                                    <td class="px-4 py-3 whitespace-nowrap text-right hidden md:table-cell">
+                                        <p class="text-xs font-black text-autocheck-red tracking-tight">₱{{ number_format($vehicle->total_cost ?? 0, 2) }}</p>
                                     </td>
 
                                     <!-- Actions -->
-                                    <td class="px-6 py-4 whitespace-nowrap text-right">
-                                        <div class="flex items-center justify-end space-x-2 transition-all duration-300">
+                                    <td class="px-4 py-3 whitespace-nowrap text-right">
+                                        <div class="flex items-center justify-end space-x-1.5 transition-all duration-300">
                                             <!-- Quick Actions -->
                                                 <button 
                                                     type="button"
                                                     @click="openView({{ json_encode($vehicleData) }})"
-                                                    class="inline-flex items-center px-3 py-1.5 bg-purple-50 text-purple-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-purple-600 hover:text-white transition-all shadow-sm border border-purple-100"
+                                                    class="inline-flex items-center px-2 py-1 bg-purple-50 text-purple-600 rounded-md text-[9px] font-black uppercase tracking-wide hover:bg-purple-600 hover:text-white transition-all shadow-sm border border-purple-100"
                                                     title="View All Vehicle Info"
                                                 >
-                                                    <svg class="w-3 h-3 sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                                    <span class="hidden sm:inline">View Details</span>
+                                                    <svg class="w-2.5 h-2.5 lg:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                                    <span class="hidden lg:inline">Details</span>
                                                 </button>
 
                                                 @if($pendingServices->filter(fn($s) => in_array($s['status'] ?? '', ['scheduled', '']))->count() > 0)
                                                     <button 
                                                         type="button"
                                                         @click="openStart({{ $vehicle->id }}, '{{ $vehicle->plate_number }}', {{ collect($vehicle->services ?? [])->map(fn($s, $i) => array_merge($s, ['original_index' => $i]))->toJson() }})"
-                                                        class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100"
+                                                        class="inline-flex items-center px-2 py-1 bg-blue-50 text-blue-600 rounded-md text-[9px] font-black uppercase tracking-wide hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100"
                                                         title="Start Specific Services"
                                                     >
-                                                        <svg class="w-3 h-3 sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                        <span class="hidden sm:inline">Start</span>
+                                                        <svg class="w-2.5 h-2.5 lg:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                        <span class="hidden lg:inline">Start</span>
                                                     </button>
                                                 @endif
                                                 <button 
                                                     type="button"
                                                     @click="openVerify({{ $vehicle->id }}, '{{ $vehicle->plate_number }}', {{ $pendingServices->toJson() }})"
-                                                    class="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-green-600 hover:text-white transition-all shadow-sm border border-green-100"
+                                                    class="inline-flex items-center px-2 py-1 bg-green-50 text-green-600 rounded-md text-[9px] font-black uppercase tracking-wide hover:bg-green-600 hover:text-white transition-all shadow-sm border border-green-100"
                                                     title="Quick Verify Completed Services"
                                                 >
-                                                    <svg class="w-3 h-3 sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                    <span class="hidden sm:inline">Verify</span>
+                                                    <svg class="w-2.5 h-2.5 lg:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                    <span class="hidden lg:inline">Verify</span>
                                                 </button>
 
                                                 @if($displayStatus === 'completed')
                                                     <a 
                                                         href="{{ route('admin.vehicles.receipt', $vehicle) }}"
                                                         target="_blank"
-                                                        class="inline-flex items-center px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 hover:text-white transition-all shadow-sm border border-amber-100"
+                                                        class="inline-flex items-center px-2 py-1 bg-amber-50 text-amber-600 rounded-md text-[9px] font-black uppercase tracking-wide hover:bg-amber-600 hover:text-white transition-all shadow-sm border border-amber-100"
                                                         title="Print Invoice / Bill Out"
                                                     >
-                                                        <svg class="w-3 h-3 sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                                        <span class="hidden sm:inline">Bill Out</span>
+                                                        <svg class="w-2.5 h-2.5 lg:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                                        <span class="hidden lg:inline">Bill</span>
                                                     </a>
 
                                                     <form action="{{ route('admin.vehicles.archive', $vehicle) }}" method="POST" class="inline" id="admin-archive-vehicle-{{ $vehicle->id }}">
                                                         @csrf
                                                         <button 
                                                             type="submit"
-                                                            class="inline-flex items-center px-3 py-1.5 bg-gray-55 text-gray-600 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-gray-600 hover:text-white transition-all shadow-sm border border-gray-200"
+                                                            class="inline-flex items-center px-2 py-1 bg-gray-55 text-gray-600 rounded-md text-[9px] font-black uppercase tracking-wide hover:bg-gray-600 hover:text-white transition-all shadow-sm border border-gray-250"
                                                             title="Archive Vehicle"
                                                         >
-                                                            <svg class="w-3 h-3 sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 001.414 0l2.414-2.414a1 1 0 01.707-.293H20"></path></svg>
-                                                            <span class="hidden sm:inline">Archive</span>
+                                                            <svg class="w-2.5 h-2.5 lg:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 001.414 0l2.414-2.414a1 1 0 01.707-.293H20"></path></svg>
+                                                            <span class="hidden lg:inline">Archive</span>
                                                         </button>
                                                     </form>
                                                 @endif
 
-                                            <a href="{{ route('admin.vehicles.edit', $vehicle) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-autocheck-red hover:bg-red-50 rounded-lg transition-all" title="Edit Vehicle">
-                                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                            <a href="{{ route('admin.vehicles.edit', $vehicle) }}" class="p-1.5 bg-gray-50 text-gray-400 hover:text-autocheck-red hover:bg-red-50 rounded-md transition-all" title="Edit Vehicle">
+                                                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             </a>
                                             <form action="{{ route('admin.vehicles.destroy', $vehicle) }}" method="POST" class="inline" id="admin-del-vehicle-{{ $vehicle->id }}">
                                                 @csrf
@@ -278,10 +295,10 @@
                                                 <button
                                                     type="button"
                                                     onclick="confirmDelete(this.closest('form'), 'This will permanently remove the vehicle and all its associated records from the fleet. This action cannot be undone.', 'Remove Vehicle', 'Yes, Remove It')"
-                                                    class="p-2 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                    class="p-1.5 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-all"
                                                     title="Delete Vehicle"
                                                 >
-                                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                    <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                 </button>
                                             </form>
                                         </div>

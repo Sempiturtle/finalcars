@@ -43,7 +43,15 @@ class MechanicController extends Controller implements HasMiddleware
             'phone' => 'nullable|string|max:20',
         ]);
 
-        Mechanic::create($validated);
+        $mechanic = Mechanic::create($validated);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Mechanic created successfully.',
+                'mechanic' => $mechanic
+            ]);
+        }
 
         return redirect()->route('admin.mechanics.index')
             ->with('success', 'Mechanic created successfully.');

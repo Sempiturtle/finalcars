@@ -331,3 +331,75 @@
         </div>
     </div>
 </div>
+
+<!-- Quick Assign Mechanic Modal -->
+<div x-show="showAssignModal" 
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm"
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-cloak>
+    
+    <div @click.away="showAssignModal = false" 
+         class="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl transform transition-all border border-gray-100"
+         x-transition:enter="transition ease-out duration-300 transform"
+         x-transition:enter-start="scale-95 translate-y-4"
+         x-transition:enter-end="scale-100 translate-y-0">
+        
+        <form :action="`/admin/vehicles/${currentVehicleId}/quick-assign`" method="POST">
+            @csrf
+            <div class="p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-black text-gray-900 uppercase tracking-tight">Assign Mechanic</h3>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1" x-text="`For Plate: ${currentPlate}`"></p>
+                    </div>
+                    <button type="button" @click="showAssignModal = false" class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Mechanic Selection -->
+                <div class="space-y-4 mb-8 text-left">
+                    <label for="modal_mechanic_name" class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Select Mechanic</label>
+                    <select name="mechanic_name" id="modal_mechanic_name" required
+                        class="block w-full px-6 py-4 bg-gray-50 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:ring-2 focus:ring-autocheck-red/20 focus:border-autocheck-red transition-all">
+                        <option value="">Select Mechanic</option>
+                        @foreach(\App\Models\Mechanic::orderBy('name')->get() as $mechanic)
+                            @php
+                                $inProgress = $mechanic->inProgressCount();
+                                $scheduled = $mechanic->scheduledCount();
+                                $activeVeh = $mechanic->currentActiveVehicle();
+                                
+                                if ($inProgress >= 1) {
+                                    $statusStr = '🔴 Active (' . ($activeVeh ? $activeVeh->plate_number : 'N/A') . ')';
+                                } elseif ($scheduled >= 5) {
+                                    $statusStr = '🔴 Fully Booked (' . $scheduled . ' Scheduled)';
+                                } elseif ($scheduled > 0) {
+                                    $statusStr = '🟢 Available (' . $scheduled . ' Scheduled)';
+                                } else {
+                                    $statusStr = '🟢 Available';
+                                }
+                            @endphp
+                            <option value="{{ $mechanic->name }}">
+                                {{ $mechanic->name }} ({{ $statusStr }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex items-center gap-3">
+                    <button type="button" @click="showAssignModal = false" 
+                            class="flex-1 px-6 py-4 bg-gray-100 text-gray-600 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="flex-1 px-6 py-4 bg-autocheck-red text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-700 transition-all shadow-lg shadow-red-500/30">
+                        Assign Now
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
